@@ -48,7 +48,7 @@ class LegalEdge(BaseModel):
     actor_id: Optional[str] = None
 
     probability: float = 1.0
-    conditions: List[str]
+    conditions: List[str] = Field(default_factory=list)
 
 
 class LegalNode(BaseModel):
@@ -59,10 +59,10 @@ class LegalNode(BaseModel):
     state: Dict[str, object]
     summary: str = ""
 
-    artifacts: List[Artifact]
+    artifacts: List[Artifact] = Field(default_factory=list)
 
-    incoming: List[str]
-    outgoing: List[str]
+    incoming: List[str] = Field(default_factory=list)
+    outgoing: List[str] = Field(default_factory=list)
 
 
 class LegalBranchNode(BaseModel):

@@ -20,7 +20,7 @@ if __name__ == "__main__":
     )
 
     # Expansion engine
-    llm = MockLLMProvider()
+    llm = MockLLMProvider(key='my_key')
 
     engine = ExpansionEngine(graph, llm)
 
