@@ -78,6 +78,14 @@ class LegalBranches(BaseModel):
     branches: list[LegalBranchNode]
 
 
+class PathStep(BaseModel):
+    node_id: str
+    event_type: Optional[str]  # edge action that led here
+    actor_id: Optional[str]
+    state_snapshot: Dict
+    summary: str
+
+
 # -------------------------
 # Graph Engine (non-Pydantic)
 # -------------------------
@@ -169,3 +177,60 @@ class CaseGraph:
     def to_json(self, path: str) -> None:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, indent=2)
+
+    # -------------------------
+    # Build path
+    # -------------------------
+    def build_path(self, node_id: str) -> List[PathStep]:
+        path = []
+        visited = set()
+
+        current_id = node_id
+
+        while current_id and current_id not in visited:
+            visited.add(current_id)
+
+            node = self.nodes[current_id]
+
+            # find incoming edge (assuming single-parent path per branch)
+            incoming_edges = [
+                self.edges[eid]
+                for eid in node.incoming
+            ]
+
+            edge = incoming_edges[0] if incoming_edges else None
+
+            step = PathStep(
+                node_id=node.id,
+                event_type=edge.action_type if edge else None,
+                actor_id=edge.actor_id if edge else None,
+                state_snapshot=node.state,
+                summary=node.summary
+            )
+
+            path.insert(0, step)
+
+            if edge:
+                current_id = edge.source_id
+            else:
+                break
+
+        return path
+
+    def build_narrative(self, path: List[PathStep]) -> str:
+
+        text = []
+        for i, step in enumerate(path):
+
+            if i == 0:
+                text.append(f"Case begins: {step.summary}")
+                continue
+
+            action = step.event_type
+            actor = step.actor_id or "unknown actor"
+
+            text.append(
+                f"{actor} executed '{action}', resulting in: {step.summary}"
+            )
+
+        return "\n".join(text)

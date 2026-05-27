@@ -6,32 +6,31 @@ from object_graph_runtime.graph_classes import LegalBranches
 class BaseLLMProvider(ABC):
 
     @abstractmethod
-    def generate(self, prompt: str) -> str:
+    def generate(self, prompt: dict[str, str]) -> LegalBranches:
         pass
 
 class MockLLMProvider(BaseLLMProvider):
 
     def __init__(self, key: str, model: str = "gpt-4"):
-        #self.openai = OpenAI(api_key=key)
+        self.openai = OpenAI(api_key=key)
         self.model = model
 
 
-    def generate(self, prompt: str) -> str:
+    def generate(self, prompt_messages: dict[str, str]) -> LegalBranches:
 
-        '''
         response = self.openai.responses.parse(
             model=self.model,
-            input=prompt,
-            text_format=LegalBranches,
-        )'''
+            input=[
+                {"role": "system", "content": prompt_messages['system_prompt']},
+                {"role": "user", "content": prompt_messages['user_prompt']}
+            ],
+            text_format=LegalBranches
+        )
+
+        result: LegalBranches = response.output_parsed
 
 
-
-
-
-
-
-        response ="""
+        response2 ="""
         {
           "transitions": [
             {
@@ -70,4 +69,4 @@ class MockLLMProvider(BaseLLMProvider):
         }
         """
 
-        return response
+        return result

@@ -16,10 +16,10 @@ class ExpansionEngine:
 
     def expand_node(self, node_id: str):
 
-        node = self.graph.nodes[node_id]
+        prompt_messages = self.prompt_builder.create_prompt_messages(self.graph, node_id)
+        legal_branches = self.llm.generate(prompt_messages)
 
-        prompt = self.prompt_builder.build(node)
-        raw_response = self.llm.generate(prompt)
+        # here to read now legal branch object
 
         data = json.loads(raw_response)
 

@@ -1,31 +1,98 @@
 import json
 
-from object_graph_runtime.graph_classes import LegalNode
+from object_graph_runtime.graph_classes import CaseGraph
+
+SYSTEM_PROMPT = """
+You are a legal process simulation engine.
+
+Your task is to simulate possible next steps in a legal procedure.
+
+You MUST:
+- Only output valid JSON
+- Never output explanations outside JSON
+- Consider legal procedural logic and realistic human behavior
+- Use probabilities for each transition (0.0 to 1.0)
+- Ensure next_state is fully structured and consistent
+
+You will receive:
+1. A causal path of past legal events
+2. A narrative summary of the case progression
+3. The current legal state
+
+Your output must be strictly in this format:
+
+{
+  "transitions": [
+    {
+      "action_type": "...",
+      "probability": 0.0,
+      "next_state": {},
+      "summary": "...",
+      "legal_reasoning": "...",
+      "artifacts": [
+        {
+          "type": "...",
+          "content": "..."
+        }
+      ]
+    }
+  ]
+}
+
+Rules:
+- Do not hallucinate laws unless explicitly provided in input
+- Ensure transitions are realistic and legally plausible
+- Ensure probabilities across transitions do not need to sum to 1, but should be meaningful
+"""
 
 
 class PromptBuilder:
 
     @staticmethod
-    def build(node: LegalNode) -> str:
+    def create_prompt_messages(graph: CaseGraph, node_id: str) -> dict[str,str]:
+
+        user_prompt = PromptBuilder.create_user_prompt(graph, node_id)
+
+        return {'system_prompt':SYSTEM_PROMPT, 'user_prompt': user_prompt}
+
+
+    @staticmethod
+    def create_user_prompt(graph: CaseGraph, node_id: str) -> str:
+
+        # 1. Build path
+        path = graph.build_path(node_id)
+
+        # 2. Build narrative
+        narrative = graph.build_narrative(path)
+
+        # 3. Current node
+        node = graph.nodes[node_id]
 
         return f"""
-        You are a legal process simulation engine.
-        
-        Current legal state:
-        
+        # CAUSAL PATH (STRUCTURED)
+
+        {json.dumps([step.__dict__ for step in path], indent=2)}
+
+        ---
+
+        # NARRATIVE SUMMARY
+
+        {narrative}
+
+        ---
+
+        # CURRENT LEGAL STATE
+
         {json.dumps(node.state, indent=2)}
-        
-        Summary:
+
+        ---
+
+        # CURRENT NODE SUMMARY
+
         {node.summary}
-        
-        Generate ALL realistic next legal transitions.
-        
-        Return STRICT JSON with:
-        - transitions
-        - probability
-        - next_state
-        - summary
-        - artifacts
-        
-        DO NOT return prose.
+
+        ---
+
+        TASK:
+        Generate three possible next legal transitions from the current state.
         """
