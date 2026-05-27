@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from openai import OpenAI
+from object_graph_runtime.graph_classes import LegalBranches
 
 
 class BaseLLMProvider(ABC):
@@ -9,9 +11,27 @@ class BaseLLMProvider(ABC):
 
 class MockLLMProvider(BaseLLMProvider):
 
+    def __init__(self, key: str, model: str = "gpt-4"):
+        #self.openai = OpenAI(api_key=key)
+        self.model = model
+
+
     def generate(self, prompt: str) -> str:
 
-        return """
+        '''
+        response = self.openai.responses.parse(
+            model=self.model,
+            input=prompt,
+            text_format=LegalBranches,
+        )'''
+
+
+
+
+
+
+
+        response ="""
         {
           "transitions": [
             {
@@ -49,3 +69,5 @@ class MockLLMProvider(BaseLLMProvider):
           ]
         }
         """
+
+        return response

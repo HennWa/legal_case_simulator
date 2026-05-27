@@ -1,62 +1,91 @@
-from __future__ import annotations
-
-from dataclasses import dataclass, field, asdict
-from typing import Dict, List, Optional
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional, Dict, List
 import uuid
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
+
+# -------------------------
+# Helpers
+# -------------------------
 def generate_id(prefix: str) -> str:
     return f"{prefix}_{uuid.uuid4().hex[:8]}"
 
-@dataclass
-class Actor:
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+# -------------------------
+# Core Models
+# -------------------------
+class Actor(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     id: str
     name: str
     role: str  # claimant, defendant, court, etc.
 
 
-@dataclass
-class Artifact:
+class Artifact(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     id: str
     type: str  # email, letter, filing, invoice, etc.
     content: str
     created_by: Optional[str] = None
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = Field(default_factory=utc_now)
 
 
-@dataclass
-class LegalEdge:
+class LegalEdge(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     id: str
     source_id: str
     target_id: str
 
-    action_type: str  # "send_reminder", "pay_invoice", "file_claim"
+    action_type: str
     actor_id: Optional[str] = None
 
     probability: float = 1.0
-    conditions: List[str] = field(default_factory=list)
+    conditions: List[str]
 
 
-@dataclass
-class LegalNode:
+class LegalNode(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     id: str
     title: str
-    state: Dict
+    state: Dict[str, object]
     summary: str = ""
 
-    artifacts: List[Artifact] = field(default_factory=list)
+    artifacts: List[Artifact]
 
-    incoming: List[str] = field(default_factory=list)
-    outgoing: List[str] = field(default_factory=list)
+    incoming: List[str]
+    outgoing: List[str]
 
 
+class LegalBranchNode(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
+    edge: LegalEdge
+    node: LegalNode
+
+
+class LegalBranches(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    branches: list[LegalBranchNode]
+
+
+# -------------------------
+# Graph Engine (non-Pydantic)
+# -------------------------
 class CaseGraph:
     def __init__(self):
-        self.nodes: Dict[str, LegalNode] = {}
-        self.edges: Dict[str, LegalEdge] = {}
-        self.actors: Dict[str, Actor] = {}
+        self.nodes: dict[str, LegalNode] = {}
+        self.edges: dict[str, LegalEdge] = {}
+        self.actors: dict[str, Actor] = {}
 
     # -------------------------
     # Actor
@@ -69,7 +98,7 @@ class CaseGraph:
     # -------------------------
     # Node
     # -------------------------
-    def add_node(self, title: str, state: Dict, summary: str = "") -> LegalNode:
+    def add_node(self, title: str, state: dict[str, object], summary: str = "") -> LegalNode:
         node = LegalNode(
             id=generate_id("node"),
             title=title,
@@ -89,7 +118,7 @@ class CaseGraph:
         action_type: str,
         actor_id: Optional[str] = None,
         probability: float = 1.0,
-        conditions: Optional[List[str]] = None,
+        conditions: Optional[list[str]] = None,
     ) -> LegalEdge:
 
         edge = LegalEdge(
@@ -104,23 +133,23 @@ class CaseGraph:
 
         self.edges[edge.id] = edge
 
-        # link nodes
+        # link nodes safely
         self.nodes[source_id].outgoing.append(edge.id)
         self.nodes[target_id].incoming.append(edge.id)
 
         return edge
 
     # -------------------------
-    # Traversal helpers
+    # Traversal
     # -------------------------
-    def get_successors(self, node_id: str) -> List[LegalNode]:
+    def get_successors(self, node_id: str) -> list[LegalNode]:
         node = self.nodes[node_id]
         return [
             self.nodes[self.edges[eid].target_id]
             for eid in node.outgoing
         ]
 
-    def get_predecessors(self, node_id: str) -> List[LegalNode]:
+    def get_predecessors(self, node_id: str) -> list[LegalNode]:
         node = self.nodes[node_id]
         return [
             self.nodes[self.edges[eid].source_id]
@@ -128,18 +157,15 @@ class CaseGraph:
         ]
 
     # -------------------------
-    # Serialization
+    # Serialization (Pydantic-native)
     # -------------------------
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
-            "nodes": {nid: asdict(node) for nid, node in self.nodes.items()},
-            "edges": {eid: asdict(edge) for eid, edge in self.edges.items()},
-            "actors": {aid: asdict(actor) for aid, actor in self.actors.items()},
+            "nodes": {nid: node.model_dump() for nid, node in self.nodes.items()},
+            "edges": {eid: edge.model_dump() for eid, edge in self.edges.items()},
+            "actors": {aid: actor.model_dump() for aid, actor in self.actors.items()},
         }
 
-    def to_json(self, path: str):
+    def to_json(self, path: str) -> None:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, indent=2)
-
-
-
