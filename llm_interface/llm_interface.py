@@ -11,7 +11,7 @@ class BaseLLMProvider(ABC):
 
 class MockLLMProvider(BaseLLMProvider):
 
-    def __init__(self, key: str, model: str = "gpt-4"):
+    def __init__(self, key: str, model: str = "gpt-4.1-mini"):
         self.openai = OpenAI(api_key=key)
         self.model = model
 

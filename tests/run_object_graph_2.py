@@ -1,26 +1,34 @@
-from object_graph_runtime.graph_classes import CaseGraph
+import os
+from dotenv import load_dotenv
+
+from object_graph_runtime.graph_classes import CaseGraph, LegalState
 from expansion_engine.exapnsion_engine import ExpansionEngine
-from prompt_builder.prompt_builder import PromptBuilder
 from llm_interface.llm_interface import MockLLMProvider
 import json
 
 if __name__ == "__main__":
 
+    load_dotenv(override=True)
+    openai_api_key = os.getenv('OPENAI_API_KEY')
+
     graph = CaseGraph()
+
+
+    state = LegalState(
+        phase ="Payment reminder sent",
+        legal_issue="Debtor has not paid the invoice after a reminder was sent.",
+        status="Overdue",
+    )
 
     # Initial node
     start = graph.add_node(
         title="Invoice Overdue",
-        state={
-            "invoice_amount": 5000,
-            "paid": False,
-            "reminder_sent": True
-        },
+        state=state,
         summary="Invoice overdue after reminder."
     )
 
     # Expansion engine
-    llm = MockLLMProvider(key='my_key')
+    llm = MockLLMProvider(key=openai_api_key)
 
     engine = ExpansionEngine(graph, llm)
 
