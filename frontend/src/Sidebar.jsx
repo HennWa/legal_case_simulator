@@ -9,9 +9,6 @@ import {
 } from "recharts";
 
 export default function Sidebar() {
-  // -------------------------
-  // Actor chart data
-  // -------------------------
   const actorData = Object.entries(statistics.actors).map(
     ([name, values]) => ({
       name,
@@ -20,9 +17,6 @@ export default function Sidebar() {
     })
   );
 
-  // -------------------------
-  // Gantt timeline preprocessing
-  // -------------------------
   const timeline = Object.entries(statistics.states).map(
     ([state, range]) => {
       const start = new Date(range.start).getTime();
@@ -47,90 +41,106 @@ export default function Sidebar() {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        gap: 18,
-        padding: 16,
+        padding: 18,
+        gap: 16,
         boxSizing: "border-box",
-        color: "#f5e9ec",
         fontFamily: "Inter, system-ui, sans-serif",
+        color: "#f4ecee",
+        background: "linear-gradient(180deg, #1b1216 0%, #140d10 100%)",
       }}
     >
       {/* HEADER */}
-      <div>
-        <h2 style={{ margin: 0, fontSize: 16 }}>Legal Analytics</h2>
-        <div style={{ fontSize: 12, opacity: 0.7 }}>
-          Graph statistics overview
-        </div>
-      </div>
-
-      {/* 📊 ACTOR CHART */}
       <div
         style={{
-          height: 240,
-          background: "rgba(0,0,0,0.15)",
-          border: "1px solid #c08497",
-          borderRadius: 10,
-          padding: 10,
+          paddingBottom: 12,
+          borderBottom: "1px solid rgba(192, 132, 151, 0.25)",
         }}
       >
-        <div style={{ fontSize: 12, marginBottom: 6, opacity: 0.8 }}>
-          Payments by Actor
+        <div style={{ fontSize: 14, letterSpacing: 0.6, opacity: 0.7 }}>
+          LEGAL ANALYTICS
         </div>
-
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={actorData}>
-            <XAxis dataKey="name" stroke="#f5e9ec" />
-            <YAxis stroke="#f5e9ec" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#2b0f1a",
-                border: "1px solid #c08497",
-                color: "#f5e9ec",
-              }}
-            />
-            <Bar dataKey="paid" fill="#c08497" />
-            <Bar dataKey="received" fill="#f3d6dc" />
-          </BarChart>
-        </ResponsiveContainer>
+        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>
+          Case Overview
+        </h2>
+        <div style={{ fontSize: 12, opacity: 0.6 }}>
+          Structured event intelligence
+        </div>
       </div>
 
-      {/* 🕒 GANTT TIMELINE */}
+      {/* ACTOR PANEL */}
+      <div
+        style={{
+          padding: 12,
+          borderRadius: 12,
+          border: "1px solid rgba(192, 132, 151, 0.25)",
+          background: "rgba(255,255,255,0.03)",
+        }}
+      >
+        <div style={{ fontSize: 12, marginBottom: 10, opacity: 0.8 }}>
+          Financial Flow by Actor
+        </div>
+
+        <div style={{ height: 220 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={actorData}>
+              <XAxis dataKey="name" stroke="#d9c7cc" />
+              <YAxis stroke="#d9c7cc" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1b1216",
+                  border: "1px solid rgba(192,132,151,0.4)",
+                  borderRadius: 8,
+                  color: "#f4ecee",
+                }}
+              />
+              <Bar dataKey="paid" fill="#c08497" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="received" fill="#8f6b75" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* TIMELINE PANEL */}
       <div
         style={{
           flex: 1,
           overflowY: "auto",
-          background: "rgba(0,0,0,0.15)",
-          border: "1px solid #c08497",
-          borderRadius: 10,
-          padding: 10,
+          padding: 12,
+          borderRadius: 12,
+          border: "1px solid rgba(192, 132, 151, 0.25)",
+          background: "rgba(255,255,255,0.03)",
         }}
       >
-        <div style={{ fontSize: 12, marginBottom: 10, opacity: 0.8 }}>
-          State Timeline (Gantt)
+        <div style={{ fontSize: 12, marginBottom: 12, opacity: 0.8 }}>
+          Procedural Timeline
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {timeline.map((t, i) => {
             const offset = ((t.start - minTime) / total) * 100;
             const width = (t.duration / total) * 100;
 
             return (
               <div key={i}>
-                {/* state label */}
-                <div style={{ fontSize: 12, marginBottom: 4 }}>
+                <div
+                  style={{
+                    fontSize: 12,
+                    marginBottom: 6,
+                    opacity: 0.85,
+                  }}
+                >
                   {t.state}
                 </div>
 
-                {/* gantt bar background */}
                 <div
                   style={{
-                    height: 14,
-                    background: "rgba(255,255,255,0.08)",
-                    borderRadius: 6,
+                    height: 10,
+                    borderRadius: 999,
+                    background: "rgba(255,255,255,0.06)",
                     position: "relative",
                     overflow: "hidden",
                   }}
                 >
-                  {/* actual time segment */}
                   <div
                     style={{
                       position: "absolute",
@@ -141,22 +151,39 @@ export default function Sidebar() {
                         t.state === "paid"
                           ? "#c08497"
                           : t.state === "waiting for payment"
-                          ? "#f3d6dc"
-                          : "#6b2c3a",
-                      borderRadius: 6,
+                          ? "#bfa3aa"
+                          : "#5a3a42",
+                      borderRadius: 999,
                     }}
                   />
                 </div>
 
-                {/* time labels */}
-                <div style={{ fontSize: 10, opacity: 0.6, marginTop: 4 }}>
-                  {new Date(t.start).toDateString()} →{" "}
-                  {new Date(t.end).toDateString()}
+                <div
+                  style={{
+                    fontSize: 10,
+                    marginTop: 6,
+                    opacity: 0.5,
+                  }}
+                >
+                  {new Date(t.start).toLocaleDateString()} →{" "}
+                  {new Date(t.end).toLocaleDateString()}
                 </div>
               </div>
             );
           })}
         </div>
+      </div>
+
+      {/* FOOTER */}
+      <div
+        style={{
+          fontSize: 11,
+          opacity: 0.5,
+          paddingTop: 10,
+          borderTop: "1px solid rgba(192, 132, 151, 0.2)",
+        }}
+      >
+        Confidential • Internal Case Intelligence System
       </div>
     </div>
   );

@@ -13,8 +13,8 @@ export function layoutGraph(nodes, edges) {
     rankdir: "LR",
 
     // 📏 spacing improvements (this is what you were missing)
-    ranksep: 300,   // vertical distance between “columns”
-    nodesep: 100,   // horizontal distance between nodes in same rank
+    ranksep: 220,
+    nodesep: 80,
     marginx: 40,
     marginy: 40,
   });

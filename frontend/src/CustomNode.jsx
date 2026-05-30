@@ -4,57 +4,133 @@ export default function CustomNode({ data }) {
   return (
     <div
       style={{
-        padding: 14,
-        border: "1px solid #c08497",
-        borderRadius: 12,
-        background: "linear-gradient(135deg, #2b0f1a, #3a1524)",
-        width: 300,
-        color: "#f5e9ec",
-        boxShadow: "0 6px 18px rgba(0,0,0,0.35)",
+        width: 260,
+        minHeight: 140,
+
+        background: "#ffffff",
+
+        border: "1px solid #e7d6da",
+        borderRadius: 16,
+
+        padding: 18,
+
+        boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+
+        color: "#2d2d2d",
+
+        display: "flex",
+        flexDirection: "column",
+
+        position: "relative",
       }}
     >
       {/* LEFT INPUT HANDLE */}
       <Handle
         type="target"
         position={Position.Left}
-        style={{ background: "#c08497" }}
+        style={{
+          width: 10,
+          height: 10,
+          background: "#b97784",
+          border: "2px solid white",
+        }}
       />
 
-      <div>
-        <strong style={{ fontSize: 14, letterSpacing: 0.3 }}>
-          {data.title}
-        </strong>
+      {/* TOP ICON */}
+      <div
+        style={{
+          width: 36,
+          height: 36,
 
-        <p
-          style={{
-            fontSize: 12,
-            opacity: 0.85,
-            marginTop: 6,
-            lineHeight: 1.4,
-          }}
-        >
-          {data.summary}
-        </p>
+          borderRadius: 10,
 
-        <pre
-          style={{
-            fontSize: 10,
-            marginTop: 8,
-            background: "rgba(255,255,255,0.05)",
-            padding: 8,
-            borderRadius: 8,
-            overflow: "auto",
-          }}
-        >
-          {JSON.stringify(data.state, null, 2)}
-        </pre>
+          background:
+            "linear-gradient(135deg, #9c5866, #b97784)",
+
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+
+          color: "white",
+          fontSize: 18,
+
+          marginBottom: 14,
+        }}
+      >
+        ⚖
+      </div>
+
+      {/* STEP NUMBER */}
+      <div
+        style={{
+          fontSize: 11,
+          fontWeight: 600,
+          color: "#9c5866",
+          letterSpacing: 1,
+
+          marginBottom: 8,
+        }}
+      >
+        EVENT
+      </div>
+
+      {/* TITLE */}
+      <div
+        style={{
+          fontSize: 15,
+          fontWeight: 600,
+          lineHeight: 1.3,
+
+          marginBottom: 10,
+        }}
+      >
+        {data.title}
+      </div>
+
+      {/* SUMMARY */}
+      <div
+        style={{
+          fontSize: 12,
+          lineHeight: 1.5,
+
+          color: "#666",
+
+          marginBottom: 14,
+        }}
+      >
+        {data.summary}
+      </div>
+
+      {/* FOOTER BADGE */}
+      <div
+        style={{
+          alignSelf: "flex-start",
+
+          background: "#f3e6e9",
+
+          color: "#9c5866",
+
+          borderRadius: 999,
+
+          padding: "4px 10px",
+
+          fontSize: 11,
+          fontWeight: 500,
+        }}
+      >
+        State
       </div>
 
       {/* RIGHT OUTPUT HANDLE */}
       <Handle
         type="source"
         position={Position.Right}
-        style={{ background: "#c08497" }}
+        style={{
+          width: 10,
+          height: 10,
+          background: "#b97784",
+          border: "2px solid white",
+        }}
       />
     </div>
   );

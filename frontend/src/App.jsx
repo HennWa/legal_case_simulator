@@ -63,7 +63,7 @@ function App() {
       width: "100vw",
       height: "100vh",
       background:
-        "linear-gradient(135deg, #2b0f1a 0%, #3a1524 60%, #f3d6dc 140%)",
+        "linear-gradient(180deg, #faf7f8 0%, #f3edef 100%)",
     }}
   >
     {/* 📊 SIDEBAR (20%) */}
@@ -74,7 +74,7 @@ function App() {
         borderRight: "1px solid #c08497",
         boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
         overflowY: "auto",
-        background: "linear-gradient(180deg, #2b0f1a, #3a1524)",
+        background: "#ffffff",
       }}
     >
       {/* If you created Sidebar component */}
@@ -104,15 +104,12 @@ function App() {
 
           <Controls />
 
-          <Background color="#c08497" gap={18} />
+          <Background color="#e7d6da" gap={24} />
         </ReactFlow>
       </ReactFlowProvider>
     </div>
   </div>
 );
-
-
-
 
 }
 

@@ -23,55 +23,71 @@ export default function CustomEdge({
 
   return (
     <>
-      {/* the actual edge line */}
+      {/* Connector */}
       <path
         id={id}
         d={edgePath}
         style={{
-          stroke: "#c08497",
-          strokeWidth: 2,
+          stroke: "#c7a5ad",
+          strokeWidth: 1.5,
           fill: "none",
+          strokeDasharray: "4 4",
           ...style,
         }}
         markerEnd={markerEnd}
       />
 
-      {/* 🧾 ACTION BOX */}
+      {/* Small floating label */}
       <foreignObject
-        width={220}
-        height={120}
-        x={labelX - 110}
-        y={labelY - 60}
-        style={{ overflow: "visible" }}
+        width={180}
+        height={70}
+        x={labelX - 90}
+        y={labelY - 35}
+        style={{
+          overflow: "visible",
+          pointerEvents: "none",
+        }}
       >
         <div
           style={{
-            background: "rgba(58, 21, 36, 0.95)",
-            border: "1px solid #c08497",
-            borderRadius: 10,
-            padding: 10,
-            color: "#f5e9ec",
+            background: "rgba(255,255,255,0.96)",
+
+            border: "1px solid #eadde0",
+
+            borderRadius: 12,
+
+            padding: "8px 10px",
+
+            boxShadow:
+              "0 2px 8px rgba(0,0,0,0.05)",
+
+            textAlign: "center",
+
+            color: "#555",
+
             fontSize: 11,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
           }}
         >
-          {/* Action type */}
-          <div style={{ fontWeight: "bold", marginBottom: 4 }}>
+          <div
+            style={{
+              color: "#9c5866",
+              fontWeight: 600,
+              fontSize: 11,
+              marginBottom: 2,
+            }}
+          >
             {data?.action_type}
           </div>
 
-          {/* Actors */}
-          <div style={{ opacity: 0.9 }}>
-            <strong>From:</strong> {data?.source_actor}
-          </div>
-
-          <div style={{ opacity: 0.9 }}>
-            <strong>To:</strong> {data?.target_actor}
-          </div>
-
-          {/* Artifact */}
-          <div style={{ marginTop: 6, opacity: 0.85 }}>
-            <strong>Artifact:</strong> {data?.artifact}
+          <div
+            style={{
+              fontSize: 10,
+              color: "#777",
+            }}
+          >
+            {data?.source_actor}
+            {" → "}
+            {data?.target_actor}
           </div>
         </div>
       </foreignObject>
