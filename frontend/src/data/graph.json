@@ -1,0 +1,77 @@
+{
+  "nodes": {
+    "node_86659335": {
+      "id": "node_86659335",
+      "title": "Rechnung \u00fcberf\u00e4llig",
+      "state": {
+        "Rechungssumme": 5000,
+        "bezahlt": false,
+        "Mahnung versandt": true
+      },
+      "summary": "Eine \u00fcberf\u00e4llige Rechnung f\u00fcr die \u00dcbertragung von Patenten wurde nach Versendung einer Mahnung nicht gezahlt.",
+      "artifacts": [],
+      "incoming": [],
+      "outgoing": [
+        "edge_2815a352",
+        "edge_6c2e6d74"
+      ]
+    },
+    "node_3f12db41": {
+      "id": "node_3f12db41",
+      "title": "pay_invoice",
+      "state": {
+        "paid": true,
+        "invoice_amount": 5000
+      },
+      "summary": "Debtor pays the invoice.",
+      "artifacts": [
+        {
+          "id": "artifact_690d0925",
+          "type": "payment_confirmation",
+          "content": "Payment of 5000 EUR received.",
+          "created_by": null,
+          "timestamp": "2026-05-27T19:11:30.624895+00:00"
+        }
+      ],
+      "incoming": [
+        "edge_2815a352"
+      ],
+      "outgoing": []
+    },
+    "node_357dae16": {
+      "id": "node_357dae16",
+      "title": "ignore_reminder",
+      "state": {
+        "paid": false,
+        "reminder_ignored": true
+      },
+      "summary": "Debtor ignores reminder.",
+      "artifacts": [],
+      "incoming": [
+        "edge_6c2e6d74"
+      ],
+      "outgoing": []
+    }
+  },
+  "edges": {
+    "edge_2815a352": {
+      "id": "edge_2815a352",
+      "source_id": "node_86659335",
+      "target_id": "node_3f12db41",
+      "action_type": "pay_invoice",
+      "actor_id": null,
+      "probability": 0.4,
+      "conditions": []
+    },
+    "edge_6c2e6d74": {
+      "id": "edge_6c2e6d74",
+      "source_id": "node_86659335",
+      "target_id": "node_357dae16",
+      "action_type": "ignore_reminder",
+      "actor_id": null,
+      "probability": 0.6,
+      "conditions": []
+    }
+  },
+  "actors": {}
+}
