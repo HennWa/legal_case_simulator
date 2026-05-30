@@ -9,6 +9,9 @@ import {
 } from "recharts";
 
 export default function Sidebar() {
+  // -------------------------
+  // Actor chart data
+  // -------------------------
   const actorData = Object.entries(statistics.actors).map(
     ([name, values]) => ({
       name,
@@ -17,13 +20,26 @@ export default function Sidebar() {
     })
   );
 
-  const stateData = Object.entries(statistics.states).map(
-    ([state, range]) => ({
-      state,
-      start: new Date(range.start),
-      end: new Date(range.end),
-    })
+  // -------------------------
+  // Gantt timeline preprocessing
+  // -------------------------
+  const timeline = Object.entries(statistics.states).map(
+    ([state, range]) => {
+      const start = new Date(range.start).getTime();
+      const end = new Date(range.end).getTime();
+
+      return {
+        state,
+        start,
+        end,
+        duration: end - start,
+      };
+    }
   );
+
+  const minTime = Math.min(...timeline.map((t) => t.start));
+  const maxTime = Math.max(...timeline.map((t) => t.end));
+  const total = maxTime - minTime;
 
   return (
     <div
@@ -77,7 +93,7 @@ export default function Sidebar() {
         </ResponsiveContainer>
       </div>
 
-      {/* 🕒 STATE TIMELINE */}
+      {/* 🕒 GANTT TIMELINE */}
       <div
         style={{
           flex: 1,
@@ -89,41 +105,57 @@ export default function Sidebar() {
         }}
       >
         <div style={{ fontSize: 12, marginBottom: 10, opacity: 0.8 }}>
-          State Timeline
+          State Timeline (Gantt)
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {stateData.map((s, i) => (
-            <div key={i}>
-              <div style={{ fontSize: 12, marginBottom: 4 }}>
-                {s.state}
-              </div>
+          {timeline.map((t, i) => {
+            const offset = ((t.start - minTime) / total) * 100;
+            const width = (t.duration / total) * 100;
 
-              <div
-                style={{
-                  height: 10,
-                  background: "rgba(255,255,255,0.08)",
-                  borderRadius: 6,
-                  overflow: "hidden",
-                  position: "relative",
-                }}
-              >
+            return (
+              <div key={i}>
+                {/* state label */}
+                <div style={{ fontSize: 12, marginBottom: 4 }}>
+                  {t.state}
+                </div>
+
+                {/* gantt bar background */}
                 <div
                   style={{
-                    height: "100%",
-                    width: "100%",
-                    background:
-                      "linear-gradient(90deg, #c08497, #f3d6dc)",
-                    opacity: 0.85,
+                    height: 14,
+                    background: "rgba(255,255,255,0.08)",
+                    borderRadius: 6,
+                    position: "relative",
+                    overflow: "hidden",
                   }}
-                />
-              </div>
+                >
+                  {/* actual time segment */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: `${offset}%`,
+                      width: `${width}%`,
+                      height: "100%",
+                      background:
+                        t.state === "paid"
+                          ? "#c08497"
+                          : t.state === "waiting for payment"
+                          ? "#f3d6dc"
+                          : "#6b2c3a",
+                      borderRadius: 6,
+                    }}
+                  />
+                </div>
 
-              <div style={{ fontSize: 10, opacity: 0.6, marginTop: 4 }}>
-                {s.start.toDateString()} → {s.end.toDateString()}
+                {/* time labels */}
+                <div style={{ fontSize: 10, opacity: 0.6, marginTop: 4 }}>
+                  {new Date(t.start).toDateString()} →{" "}
+                  {new Date(t.end).toDateString()}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
