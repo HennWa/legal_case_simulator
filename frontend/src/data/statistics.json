@@ -1,0 +1,28 @@
+{
+  "actors": {
+    "Person1": {
+      "paid": 250,
+      "received": 0
+    },
+    "Person2": {
+      "paid": 0,
+      "received": 250
+    }
+  },
+  "actions": {
+    "send_reminder": {
+      "count": 1
+    }
+  },
+  "states": {
+    "not paid": {"start": "2024-06-01T00:00:00Z",
+      "end": "2024-06-30T23:59:59Z"
+    },
+    "waiting for payment": {"start": "2024-07-01T00:00:00Z",
+      "end": "2024-07-15T23:59:59Z"
+    },
+    "paid": {"start": "2024-07-15T00:00:00Z",
+      "end": "2024-07-30T23:59:59Z"
+    }
+  }
+}

@@ -1,76 +1,147 @@
 {
   "nodes": {
-    "node_86659335": {
-      "id": "node_86659335",
-      "title": "Rechnung \u00fcberf\u00e4llig",
+    "node_6705ed4a": {
+      "id": "node_6705ed4a",
+      "title": "Invoice Overdue",
       "state": {
-        "Rechungssumme": 5000,
-        "bezahlt": false,
-        "Mahnung versandt": true
+        "phase": "Payment reminder sent",
+        "legal_issue": "Debtor has not paid the invoice after a reminder was sent.",
+        "status": "Overdue"
       },
-      "summary": "Eine \u00fcberf\u00e4llige Rechnung f\u00fcr die \u00dcbertragung von Patenten wurde nach Versendung einer Mahnung nicht gezahlt.",
+      "deadlines": [],
+      "summary": "Invoice overdue after reminder.",
       "artifacts": [],
       "incoming": [],
       "outgoing": [
-        "edge_2815a352",
-        "edge_6c2e6d74"
+        "edge_a9a131f3",
+        "edge_e39060cd",
+        "edge_5ae7a52c"
       ]
     },
-    "node_3f12db41": {
-      "id": "node_3f12db41",
-      "title": "pay_invoice",
+    "node_final_notice_sent": {
+      "id": "node_final_notice_sent",
+      "title": "Final Payment Notice Sent",
       "state": {
-        "paid": true,
-        "invoice_amount": 5000
+        "phase": "Final payment notice sent",
+        "legal_issue": "Debtor has still not paid after final notice.",
+        "status": "Overdue"
       },
-      "summary": "Debtor pays the invoice.",
+      "deadlines": [
+        {
+          "name": "Payment deadline after final notice",
+          "due_date": "2024-07-10T00:00:00Z"
+        }
+      ],
+      "summary": "The creditor has sent a final notice requesting immediate payment.",
       "artifacts": [
         {
-          "id": "artifact_690d0925",
-          "type": "payment_confirmation",
-          "content": "Payment of 5000 EUR received.",
+          "id": "artifact_final_notice_001",
+          "type": "document",
+          "content": "Final payment notice document content",
           "created_by": null,
-          "timestamp": "2026-05-27T19:11:30.624895+00:00"
+          "timestamp": "2024-06-25T00:00:00Z"
         }
       ],
       "incoming": [
-        "edge_2815a352"
+        "edge_1_send_final_notice",
+        "edge_a9a131f3"
       ],
       "outgoing": []
     },
-    "node_357dae16": {
-      "id": "node_357dae16",
-      "title": "ignore_reminder",
+    "node_claim_filed": {
+      "id": "node_claim_filed",
+      "title": "Collection Claim Filed",
       "state": {
-        "paid": false,
-        "reminder_ignored": true
+        "phase": "Claim filed",
+        "legal_issue": "Creditor has initiated a formal claim to recover overdue payment.",
+        "status": "In Litigation"
       },
-      "summary": "Debtor ignores reminder.",
-      "artifacts": [],
+      "deadlines": [
+        {
+          "name": "Response deadline for defendant",
+          "due_date": "2024-08-01T00:00:00Z"
+        }
+      ],
+      "summary": "The creditor has filed a formal claim to compel payment of the overdue invoice.",
+      "artifacts": [
+        {
+          "id": "artifact_claim_doc_001",
+          "type": "document",
+          "content": "Formal claim document content for collection",
+          "created_by": "creditor_id_001",
+          "timestamp": "2024-06-25T00:00:00Z"
+        }
+      ],
       "incoming": [
-        "edge_6c2e6d74"
+        "edge_2_file_collection_claim",
+        "edge_e39060cd"
+      ],
+      "outgoing": []
+    },
+    "node_payment_received": {
+      "id": "node_payment_received",
+      "title": "Payment Received",
+      "state": {
+        "phase": "Payment completed",
+        "legal_issue": null,
+        "status": "Settled"
+      },
+      "deadlines": [],
+      "summary": "Debtor has made payment and the invoice is settled.",
+      "artifacts": [
+        {
+          "id": "artifact_payment_receipt_001",
+          "type": "evidence",
+          "content": "Payment receipt or confirmation",
+          "created_by": "debtor_id_001",
+          "timestamp": "2024-06-25T00:00:00Z"
+        }
+      ],
+      "incoming": [
+        "edge_3_debtor_payment",
+        "edge_5ae7a52c"
       ],
       "outgoing": []
     }
   },
   "edges": {
-    "edge_2815a352": {
-      "id": "edge_2815a352",
-      "source_id": "node_86659335",
-      "target_id": "node_3f12db41",
-      "action_type": "pay_invoice",
+    "edge_a9a131f3": {
+      "id": "edge_a9a131f3",
+      "source_id": "node_6705ed4a",
+      "target_id": "node_final_notice_sent",
+      "action_type": "send_final_payment_notice",
       "actor_id": null,
-      "probability": 0.4,
-      "conditions": []
-    },
-    "edge_6c2e6d74": {
-      "id": "edge_6c2e6d74",
-      "source_id": "node_86659335",
-      "target_id": "node_357dae16",
-      "action_type": "ignore_reminder",
-      "actor_id": null,
+      "artifacts": [],
       "probability": 0.6,
-      "conditions": []
+      "conditions": [
+        "Debtor has not paid within the reminder period",
+        "Creditor decides to escalate the demand"
+      ]
+    },
+    "edge_e39060cd": {
+      "id": "edge_e39060cd",
+      "source_id": "node_6705ed4a",
+      "target_id": "node_claim_filed",
+      "action_type": "file_collection_claim",
+      "actor_id": "creditor_id_001",
+      "artifacts": [],
+      "probability": 0.25,
+      "conditions": [
+        "Payment overdue beyond final grace period",
+        "Creditor decides to begin formal collection process"
+      ]
+    },
+    "edge_5ae7a52c": {
+      "id": "edge_5ae7a52c",
+      "source_id": "node_6705ed4a",
+      "target_id": "node_payment_received",
+      "action_type": "debtor_payment_made",
+      "actor_id": "debtor_id_001",
+      "artifacts": [],
+      "probability": 0.15,
+      "conditions": [
+        "Debtor decides to pay invoice after reminder"
+      ]
     }
   },
   "actors": {}

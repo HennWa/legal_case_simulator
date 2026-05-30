@@ -9,6 +9,8 @@ import "reactflow/dist/style.css";
 
 import graphData from "./data/graph.json";
 import CustomNode from "./CustomNode";
+import CustomEdge from "./CustomEdge";
+import Sidebar from "./Sidebar";
 import { layoutGraph } from "./layout";
 
 function App() {
@@ -27,8 +29,16 @@ function App() {
       id: e.id,
       source: e.source_id,
       target: e.target_id,
-      label: `${e.action_type} (${e.probability})`,
-      animated: false,
+      type: "custom",
+
+      data: {
+        action_type: e.action_type,
+        source_actor: e.source_actor,
+        target_actor: e.target_actor,
+        artifact: e.artifact,
+        probability: e.probability,
+      },
+
       style: {
         stroke: "#c08497",
         strokeWidth: 2,
@@ -42,26 +52,47 @@ function App() {
     return { custom: CustomNode };
   }, []);
 
+  const edgeTypes = useMemo(() => {
+  return { custom: CustomEdge };
+}, []);
+
   return (
+  <div
+    style={{
+      display: "flex",
+      width: "100vw",
+      height: "100vh",
+      background:
+        "linear-gradient(135deg, #2b0f1a 0%, #3a1524 60%, #f3d6dc 140%)",
+    }}
+  >
+    {/* 📊 SIDEBAR (20%) */}
     <div
       style={{
-        width: "100vw",
+        width: "20vw",
         height: "100vh",
-        background: "linear-gradient(135deg, #2b0f1a 0%, #3a1524 60%, #f3d6dc 140%)",
+        borderRight: "1px solid #c08497",
+        boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
+        overflowY: "auto",
+        background: "linear-gradient(180deg, #2b0f1a, #3a1524)",
       }}
     >
+      {/* If you created Sidebar component */}
+      <Sidebar />
+    </div>
+
+    {/* 🌐 GRAPH AREA (80%) */}
+    <div style={{ width: "80vw", height: "100vh" }}>
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
-
-          // 🔥 Key UX improvements for legal graph feel
           defaultEdgeOptions={{
-            type: "smoothstep",
+            type: "custom",
           }}
-
           proOptions={{ hideAttribution: true }}
         >
           <MiniMap
@@ -77,7 +108,12 @@ function App() {
         </ReactFlow>
       </ReactFlowProvider>
     </div>
-  );
+  </div>
+);
+
+
+
+
 }
 
 export default App;

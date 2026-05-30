@@ -49,6 +49,8 @@ class LegalEdge(BaseModel):
                                          '(e.g., file_complaint, submit_evidence, hold_hearing)')
     actor_id: Optional[str] = Field(default=None, description='ID of the actor responsible for this '
                                                               'action, if applicable')
+    artifacts: List[Artifact] = Field(default_factory=list, description='List of artifacts associated '
+                                                                        'used in this transition, if applicable')
 
     probability: float = Field(default=1.0, description='Probability of this transition occurring, if applicable')
     conditions: List[str] = Field(default_factory=list, description='List of conditions or legal rules that '
