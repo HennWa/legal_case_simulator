@@ -1,4 +1,4 @@
-from object_graph_runtime.graph_classes import CaseGraph
+from backend.object_graph_runtime.graph_classes import CaseGraph
 import json
 
 if __name__ == "__main__":

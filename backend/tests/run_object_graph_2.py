@@ -1,9 +1,9 @@
 import os
 from dotenv import load_dotenv
 
-from object_graph_runtime.graph_classes import CaseGraph, LegalState
-from expansion_engine.exapnsion_engine import ExpansionEngine
-from llm_interface.llm_interface import MockLLMProvider
+from backend.object_graph_runtime.graph_classes import CaseGraph, LegalState
+from backend.expansion_engine.exapnsion_engine import ExpansionEngine
+from backend.llm_interface.llm_interface import MockLLMProvider
 import json
 
 if __name__ == "__main__":
