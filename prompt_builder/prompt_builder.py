@@ -1,8 +1,15 @@
 import json
+from object_graph_runtime.graph_classes import LegalBranches
 
 from object_graph_runtime.graph_classes import CaseGraph
 
-SYSTEM_PROMPT = """
+
+schema_json = json.dumps(
+    LegalBranches.model_json_schema(),
+    indent=2
+)
+
+SYSTEM_PROMPT = f"""
 You are a legal process simulation engine.
 
 Your task is to simulate possible next steps in a legal procedure.
@@ -22,122 +29,7 @@ You will receive:
 
 Your output must be strictly in this format:
 
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "branches": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "edge": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "id": { "type": "string" },
-              "source_id": { "type": "string" },
-              "target_id": { "type": "string" },
-              "action_type": { "type": "string" },
-              "actor_id": { "type": ["string", "null"] },
-              "probability": { "type": "number" },
-              "conditions": {
-                "type": "array",
-                "items": { "type": "string" }
-              }
-            },
-            "required": [
-              "id",
-              "source_id",
-              "target_id",
-              "action_type",
-              "actor_id",
-              "probability",
-              "conditions"
-            ]
-          },
-          "node": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "id": { "type": "string" },
-              "title": { "type": "string" },
-              "state": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "phase": { "type": ["string", "null"] },
-                  "legal_issue": { "type": ["string", "null"] },
-                  "status": { "type": ["string", "null"] }
-                },
-                "required": [
-                  "phase",
-                  "legal_issue",
-                  "status"
-                ]
-              },
-              "deadlines": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "name": { "type": "string" },
-                    "due_date": { "type": "string" }
-                  },
-                  "required": ["name", "due_date"]
-                }
-              },
-              "summary": { "type": "string" },
-              "artifacts": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "id": { "type": "string" },
-                    "type": { "type": "string" },
-                    "content": { "type": "string" },
-                    "created_by": { "type": ["string", "null"] },
-                    "timestamp": { "type": "string" }
-                  },
-                  "required": [
-                    "id",
-                    "type",
-                    "content",
-                    "created_by",
-                    "timestamp"
-                  ]
-                }
-              },
-              "incoming": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "outgoing": {
-                "type": "array",
-                "items": { "type": "string" }
-              }
-            },
-            "required": [
-              "id",
-              "title",
-              "state",
-              "deadlines",
-              "summary",
-              "artifacts",
-              "incoming",
-              "outgoing"
-            ]
-          }
-        },
-        "required": ["edge", "node"]
-      }
-    }
-  },
-  "required": ["branches"]
-}
+{schema_json}
 
 Rules:
 - Do not hallucinate laws unless explicitly provided in input

@@ -1,7 +1,7 @@
 {
   "nodes": {
-    "node_6f186f88": {
-      "id": "node_6f186f88",
+    "node_199f0b8e": {
+      "id": "node_199f0b8e",
       "title": "Invoice Overdue",
       "state": {
         "phase": "Payment reminder sent",
@@ -13,115 +13,118 @@
       "artifacts": [],
       "incoming": [],
       "outgoing": [
-        "edge_3393bc49",
-        "edge_c652a3fc",
-        "edge_af7862d4"
+        "edge_c4597bc2",
+        "edge_9801e339",
+        "edge_b1d21fd6"
       ]
     },
-    "node_2f8bda11": {
-      "id": "node_2f8bda11",
-      "title": "Second payment reminder sent",
+    "node_001_final_notice_sent": {
+      "id": "node_001_final_notice_sent",
+      "title": "Final Notice Sent to Debtor",
       "state": {
-        "phase": "Second payment reminder sent",
-        "legal_issue": "Debtor still has not paid the overdue invoice.",
+        "phase": "Final notice sent",
+        "legal_issue": "Debtor has not responded to initial payment reminder.",
         "status": "Overdue"
       },
       "deadlines": [
         {
-          "name": "Deadline for payment after second reminder",
-          "due_date": "2024-07-15T00:00:00Z"
+          "name": "Final notice response deadline",
+          "due_date": "2024-07-15"
         }
       ],
-      "summary": "Second payment reminder sent to debtor due to non-payment after the first reminder.",
+      "summary": "A final payment notice has been sent to the debtor as no payment was received after the initial reminder.",
       "artifacts": [],
       "incoming": [
-        "edge_1_send_second_reminder",
-        "edge_3393bc49"
+        "edge_001_send_final_notice",
+        "edge_c4597bc2"
       ],
       "outgoing": []
     },
-    "node_3a9f7c40": {
-      "id": "node_3a9f7c40",
-      "title": "Debt collection initiated",
+    "node_002_debt_collection_started": {
+      "id": "node_002_debt_collection_started",
+      "title": "Debt Collection Proceedings Initiated",
       "state": {
         "phase": "Debt collection",
-        "legal_issue": "Debtor has not paid and debt collection proceedings started.",
-        "status": "Collection initiated"
+        "legal_issue": "Debtor non-payment escalating to formal collection.",
+        "status": "Overdue"
       },
       "deadlines": [
         {
-          "name": "Deadline to respond to collection notice",
-          "due_date": "2024-07-31T00:00:00Z"
+          "name": "Debt collection response deadline",
+          "due_date": "2024-07-10"
         }
       ],
-      "summary": "Debt collection process initiated due to continued non-payment after reminder.",
+      "summary": "Formal debt collection proceedings have been initiated due to continued non-payment after reminder.",
       "artifacts": [],
       "incoming": [
-        "edge_2_initiate_collection",
-        "edge_c652a3fc"
+        "edge_002_initiate_debt_collection",
+        "edge_9801e339"
       ],
       "outgoing": []
     },
-    "node_4d7c9e3a": {
-      "id": "node_4d7c9e3a",
-      "title": "Payment agreement negotiation",
+    "node_003_payment_received": {
+      "id": "node_003_payment_received",
+      "title": "Payment Received from Debtor",
       "state": {
-        "phase": "Negotiation",
-        "legal_issue": "Debtor and creditor are negotiating payment terms.",
-        "status": "Negotiation ongoing"
+        "phase": "Payment confirmation",
+        "legal_issue": "Payment cleared after overdue reminder.",
+        "status": "Paid"
       },
-      "deadlines": [
+      "deadlines": [],
+      "summary": "The debtor has made payment after the initial reminder, resolving the overdue status.",
+      "artifacts": [
         {
-          "name": "Deadline to finalize negotiation",
-          "due_date": "2024-07-20T00:00:00Z"
+          "id": "artifact_payment_receipt_001",
+          "type": "payment_receipt",
+          "content": "Receipt of payment clearing overdue invoice.",
+          "created_by": null,
+          "timestamp": "2024-06-20T10:00:00Z"
         }
       ],
-      "summary": "Debtor and creditor entering into negotiations to settle overdue payment.",
-      "artifacts": [],
       "incoming": [
-        "edge_3_agreement_negotiation",
-        "edge_af7862d4"
+        "edge_003_debtor_payment_received",
+        "edge_b1d21fd6"
       ],
       "outgoing": []
     }
   },
   "edges": {
-    "edge_3393bc49": {
-      "id": "edge_3393bc49",
-      "source_id": "node_6f186f88",
-      "target_id": "node_2f8bda11",
-      "action_type": "send_second_reminder",
+    "edge_c4597bc2": {
+      "id": "edge_c4597bc2",
+      "source_id": "node_199f0b8e",
+      "target_id": "node_001_final_notice_sent",
+      "action_type": "send_final_notice",
       "actor_id": null,
       "artifacts": [],
       "probability": 0.6,
       "conditions": [
-        "First payment reminder has been sent and no payment received within standard period"
+        "Invoice remains unpaid after reminder",
+        "Debtor is reachable via provided contact information"
       ]
     },
-    "edge_c652a3fc": {
-      "id": "edge_c652a3fc",
-      "source_id": "node_6f186f88",
-      "target_id": "node_3a9f7c40",
+    "edge_9801e339": {
+      "id": "edge_9801e339",
+      "source_id": "node_199f0b8e",
+      "target_id": "node_002_debt_collection_started",
       "action_type": "initiate_debt_collection",
       "actor_id": null,
       "artifacts": [],
       "probability": 0.3,
       "conditions": [
-        "Debtor has ignored payment reminders",
-        "Internal policy or contract allows immediate collection action"
+        "Invoice sufficiently overdue",
+        "Internal policy allows immediate collection action"
       ]
     },
-    "edge_af7862d4": {
-      "id": "edge_af7862d4",
-      "source_id": "node_6f186f88",
-      "target_id": "node_4d7c9e3a",
-      "action_type": "negotiate_payment_agreement",
+    "edge_b1d21fd6": {
+      "id": "edge_b1d21fd6",
+      "source_id": "node_199f0b8e",
+      "target_id": "node_003_payment_received",
+      "action_type": "receive_payment",
       "actor_id": null,
       "artifacts": [],
       "probability": 0.1,
       "conditions": [
-        "Debtor has contacted creditor to negotiate terms",
-        "Creditor is willing to negotiate payment arrangements"
+        "Debtor makes payment after reminder"
       ]
     }
   },
