@@ -8,15 +8,21 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function Sidebar() {
-  const actorData = Object.entries(statistics.actors).map(
-    ([name, values]) => ({
-      name,
-      paid: values.paid,
-      received: values.received,
-    })
-  );
+export default function Sidebar({ selectedNode }) {
+  // --------------------------------------------------
+  // NODE-BASED DATA (dynamic)
+  // --------------------------------------------------
+  const actorData =
+    selectedNode?.data?.state?.actors_status?.map((actorStatus) => ({
+      name: actorStatus.actors.name,
+      paid: actorStatus.paid,
+      received: actorStatus.received,
+      role: actorStatus.actors.role,
+    })) || [];
 
+  // --------------------------------------------------
+  // STATIC TIMELINE (from statistics.json)
+  // --------------------------------------------------
   const timeline = Object.entries(statistics.states).map(
     ([state, range]) => {
       const start = new Date(range.start).getTime();
@@ -53,7 +59,7 @@ export default function Sidebar() {
       <div
         style={{
           paddingBottom: 12,
-          borderBottom: "1px solid rgba(192, 132, 151, 0.25)",
+          borderBottom: "1px solid rgba(192,132,151,0.25)",
         }}
       >
         <div style={{ fontSize: 14, letterSpacing: 0.6, opacity: 0.7 }}>
@@ -63,11 +69,13 @@ export default function Sidebar() {
           Case Overview
         </h2>
         <div style={{ fontSize: 12, opacity: 0.6 }}>
-          Structured event intelligence
+          Graph statistics overview
         </div>
       </div>
 
-      {/* ACTOR PANEL */}
+      {/* ---------------------------------------------
+          ACTOR CHART (DYNAMIC NODE DATA)
+      --------------------------------------------- */}
       <div
         style={{
           padding: 12,
@@ -76,31 +84,53 @@ export default function Sidebar() {
           background: "rgba(255,255,255,0.03)",
         }}
       >
-        <div style={{ fontSize: 12, marginBottom: 10, opacity: 0.8 }}>
-          Financial Flow by Actor
+        <div style={{ fontSize: 12, marginBottom: 8, opacity: 0.8 }}>
+          Actors (Selected Node)
         </div>
 
-        <div style={{ height: 220 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={actorData}>
-              <XAxis dataKey="name" stroke="#d9c7cc" />
-              <YAxis stroke="#d9c7cc" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1b1216",
-                  border: "1px solid rgba(192,132,151,0.4)",
-                  borderRadius: 8,
-                  color: "#f4ecee",
-                }}
-              />
-              <Bar dataKey="paid" fill="#c08497" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="received" fill="#8f6b75" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {!selectedNode ? (
+          <div style={{ fontSize: 12, opacity: 0.5 }}>
+            Click a node to view actor financials
+          </div>
+        ) : actorData.length === 0 ? (
+          <div style={{ fontSize: 12, opacity: 0.5 }}>
+            No actor data for this node
+          </div>
+        ) : (
+          <div style={{ height: 220 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={actorData}>
+                <XAxis dataKey="name" stroke="#d9c7cc" />
+                <YAxis stroke="#d9c7cc" />
+
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1b1216",
+                    border: "1px solid rgba(192,132,151,0.4)",
+                    borderRadius: 8,
+                    color: "#f4ecee",
+                  }}
+                />
+
+                <Bar
+                  dataKey="paid"
+                  fill="#c08497"
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  dataKey="received"
+                  fill="#8f6b75"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
 
-      {/* TIMELINE PANEL */}
+      {/* ---------------------------------------------
+          TIMELINE (STATIC STATISTICS.JSON)
+      --------------------------------------------- */}
       <div
         style={{
           flex: 1,
@@ -112,7 +142,7 @@ export default function Sidebar() {
         }}
       >
         <div style={{ fontSize: 12, marginBottom: 12, opacity: 0.8 }}>
-          Procedural Timeline
+          Procedural Timeline (Global)
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -180,7 +210,7 @@ export default function Sidebar() {
           fontSize: 11,
           opacity: 0.5,
           paddingTop: 10,
-          borderTop: "1px solid rgba(192, 132, 151, 0.2)",
+          borderTop: "1px solid rgba(192,132,151,0.2)",
         }}
       >
         Confidential • Internal Case Intelligence System

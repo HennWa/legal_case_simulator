@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -22,7 +22,7 @@ function App() {
       id: n.id,
       type: "custom",
       data: n,
-      position: { x: 0, y: 0 }, // layoutGraph will override this
+      position: { x: 0, y: 0 },
     }));
 
     const flowEdges = rawEdges.map((e) => ({
@@ -48,69 +48,77 @@ function App() {
     return layoutGraph(flowNodes, flowEdges);
   }, []);
 
+  // ------------------------------------
+  // SELECTED NODE STATE
+  // ------------------------------------
+  const [selectedNode, setSelectedNode] = useState(
+    nodes.length > 0 ? nodes[0] : null
+  );
+
   const nodeTypes = useMemo(() => {
     return { custom: CustomNode };
   }, []);
 
   const edgeTypes = useMemo(() => {
-  return { custom: CustomEdge };
-}, []);
+    return { custom: CustomEdge };
+  }, []);
 
   return (
-  <div
-    style={{
-      display: "flex",
-      width: "100vw",
-      height: "100vh",
-      background:
-        "linear-gradient(180deg, #faf7f8 0%, #f3edef 100%)",
-    }}
-  >
-    {/* 📊 SIDEBAR (20%) */}
     <div
       style={{
-        width: "20vw",
+        display: "flex",
+        width: "100vw",
         height: "100vh",
-        borderRight: "1px solid #c08497",
-        boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
-        overflowY: "auto",
-        background: "#ffffff",
+        background:
+          "linear-gradient(180deg, #faf7f8 0%, #f3edef 100%)",
       }}
     >
-      {/* If you created Sidebar component */}
-      <Sidebar />
-    </div>
+      {/* SIDEBAR */}
+      <div
+        style={{
+          width: "20vw",
+          height: "100vh",
+          borderRight: "1px solid #c08497",
+          boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
+          overflowY: "auto",
+          background: "#ffffff",
+        }}
+      >
+        <Sidebar selectedNode={selectedNode} />
+      </div>
 
-    {/* 🌐 GRAPH AREA (80%) */}
-    <div style={{ width: "80vw", height: "100vh" }}>
-      <ReactFlowProvider>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-          defaultEdgeOptions={{
-            type: "custom",
-          }}
-          proOptions={{ hideAttribution: true }}
-        >
-          <MiniMap
-            style={{
-              backgroundColor: "#2b0f1a",
+      {/* GRAPH */}
+      <div style={{ width: "80vw", height: "100vh" }}>
+        <ReactFlowProvider>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            fitView
+            onNodeClick={(event, node) => {
+              setSelectedNode(node);
             }}
-            nodeColor={() => "#c08497"}
-          />
+            defaultEdgeOptions={{
+              type: "custom",
+            }}
+            proOptions={{ hideAttribution: true }}
+          >
+            <MiniMap
+              style={{
+                backgroundColor: "#2b0f1a",
+              }}
+              nodeColor={() => "#c08497"}
+            />
 
-          <Controls />
+            <Controls />
 
-          <Background color="#e7d6da" gap={24} />
-        </ReactFlow>
-      </ReactFlowProvider>
+            <Background color="#e7d6da" gap={24} />
+          </ReactFlow>
+        </ReactFlowProvider>
+      </div>
     </div>
-  </div>
-);
-
+  );
 }
 
 export default App;
