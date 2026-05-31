@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import json
+import os
 
-from object_graph_runtime.graph_classes import CaseGraph, Artifact, generate_id, LegalNode
+from object_graph_runtime.graph_classes import CaseGraph, LegalNode
 from prompt_builder.prompt_builder import PromptBuilder
 from llm_interface.llm_interface import BaseLLMProvider
-
+from utils.utils import get_frontend_dir
 
 class ExpansionEngine:
 
@@ -26,38 +26,6 @@ class ExpansionEngine:
             self.graph.add_branch_obj(source_id=node_id, branch_node=branch_node)
             created_nodes.append(branch_node.node)
 
-        '''
-        data = json.loads(raw_response)
-
-        created_nodes = []
-        for transition in data["transitions"]:
-
-            # Create next node
-            next_node = self.graph.add_node(
-                title=transition["action_type"],
-                state=transition["next_state"],
-                summary=transition["summary"]
-            )
-
-            # Add artifacts
-            for art in transition.get("artifacts", []):
-
-                artifact = Artifact(
-                    id=generate_id("artifact"),
-                    type=art["type"],
-                    content=art["content"]
-                )
-
-                next_node.artifacts.append(artifact)
-
-            # Create edge
-            self.graph.add_edge(
-                source_id=node.id,
-                target_id=next_node.id,
-                action_type=transition["action_type"],
-                probability=transition["probability"]
-            )
-
-            created_nodes.append(next_node)'''
+        self.graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
 
         return created_nodes
