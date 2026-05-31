@@ -21,6 +21,7 @@ You MUST:
 - Consider legal procedural logic and realistic human behavior
 - Use probabilities for each transition (0.0 to 1.0)
 - Ensure next_state is fully structured and consistent
+- In the node -> state -> actor_status write every existing actor with a random amount in the field paid
 
 You will receive:
 1. A causal path of past legal events

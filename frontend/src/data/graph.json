@@ -1,7 +1,7 @@
 {
   "nodes": {
-    "node_b5233323": {
-      "id": "node_b5233323",
+    "node_c9312301": {
+      "id": "node_c9312301",
       "title": "Invoice Overdue",
       "state": {
         "phase": "Payment reminder sent",
@@ -14,116 +14,200 @@
       "artifacts": [],
       "incoming": [],
       "outgoing": [
-        "edge_8982de03",
-        "edge_49b2a520",
-        "edge_77a8e03e"
+        "edge_a5361f01",
+        "edge_c4d07b49",
+        "edge_f007eb98"
       ]
     },
-    "node_a1": {
-      "id": "node_a1",
-      "title": "Final payment reminder sent to debtor",
+    "node_1a": {
+      "id": "node_1a",
+      "title": "Second Payment Demand Sent",
       "state": {
-        "phase": "Final payment reminder sent",
-        "legal_issue": "Debtor Andi has still not paid after the initial reminder.",
+        "phase": "Second payment demand",
+        "legal_issue": "Debtor Andi still has not paid the invoice after first reminder.",
         "status": "Overdue",
-        "actors_status": []
+        "actors_status": [
+          {
+            "actors": {
+              "id": "actor_debtor",
+              "name": "Andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actors": {
+              "id": "actor_creditor",
+              "name": "Creditor",
+              "role": "creditor"
+            },
+            "paid": 100,
+            "received": 0
+          }
+        ]
       },
-      "deadlines": [],
-      "summary": "A final payment reminder is sent to debtor in hope of payment before further actions.",
-      "artifacts": [],
+      "deadlines": [
+        {
+          "name": "Payment deadline",
+          "due_date": "2024-06-15"
+        }
+      ],
+      "summary": "Second payment demand letter sent to debtor Andi to pay the overdue invoice.",
+      "artifacts": [
+        {
+          "id": "artifact_1",
+          "type": "document",
+          "content": "Second payment demand letter sent to debtor Andi for unpaid invoice of 5000 Euro.",
+          "created_by": null,
+          "timestamp": "2024-06-01T09:00:00Z"
+        }
+      ],
       "incoming": [
-        "edge_1a",
-        "edge_8982de03"
+        "edge_1",
+        "edge_a5361f01"
       ],
       "outgoing": []
     },
-    "node_a2": {
-      "id": "node_a2",
-      "title": "Claim filed in court for debt collection",
+    "node_2a": {
+      "id": "node_2a",
+      "title": "Debt Collection Procedure Initiated",
       "state": {
-        "phase": "Litigation started",
-        "legal_issue": "Claim filed against debtor Andi for unpaid 5000 Euro invoice.",
-        "status": "Claim filed",
-        "actors_status": []
+        "phase": "Collection procedure",
+        "legal_issue": "Debtor Andi has not paid the invoice after reminder; collection procedure started.",
+        "status": "Collection initiated",
+        "actors_status": [
+          {
+            "actors": {
+              "id": "actor_debtor",
+              "name": "Andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actors": {
+              "id": "actor_creditor",
+              "name": "Creditor",
+              "role": "creditor"
+            },
+            "paid": 300,
+            "received": 0
+          }
+        ]
       },
-      "deadlines": [],
-      "summary": "The creditor files a claim in court to recover the unpaid invoice amount.",
-      "artifacts": [],
+      "deadlines": [
+        {
+          "name": "Collection response deadline",
+          "due_date": "2024-06-20"
+        }
+      ],
+      "summary": "Debt collection procedure initiated for invoice unpaid by debtor Andi.",
+      "artifacts": [
+        {
+          "id": "artifact_2",
+          "type": "document",
+          "content": "Initiation of debt collection procedure for unpaid invoice of 5000 Euro.",
+          "created_by": null,
+          "timestamp": "2024-06-01T10:00:00Z"
+        }
+      ],
       "incoming": [
-        "edge_1b",
-        "edge_49b2a520"
+        "edge_2",
+        "edge_c4d07b49"
       ],
       "outgoing": []
     },
-    "node_a3": {
-      "id": "node_a3",
-      "title": "Negotiations opened for payment plan",
+    "node_3a": {
+      "id": "node_3a",
+      "title": "Waiting for Payment",
       "state": {
-        "phase": "Negotiation",
-        "legal_issue": "Creditor and debtor discuss alternative payment arrangements.",
-        "status": "Negotiation ongoing",
-        "actors_status": []
+        "phase": "Waiting for payment",
+        "legal_issue": "Debtor Andi has not paid the invoice after reminder; awaiting payment.",
+        "status": "Pending payment",
+        "actors_status": [
+          {
+            "actors": {
+              "id": "actor_debtor",
+              "name": "Andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actors": {
+              "id": "actor_creditor",
+              "name": "Creditor",
+              "role": "creditor"
+            },
+            "paid": 50,
+            "received": 0
+          }
+        ]
       },
-      "deadlines": [],
-      "summary": "Parties begin negotiating a payment plan to resolve the overdue invoice amicably.",
+      "deadlines": [
+        {
+          "name": "Next reminder deadline",
+          "due_date": "2024-06-10"
+        }
+      ],
+      "summary": "Waiting for debtor Andi to pay the invoice after the reminder was sent.",
       "artifacts": [],
       "incoming": [
-        "edge_1c",
-        "edge_77a8e03e"
+        "edge_3",
+        "edge_f007eb98"
       ],
       "outgoing": []
     }
   },
   "edges": {
-    "edge_8982de03": {
-      "id": "edge_8982de03",
-      "source_id": "node_b5233323",
-      "target_id": "node_a1",
-      "action_type": "send_final_payment reminder",
+    "edge_a5361f01": {
+      "id": "edge_a5361f01",
+      "source_id": "node_c9312301",
+      "target_id": "node_1a",
+      "action_type": "send_payment_demand",
       "actor_id": null,
       "artifacts": [],
-      "probability": 0.6,
+      "probability": 0.7,
       "conditions": [
-        "Payment reminder sent",
-        "Invoice overdue"
+        "Debtor has ignored initial reminder"
       ]
     },
-    "edge_49b2a520": {
-      "id": "edge_49b2a520",
-      "source_id": "node_b5233323",
-      "target_id": "node_a2",
-      "action_type": "file_claim in court",
+    "edge_c4d07b49": {
+      "id": "edge_c4d07b49",
+      "source_id": "node_c9312301",
+      "target_id": "node_2a",
+      "action_type": "initiate_collection_procedure",
       "actor_id": null,
       "artifacts": [],
       "probability": 0.3,
       "conditions": [
-        "Invoice overdue",
-        "Reminder sent",
-        "Debtor did not pay"
+        "Debtor refuses to respond or pay"
       ]
     },
-    "edge_77a8e03e": {
-      "id": "edge_77a8e03e",
-      "source_id": "node_b5233323",
-      "target_id": "node_a3",
-      "action_type": "negotiate payment plan",
+    "edge_f007eb98": {
+      "id": "edge_f007eb98",
+      "source_id": "node_c9312301",
+      "target_id": "node_3a",
+      "action_type": "wait_for_payment",
       "actor_id": null,
       "artifacts": [],
       "probability": 0.1,
       "conditions": [
-        "Invoice overdue",
-        "Debtor willing to cooperate"
+        "Debtor may pay spontaneously after reminder"
       ]
     }
   },
   "actors": {
-    "actor_d71e3509": {
-      "id": "actor_d71e3509",
+    "actor_d88ba657": {
+      "id": "actor_d88ba657",
       "name": "Timmy",
       "role": "plaintiff"
     },
-    "actor_3e6234c6": {
-      "id": "actor_3e6234c6",
+    "actor_3e5a341d": {
+      "id": "actor_3e5a341d",
       "name": "Andi",
       "role": "debtor"
     }
