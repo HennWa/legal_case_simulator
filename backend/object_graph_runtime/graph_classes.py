@@ -28,6 +28,14 @@ class Actor(BaseModel):
                                   '(e.g., plaintiff, defendant, judge, lawyer)')
 
 
+class ActorStatus(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    actors: Actor = Field(description='Actor of the status')
+    paid: int = Field(description='Sum of paid money for services to lawyers, courts etc.')
+    received: int = Field(description='Sum of received money from other actors, refunds etc.')
+
+
 class Artifact(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -68,6 +76,8 @@ class LegalState(BaseModel):
     phase: Optional[str] = None
     legal_issue: Optional[str] = None
     status: Optional[str] = None
+    actors_status: List[ActorStatus] = Field(default_factory=list, description='Status of each actor that '
+                                                                               'is relevant for the legal state.')
 
 class LegalNode(BaseModel):
     model_config = ConfigDict(extra="forbid")

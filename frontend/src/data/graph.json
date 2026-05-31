@@ -1,136 +1,131 @@
 {
   "nodes": {
-    "node_215112a9": {
-      "id": "node_215112a9",
+    "node_b5233323": {
+      "id": "node_b5233323",
       "title": "Invoice Overdue",
       "state": {
         "phase": "Payment reminder sent",
-        "legal_issue": "Debtor has not paid the invoice after a reminder was sent.",
-        "status": "Overdue"
+        "legal_issue": "Debtor Andi has not paid the invoice of 5000 Euro after a reminder was sent.",
+        "status": "Overdue",
+        "actors_status": []
       },
       "deadlines": [],
       "summary": "Invoice overdue after reminder.",
       "artifacts": [],
       "incoming": [],
       "outgoing": [
-        "edge_7cb99a7f",
-        "edge_2b34d557",
-        "edge_a7e563ab"
+        "edge_8982de03",
+        "edge_49b2a520",
+        "edge_77a8e03e"
       ]
     },
-    "node_01_dunning_letter_sent": {
-      "id": "node_01_dunning_letter_sent",
-      "title": "Dunning Letter Sent",
+    "node_a1": {
+      "id": "node_a1",
+      "title": "Final payment reminder sent to debtor",
       "state": {
-        "phase": "Dunning process",
-        "legal_issue": "Demand for payment through dunning letter",
-        "status": "Awaiting debtor response"
-      },
-      "deadlines": [
-        {
-          "name": "Payment deadline after dunning letter",
-          "due_date": "2024-06-15"
-        }
-      ],
-      "summary": "Dunning letter sent to debtor requesting payment within deadline.",
-      "artifacts": [
-        {
-          "id": "artifact_01_dunning_letter",
-          "type": "document",
-          "content": "Dunning letter demanding payment within legal period.",
-          "created_by": null,
-          "timestamp": "2024-06-01T10:00:00Z"
-        }
-      ],
-      "incoming": [
-        "edge_01_initiate_dunning",
-        "edge_7cb99a7f"
-      ],
-      "outgoing": []
-    },
-    "node_02_payment_claim_filed": {
-      "id": "node_02_payment_claim_filed",
-      "title": "Payment Claim Filed",
-      "state": {
-        "phase": "Litigation initiated",
-        "legal_issue": "Formal payment claim filed in court",
-        "status": "Claim pending court response"
+        "phase": "Final payment reminder sent",
+        "legal_issue": "Debtor Andi has still not paid after the initial reminder.",
+        "status": "Overdue",
+        "actors_status": []
       },
       "deadlines": [],
-      "summary": "Creditor files formal payment claim with court to enforce invoice payment.",
-      "artifacts": [
-        {
-          "id": "artifact_02_claim_document",
-          "type": "document",
-          "content": "Formal payment claim filed with court.",
-          "created_by": null,
-          "timestamp": "2024-06-01T11:00:00Z"
-        }
-      ],
-      "incoming": [
-        "edge_02_file_payment_claim",
-        "edge_2b34d557"
-      ],
-      "outgoing": []
-    },
-    "node_03_payment_plan_negotiation": {
-      "id": "node_03_payment_plan_negotiation",
-      "title": "Payment Plan Negotiation",
-      "state": {
-        "phase": "Negotiation",
-        "legal_issue": "Negotiating installment plan for payment",
-        "status": "Negotiation ongoing"
-      },
-      "deadlines": [],
-      "summary": "Creditor and debtor enter negotiation to establish a payment plan.",
+      "summary": "A final payment reminder is sent to debtor in hope of payment before further actions.",
       "artifacts": [],
       "incoming": [
-        "edge_03_negotiate_payment_plan",
-        "edge_a7e563ab"
+        "edge_1a",
+        "edge_8982de03"
+      ],
+      "outgoing": []
+    },
+    "node_a2": {
+      "id": "node_a2",
+      "title": "Claim filed in court for debt collection",
+      "state": {
+        "phase": "Litigation started",
+        "legal_issue": "Claim filed against debtor Andi for unpaid 5000 Euro invoice.",
+        "status": "Claim filed",
+        "actors_status": []
+      },
+      "deadlines": [],
+      "summary": "The creditor files a claim in court to recover the unpaid invoice amount.",
+      "artifacts": [],
+      "incoming": [
+        "edge_1b",
+        "edge_49b2a520"
+      ],
+      "outgoing": []
+    },
+    "node_a3": {
+      "id": "node_a3",
+      "title": "Negotiations opened for payment plan",
+      "state": {
+        "phase": "Negotiation",
+        "legal_issue": "Creditor and debtor discuss alternative payment arrangements.",
+        "status": "Negotiation ongoing",
+        "actors_status": []
+      },
+      "deadlines": [],
+      "summary": "Parties begin negotiating a payment plan to resolve the overdue invoice amicably.",
+      "artifacts": [],
+      "incoming": [
+        "edge_1c",
+        "edge_77a8e03e"
       ],
       "outgoing": []
     }
   },
   "edges": {
-    "edge_7cb99a7f": {
-      "id": "edge_7cb99a7f",
-      "source_id": "node_215112a9",
-      "target_id": "node_01_dunning_letter_sent",
-      "action_type": "send_dunning_letter",
+    "edge_8982de03": {
+      "id": "edge_8982de03",
+      "source_id": "node_b5233323",
+      "target_id": "node_a1",
+      "action_type": "send_final_payment reminder",
       "actor_id": null,
       "artifacts": [],
-      "probability": 0.65,
+      "probability": 0.6,
       "conditions": [
-        "Debtor has not responded to payment reminder",
-        "Invoice remains unpaid"
+        "Payment reminder sent",
+        "Invoice overdue"
       ]
     },
-    "edge_2b34d557": {
-      "id": "edge_2b34d557",
-      "source_id": "node_215112a9",
-      "target_id": "node_02_payment_claim_filed",
-      "action_type": "file_payment_claim",
+    "edge_49b2a520": {
+      "id": "edge_49b2a520",
+      "source_id": "node_b5233323",
+      "target_id": "node_a2",
+      "action_type": "file_claim in court",
       "actor_id": null,
       "artifacts": [],
-      "probability": 0.25,
+      "probability": 0.3,
       "conditions": [
-        "Invoice unpaid after reminder and reasonable waiting period",
-        "Creditor authorized to proceed with legal claim"
+        "Invoice overdue",
+        "Reminder sent",
+        "Debtor did not pay"
       ]
     },
-    "edge_a7e563ab": {
-      "id": "edge_a7e563ab",
-      "source_id": "node_215112a9",
-      "target_id": "node_03_payment_plan_negotiation",
-      "action_type": "initiate_payment_plan_negotiation",
+    "edge_77a8e03e": {
+      "id": "edge_77a8e03e",
+      "source_id": "node_b5233323",
+      "target_id": "node_a3",
+      "action_type": "negotiate payment plan",
       "actor_id": null,
       "artifacts": [],
       "probability": 0.1,
       "conditions": [
-        "Debtor contacts creditor expressing willingness to pay",
-        "Creditor is open to negotiation"
+        "Invoice overdue",
+        "Debtor willing to cooperate"
       ]
     }
   },
-  "actors": {}
+  "actors": {
+    "actor_d71e3509": {
+      "id": "actor_d71e3509",
+      "name": "Timmy",
+      "role": "plaintiff"
+    },
+    "actor_3e6234c6": {
+      "id": "actor_3e6234c6",
+      "name": "Andi",
+      "role": "debtor"
+    }
+  }
 }
