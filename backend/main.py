@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.node import router as node_router
 from api.cases import router as cases_router
+from api.graph import router as graph_router
 
 app = FastAPI()
 
@@ -14,6 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(graph_router, prefix="/api")
 app.include_router(node_router, prefix="/api")
 app.include_router(cases_router, prefix="/api")
 
