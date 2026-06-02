@@ -1,10 +1,9 @@
-async function fetchGraph() {
-const res = await fetch("http://localhost:8000/api/graph");
+export async function fetchGraph() {
+  const res = await fetch("http://localhost:8000/api/graph");
 
-if (!res.ok) {
-  throw new Error("Failed to fetch graph");
-}
+  if (!res.ok) {
+    throw new Error("Failed to fetch graph");
+  }
 
-return res.json();
-
+  return res.json();
 }

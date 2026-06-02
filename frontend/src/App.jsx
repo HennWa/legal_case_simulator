@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -7,7 +7,6 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
-import graphData from "./data/graph.json";
 import CustomNode from "./CustomNode";
 import CustomEdge from "./CustomEdge";
 import Sidebar from "./Sidebar";
@@ -15,9 +14,38 @@ import { layoutGraph } from "./layout";
 import TopBar from "./TopBar";
 
 import { fetchNode } from "./api/node";
+import { fetchGraph } from "./api/graph";
 
 function App() {
+
+  const [graphData, setGraphData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedNodeData, setSelectedNodeData] = useState(null);
+
+  const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
+  const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await fetchGraph();
+        setGraphData(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, []);
+
+
   const { nodes, edges } = useMemo(() => {
+    if (!graphData) return { nodes: [], edges: [] };
+
     const rawNodes = Object.values(graphData.nodes);
     const rawEdges = Object.values(graphData.edges);
 
@@ -41,13 +69,7 @@ function App() {
     }));
 
     return layoutGraph(flowNodes, flowEdges);
-  }, []);
-
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
-  const [selectedNodeData, setSelectedNodeData] = useState(null);
-
-  const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
-  const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
+  }, [graphData]);
 
   return (
     <div
