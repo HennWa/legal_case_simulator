@@ -151,6 +151,15 @@ class CaseGraph:
         self.nodes[node.id] = node
         return node
 
+    def get_node(self, node_id: str) -> LegalNode:
+        if node_id not in self.nodes:
+            raise KeyError(f"Node '{node_id}' does not exist")
+        return self.nodes[node_id]
+
+    def node_to_dict(self, node_id: str) -> dict:
+        node = self.get_node(node_id)
+        return node.model_dump()
+
     # -------------------------
     # Edge
     # -------------------------
@@ -237,6 +246,40 @@ class CaseGraph:
             json.dump(self.to_dict(), f, indent=2)
 
     # -------------------------
+    # Deserialization
+    # -------------------------
+    @classmethod
+    def from_dict(cls, data: dict) -> "CaseGraph":
+        graph = cls()
+
+        # Restore actors
+        graph.actors = {
+            aid: Actor.model_validate(actor_data)
+            for aid, actor_data in data.get("actors", {}).items()
+        }
+
+        # Restore nodes
+        graph.nodes = {
+            nid: LegalNode.model_validate(node_data)
+            for nid, node_data in data.get("nodes", {}).items()
+        }
+
+        # Restore edges
+        graph.edges = {
+            eid: LegalEdge.model_validate(edge_data)
+            for eid, edge_data in data.get("edges", {}).items()
+        }
+
+        return graph
+
+    @classmethod
+    def from_json(cls, path: str) -> "CaseGraph":
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        return cls.from_dict(data)
+
+    # -------------------------
     # Build path
     # -------------------------
     def build_path(self, node_id: str) -> List[PathStep]:
@@ -275,6 +318,9 @@ class CaseGraph:
 
         return path
 
+    # -------------------------
+    # Build narrative
+    # -------------------------
     def build_narrative(self, path: List[PathStep]) -> str:
 
         text = []
