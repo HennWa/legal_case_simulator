@@ -14,6 +14,8 @@ import Sidebar from "./Sidebar";
 import { layoutGraph } from "./layout";
 import TopBar from "./TopBar";
 
+import { fetchNode } from "./api/node";
+
 function App() {
   const { nodes, edges } = useMemo(() => {
     const rawNodes = Object.values(graphData.nodes);
@@ -84,16 +86,15 @@ function App() {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               fitView
-              onNodeClick={async (e, node) => {
+             onNodeClick={async (e, node) => {
                   setSelectedNodeId(node.id);
 
-                  const res = await fetch(
-                    `http://localhost:8000/api/node/${node.id}`
-                  );
-
-                  const data = await res.json();
-
-                  setSelectedNodeData(data);
+                  try {
+                    const data = await fetchNode(node.id);
+                    setSelectedNodeData(data);
+                  } catch (err) {
+                    console.error("Failed to load node:", err);
+                  }
                 }}
               proOptions={{ hideAttribution: true }}
             >
