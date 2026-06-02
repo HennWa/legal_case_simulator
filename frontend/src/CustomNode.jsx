@@ -22,6 +22,8 @@ export default function CustomNode({ data }) {
         flexDirection: "column",
 
         position: "relative",
+
+        pointerEvents: "all",
       }}
     >
       {/* LEFT INPUT HANDLE */}

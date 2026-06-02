@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";  // for rendering context menu outside of React Flow's canvas
 import ReactFlow, {
   Background,
   Controls,
@@ -10,11 +11,13 @@ import "reactflow/dist/style.css";
 import CustomNode from "./CustomNode";
 import CustomEdge from "./CustomEdge";
 import Sidebar from "./Sidebar";
-import { layoutGraph } from "./layout";
+import ContextMenu from "./ContextMenu";
 import TopBar from "./TopBar";
+import { layoutGraph } from "./layout";
 
 import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
+
 
 function App() {
 
@@ -27,6 +30,51 @@ function App() {
   const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
 
+  const [contextMenu, setContextMenu] = useState(null);
+
+
+  // ACTIONS (EMPTY LOGIC FOR NOW)
+  const handleAdd = (nodeId) => {
+    console.log("Add node from:", nodeId);
+    setContextMenu(null);
+  };
+
+  const handleDeactivate = (nodeId) => {
+    console.log("Deactivate node:", nodeId);
+    setContextMenu(null);
+  };
+
+  const handleDelete = (nodeId) => {
+    console.log("Delete node:", nodeId);
+    setContextMenu(null);
+  };
+
+  // RIGHT CLICK HANDLER
+  const onNodeContextMenu = (event, node) => {
+      event.preventDefault();
+      console.log("🟢 STEP 1: React Flow detected right click", node?.id);
+
+      setContextMenu({
+        x: event.clientX,
+        y: event.clientY,
+        nodeId: node.id,
+      });
+    };
+
+  // CLOSE ON OUTSIDE CLICK
+  useEffect(() => {
+    if (!contextMenu) return;
+
+    console.log("Outside CLiCKKKKKK");
+
+    const handleClick = () => setContextMenu(null);
+
+    window.addEventListener("mousedown", handleClick);
+    return () => window.removeEventListener("mousedown", handleClick);
+  }, [contextMenu]);
+
+
+  // SET GRAPH
   useEffect(() => {
     async function load() {
       try {
@@ -42,7 +90,7 @@ function App() {
     load();
   }, []);
 
-
+// SET NODES & EDGES
   const { nodes, edges } = useMemo(() => {
     if (!graphData) return { nodes: [], edges: [] };
 
@@ -108,7 +156,8 @@ function App() {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               fitView
-             onNodeClick={async (e, node) => {
+              onNodeContextMenu={onNodeContextMenu}
+              onNodeClick={async (e, node) => {
                   setSelectedNodeId(node.id);
 
                   try {
@@ -124,6 +173,20 @@ function App() {
               <Controls />
               <Background color="#e7d6da" gap={24} />
             </ReactFlow>
+
+          {contextMenu &&
+            createPortal(
+              <ContextMenu
+                x={contextMenu.x}
+                y={contextMenu.y}
+                nodeId={contextMenu.nodeId}
+                onAdd={handleAdd}
+                onDeactivate={handleDeactivate}
+                onDelete={handleDelete}
+              />,
+              document.body
+            )}
+
           </ReactFlowProvider>
         </div>
       </div>
