@@ -12,13 +12,13 @@ export default function Sidebar({ selectedNode }) {
   // --------------------------------------------------
   // NODE-BASED DATA (dynamic)
   // --------------------------------------------------
-  const actorData =
-    selectedNode?.data?.state?.actors_status?.map((actorStatus) => ({
-      name: actorStatus.actors.name,
-      paid: actorStatus.paid,
-      received: actorStatus.received,
-      role: actorStatus.actors.role,
-    })) || [];
+    const actorData =
+      selectedNode?.state?.actors_status?.map((actorStatus) => ({
+        name: actorStatus.actors.name,
+        paid: actorStatus.paid,
+        received: actorStatus.received,
+        role: actorStatus.actors.role,
+      })) || [];
 
   // --------------------------------------------------
   // STATIC TIMELINE (from statistics.json)

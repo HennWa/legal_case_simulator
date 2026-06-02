@@ -41,9 +41,8 @@ function App() {
     return layoutGraph(flowNodes, flowEdges);
   }, []);
 
-  const [selectedNode, setSelectedNode] = useState(
-    nodes.length > 0 ? nodes[0] : null
-  );
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedNodeData, setSelectedNodeData] = useState(null);
 
   const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
@@ -73,7 +72,7 @@ function App() {
             overflowY: "auto",
           }}
         >
-          <Sidebar selectedNode={selectedNode} />
+          <Sidebar selectedNode={selectedNodeData} />
         </div>
 
         {/* GRAPH */}
@@ -85,7 +84,17 @@ function App() {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               fitView
-              onNodeClick={(e, node) => setSelectedNode(node)}
+              onNodeClick={async (e, node) => {
+                  setSelectedNodeId(node.id);
+
+                  const res = await fetch(
+                    `http://localhost:8000/api/node/${node.id}`
+                  );
+
+                  const data = await res.json();
+
+                  setSelectedNodeData(data);
+                }}
               proOptions={{ hideAttribution: true }}
             >
               <MiniMap nodeColor={() => "#c08497"} />
