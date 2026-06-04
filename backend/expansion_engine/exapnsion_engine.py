@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import os
 
-from backend.object_graph_runtime.graph_classes import CaseGraph, LegalNode
-from backend.prompt_builder.prompt_builder import PromptBuilder
-from backend.llm_interface.llm_interface import BaseLLMProvider
-from backend.utils.utils import get_frontend_dir
+from object_graph_runtime.graph_classes import CaseGraph, LegalNode
+from prompt_builder.prompt_builder import PromptBuilder
+from llm_interface.llm_interface import BaseLLMProvider
+from utils.utils import get_frontend_dir
 
 class ExpansionEngine:
 

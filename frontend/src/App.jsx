@@ -74,8 +74,6 @@ function App() {
   useEffect(() => {
     if (!contextMenuRightClick) return;
 
-    console.log("Outside CLiCKKKKKK");
-
     const handleClick = () => setContextMenuRightClick(null);
 
     window.addEventListener("mousedown", handleClick);
