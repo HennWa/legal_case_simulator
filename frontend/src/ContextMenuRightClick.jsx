@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ContextMenu({
+export default function ContextMenuRightClick({
   x,
   y,
   nodeId,

@@ -11,7 +11,7 @@ import "reactflow/dist/style.css";
 import CustomNode from "./CustomNode";
 import CustomEdge from "./CustomEdge";
 import Sidebar from "./Sidebar";
-import ContextMenu from "./ContextMenu";
+import ContextMenuRightClick from "./ContextMenuRightClick";
 import TopBar from "./TopBar";
 import { layoutGraph } from "./layout";
 
@@ -30,31 +30,31 @@ function App() {
   const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
 
-  const [contextMenu, setContextMenu] = useState(null);
+  const [contextMenuRightClick, setContextMenuRightClick] = useState(null);
 
 
   // ACTIONS (EMPTY LOGIC FOR NOW)
   const handleAdd = (nodeId) => {
     console.log("Add node from:", nodeId);
-    setContextMenu(null);
+    setContextMenuRightClick(null);
   };
 
   const handleDeactivate = (nodeId) => {
     console.log("Deactivate node:", nodeId);
-    setContextMenu(null);
+    setContextMenuRightClick(null);
   };
 
   const handleDelete = (nodeId) => {
     console.log("Delete node:", nodeId);
-    setContextMenu(null);
+    setContextMenuRightClick(null);
   };
 
   // RIGHT CLICK HANDLER
-  const onNodeContextMenu = (event, node) => {
+  const onNodeContextMenuRightClick = (event, node) => {
       event.preventDefault();
       console.log("🟢 STEP 1: React Flow detected right click", node?.id);
 
-      setContextMenu({
+      setContextMenuRightClick({
         x: event.clientX,
         y: event.clientY,
         nodeId: node.id,
@@ -63,15 +63,15 @@ function App() {
 
   // CLOSE ON OUTSIDE CLICK
   useEffect(() => {
-    if (!contextMenu) return;
+    if (!contextMenuRightClick) return;
 
     console.log("Outside CLiCKKKKKK");
 
-    const handleClick = () => setContextMenu(null);
+    const handleClick = () => setContextMenuRightClick(null);
 
     window.addEventListener("mousedown", handleClick);
     return () => window.removeEventListener("mousedown", handleClick);
-  }, [contextMenu]);
+  }, [contextMenuRightClick]);
 
 
   // SET GRAPH
@@ -156,7 +156,7 @@ function App() {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               fitView
-              onNodeContextMenu={onNodeContextMenu}
+              onNodeContextMenu={onNodeContextMenuRightClick}
               onNodeClick={async (e, node) => {
                   setSelectedNodeId(node.id);
 
@@ -174,12 +174,12 @@ function App() {
               <Background color="#e7d6da" gap={24} />
             </ReactFlow>
 
-          {contextMenu &&
+          {contextMenuRightClick &&
             createPortal(
-              <ContextMenu
-                x={contextMenu.x}
-                y={contextMenu.y}
-                nodeId={contextMenu.nodeId}
+              <ContextMenuRightClick
+                x={contextMenuRightClick.x}
+                y={contextMenuRightClick.y}
+                nodeId={contextMenuRightClick.nodeId}
                 onAdd={handleAdd}
                 onDeactivate={handleDeactivate}
                 onDelete={handleDelete}
