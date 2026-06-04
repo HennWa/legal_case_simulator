@@ -33,7 +33,16 @@ function App() {
   const [contextMenuRightClick, setContextMenuRightClick] = useState(null);
 
 
-  // ACTIONS (EMPTY LOGIC FOR NOW)
+  const loadGraph = async () => {
+      try {
+        const data = await fetchGraph();
+        setGraphData(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+  // ACTIONS ON RIGHT CLICK (EMPTY LOGIC FOR NOW)
   const handleAdd = (nodeId) => {
     console.log("Add node from:", nodeId);
     setContextMenuRightClick(null);
@@ -76,19 +85,8 @@ function App() {
 
   // SET GRAPH
   useEffect(() => {
-    async function load() {
-      try {
-        const data = await fetchGraph();
-        setGraphData(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, []);
+      loadGraph();
+    }, []);
 
 // SET NODES & EDGES
   const { nodes, edges } = useMemo(() => {
