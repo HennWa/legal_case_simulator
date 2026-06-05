@@ -192,10 +192,12 @@ class CaseGraph:
         return edge
 
     def add_branch_obj(self, source_id: str, branch_node: LegalBranchNode) -> LegalEdge:
-        # Add the node
+
+        # Add the node with unique id
+        branch_node.node.id = generate_id("node")
         self.nodes[branch_node.node.id] = branch_node.node
 
-        # Add the edge
+        # Add the edge with unique id
         edge = LegalEdge(
             id=generate_id("edge"),
             source_id=source_id,
@@ -210,7 +212,7 @@ class CaseGraph:
 
         # link nodes safely
         self.nodes[source_id].outgoing.append(edge.id)
-        self.nodes[branch_node.node.id].incoming.append(edge.id)
+        self.nodes[branch_node.node.id].incoming = [edge.id]
 
         return edge
 

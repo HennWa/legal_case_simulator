@@ -1,7 +1,7 @@
 {
   "nodes": {
-    "node_c9312301": {
-      "id": "node_c9312301",
+    "node_37aab7d5": {
+      "id": "node_37aab7d5",
       "title": "Invoice Overdue",
       "state": {
         "phase": "Payment reminder sent",
@@ -14,200 +14,160 @@
       "artifacts": [],
       "incoming": [],
       "outgoing": [
-        "edge_a5361f01",
-        "edge_c4d07b49",
-        "edge_f007eb98"
+        "edge_05c5a4f5",
+        "edge_301b2c53",
+        "edge_5419e206"
       ]
     },
-    "node_1a": {
-      "id": "node_1a",
-      "title": "Second Payment Demand Sent",
+    "node_56dfd738": {
+      "id": "node_56dfd738",
+      "title": "Second payment reminder sent to debtor",
       "state": {
-        "phase": "Second payment demand",
-        "legal_issue": "Debtor Andi still has not paid the invoice after first reminder.",
+        "phase": "Second payment reminder sent",
+        "legal_issue": "Debtor Andi still has not paid the invoice of 5000 Euro after a second reminder.",
         "status": "Overdue",
         "actors_status": [
           {
             "actors": {
-              "id": "actor_debtor",
-              "name": "Andi",
+              "id": "Andi",
+              "name": "Debtor Andi",
               "role": "debtor"
             },
             "paid": 0,
             "received": 0
-          },
-          {
-            "actors": {
-              "id": "actor_creditor",
-              "name": "Creditor",
-              "role": "creditor"
-            },
-            "paid": 100,
-            "received": 0
           }
         ]
       },
-      "deadlines": [
-        {
-          "name": "Payment deadline",
-          "due_date": "2024-06-15"
-        }
-      ],
-      "summary": "Second payment demand letter sent to debtor Andi to pay the overdue invoice.",
-      "artifacts": [
-        {
-          "id": "artifact_1",
-          "type": "document",
-          "content": "Second payment demand letter sent to debtor Andi for unpaid invoice of 5000 Euro.",
-          "created_by": null,
-          "timestamp": "2024-06-01T09:00:00Z"
-        }
-      ],
-      "incoming": [
-        "edge_1",
-        "edge_a5361f01"
-      ],
-      "outgoing": []
-    },
-    "node_2a": {
-      "id": "node_2a",
-      "title": "Debt Collection Procedure Initiated",
-      "state": {
-        "phase": "Collection procedure",
-        "legal_issue": "Debtor Andi has not paid the invoice after reminder; collection procedure started.",
-        "status": "Collection initiated",
-        "actors_status": [
-          {
-            "actors": {
-              "id": "actor_debtor",
-              "name": "Andi",
-              "role": "debtor"
-            },
-            "paid": 0,
-            "received": 0
-          },
-          {
-            "actors": {
-              "id": "actor_creditor",
-              "name": "Creditor",
-              "role": "creditor"
-            },
-            "paid": 300,
-            "received": 0
-          }
-        ]
-      },
-      "deadlines": [
-        {
-          "name": "Collection response deadline",
-          "due_date": "2024-06-20"
-        }
-      ],
-      "summary": "Debt collection procedure initiated for invoice unpaid by debtor Andi.",
-      "artifacts": [
-        {
-          "id": "artifact_2",
-          "type": "document",
-          "content": "Initiation of debt collection procedure for unpaid invoice of 5000 Euro.",
-          "created_by": null,
-          "timestamp": "2024-06-01T10:00:00Z"
-        }
-      ],
-      "incoming": [
-        "edge_2",
-        "edge_c4d07b49"
-      ],
-      "outgoing": []
-    },
-    "node_3a": {
-      "id": "node_3a",
-      "title": "Waiting for Payment",
-      "state": {
-        "phase": "Waiting for payment",
-        "legal_issue": "Debtor Andi has not paid the invoice after reminder; awaiting payment.",
-        "status": "Pending payment",
-        "actors_status": [
-          {
-            "actors": {
-              "id": "actor_debtor",
-              "name": "Andi",
-              "role": "debtor"
-            },
-            "paid": 0,
-            "received": 0
-          },
-          {
-            "actors": {
-              "id": "actor_creditor",
-              "name": "Creditor",
-              "role": "creditor"
-            },
-            "paid": 50,
-            "received": 0
-          }
-        ]
-      },
-      "deadlines": [
-        {
-          "name": "Next reminder deadline",
-          "due_date": "2024-06-10"
-        }
-      ],
-      "summary": "Waiting for debtor Andi to pay the invoice after the reminder was sent.",
+      "deadlines": [],
+      "summary": "A second payment reminder was sent to the debtor after the first was ignored.",
       "artifacts": [],
       "incoming": [
-        "edge_3",
-        "edge_f007eb98"
+        "edge_05c5a4f5"
+      ],
+      "outgoing": []
+    },
+    "node_3c709d43": {
+      "id": "node_3c709d43",
+      "title": "Complaint for payment filed with the court",
+      "state": {
+        "phase": "Complaint filed",
+        "legal_issue": "Complaint filed for non-payment of 5000 Euro invoice by debtor Andi.",
+        "status": "In litigation",
+        "actors_status": [
+          {
+            "actors": {
+              "id": "Andi",
+              "name": "Debtor Andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actors": {
+              "id": "Creditor",
+              "name": "Creditor",
+              "role": "plaintiff"
+            },
+            "paid": 200,
+            "received": 0
+          }
+        ]
+      },
+      "deadlines": [],
+      "summary": "The creditor has decided to initiate legal action by filing a complaint for payment.",
+      "artifacts": [],
+      "incoming": [
+        "edge_301b2c53"
+      ],
+      "outgoing": []
+    },
+    "node_858e8abc": {
+      "id": "node_858e8abc",
+      "title": "Debtor makes a partial payment",
+      "state": {
+        "phase": "Partial payment received",
+        "legal_issue": "Debtor Andi made a partial payment towards the overdue invoice of 5000 Euro.",
+        "status": "Partial payment received",
+        "actors_status": [
+          {
+            "actors": {
+              "id": "Andi",
+              "name": "Debtor Andi",
+              "role": "debtor"
+            },
+            "paid": 1500,
+            "received": 0
+          },
+          {
+            "actors": {
+              "id": "Creditor",
+              "name": "Creditor",
+              "role": "plaintiff"
+            },
+            "paid": 0,
+            "received": 1500
+          }
+        ]
+      },
+      "deadlines": [],
+      "summary": "Debtor Andi has made a partial payment, reducing the outstanding invoice amount.",
+      "artifacts": [],
+      "incoming": [
+        "edge_5419e206"
       ],
       "outgoing": []
     }
   },
   "edges": {
-    "edge_a5361f01": {
-      "id": "edge_a5361f01",
-      "source_id": "node_c9312301",
-      "target_id": "node_1a",
-      "action_type": "send_payment_demand",
+    "edge_05c5a4f5": {
+      "id": "edge_05c5a4f5",
+      "source_id": "node_37aab7d5",
+      "target_id": "node_56dfd738",
+      "action_type": "send_second_payment_reminder",
       "actor_id": null,
       "artifacts": [],
-      "probability": 0.7,
+      "probability": 0.6,
       "conditions": [
-        "Debtor has ignored initial reminder"
+        "No payment received after first reminder",
+        "Invoice amount due is 5000 Euro"
       ]
     },
-    "edge_c4d07b49": {
-      "id": "edge_c4d07b49",
-      "source_id": "node_c9312301",
-      "target_id": "node_2a",
-      "action_type": "initiate_collection_procedure",
+    "edge_301b2c53": {
+      "id": "edge_301b2c53",
+      "source_id": "node_37aab7d5",
+      "target_id": "node_3c709d43",
+      "action_type": "file_complaint_for_payment",
       "actor_id": null,
       "artifacts": [],
       "probability": 0.3,
       "conditions": [
-        "Debtor refuses to respond or pay"
+        "Payment overdue despite reminder",
+        "Invoice amount is 5000 Euro"
       ]
     },
-    "edge_f007eb98": {
-      "id": "edge_f007eb98",
-      "source_id": "node_c9312301",
-      "target_id": "node_3a",
-      "action_type": "wait_for_payment",
-      "actor_id": null,
+    "edge_5419e206": {
+      "id": "edge_5419e206",
+      "source_id": "node_37aab7d5",
+      "target_id": "node_858e8abc",
+      "action_type": "debtor_makes_partial_payment",
+      "actor_id": "Andi",
       "artifacts": [],
       "probability": 0.1,
       "conditions": [
-        "Debtor may pay spontaneously after reminder"
+        "Debtor willing to pay partially",
+        "Invoice amount overdue"
       ]
     }
   },
   "actors": {
-    "actor_d88ba657": {
-      "id": "actor_d88ba657",
+    "actor_77a5b4ea": {
+      "id": "actor_77a5b4ea",
       "name": "Timmy",
       "role": "plaintiff"
     },
-    "actor_3e5a341d": {
-      "id": "actor_3e5a341d",
+    "actor_b727a1c3": {
+      "id": "actor_b727a1c3",
       "name": "Andi",
       "role": "debtor"
     }
