@@ -20,6 +20,7 @@ import { layoutGraph } from "./layout";
 import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
 import { addNode } from "./api/add_node";
+import { deleteNode } from "./api/delete_node";
 
 
 function App() {
@@ -71,10 +72,18 @@ function App() {
     setContextMenuRightClick(null);
   };
 
-  const handleDelete = (nodeId) => {
-    console.log("Delete node:", nodeId);
-    setContextMenuRightClick(null);
-  };
+  const handleDelete = async (nodeId) => {
+      try {
+        setContextMenuRightClick(null);
+
+        console.log('Deleting node', nodeId);
+        await deleteNode(nodeId);
+        console.log('Node deleted', nodeId);
+        await loadGraph();
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
   // RIGHT CLICK HANDLER
   const onNodeContextMenuRightClick = (event, node) => {

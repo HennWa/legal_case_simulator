@@ -217,6 +217,50 @@ class CaseGraph:
         return edge
 
     # -------------------------
+    # Delete
+    # -------------------------
+
+    def delete_node(self, node_id: str) -> None:
+        if node_id not in self.nodes:
+            raise KeyError(f"Node '{node_id}' does not exist")
+
+        # 1. Collect all nodes to delete (including root)
+        to_delete_nodes = {node_id}
+
+        successors = self.get_successor_nodes(node_id)
+        to_delete_nodes.update(n.id for n in successors)
+
+        # 2. Collect edges to delete
+        to_delete_edges = set()
+
+        for nid in to_delete_nodes:
+            node = self.nodes[nid]
+            to_delete_edges.update(node.incoming)
+            to_delete_edges.update(node.outgoing)
+
+        # 3. Remove edges from graph
+        for eid in to_delete_edges:
+            if eid in self.edges:
+                edge = self.edges[eid]
+
+                # clean references in connected nodes (if they still exist)
+                if edge.source_id in self.nodes:
+                    if eid in self.nodes[edge.source_id].outgoing:
+                        self.nodes[edge.source_id].outgoing.remove(eid)
+
+                if edge.target_id in self.nodes:
+                    if eid in self.nodes[edge.target_id].incoming:
+                        self.nodes[edge.target_id].incoming.remove(eid)
+
+                del self.edges[eid]
+
+        # 4. Remove nodes
+        for nid in to_delete_nodes:
+            if nid in self.nodes:
+                del self.nodes[nid]
+
+
+    # -------------------------
     # Traversal
     # -------------------------
     def get_successors(self, node_id: str) -> list[LegalNode]:
@@ -232,6 +276,25 @@ class CaseGraph:
             self.nodes[self.edges[eid].source_id]
             for eid in node.incoming
         ]
+
+    def get_successor_nodes(self, node_id: str) -> list[LegalNode]:
+        visited = set()
+        result = []
+
+        def dfs(nid: str):
+            for eid in self.nodes[nid].outgoing:
+                edge = self.edges[eid]
+                target_id = edge.target_id
+
+                if target_id in visited:
+                    continue
+
+                visited.add(target_id)
+                result.append(self.nodes[target_id])
+                dfs(target_id)
+
+        dfs(node_id)
+        return result
 
     # -------------------------
     # Serialization (Pydantic-native)
