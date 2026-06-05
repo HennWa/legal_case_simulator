@@ -171,6 +171,13 @@ function App() {
               edgeTypes={edgeTypes}
               fitView
               onNodeContextMenu={onNodeContextMenuRightClick}
+                onPaneClick={() => {
+                    setContextMenuRightClick(null);
+                  }}
+
+              onMoveStart={() => {
+                    setContextMenuRightClick(null);
+                  }}
               onNodeClick={async (e, node) => {
                   setSelectedNodeId(node.id);
 
