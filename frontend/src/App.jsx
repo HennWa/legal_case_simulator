@@ -8,6 +8,8 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
+import "./App.css";
+
 import CustomNode from "./CustomNode";
 import CustomEdge from "./CustomEdge";
 import Sidebar from "./Sidebar";
@@ -33,6 +35,9 @@ function App() {
 
   const [contextMenuRightClick, setContextMenuRightClick] = useState(null);
 
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingNodeId, setProcessingNodeId] = useState(null);
+
 
   const loadGraph = async () => {
       try {
@@ -44,18 +49,22 @@ function App() {
     };
 
   // ACTIONS ON RIGHT CLICK (EMPTY LOGIC FOR NOW)
-  const handleAdd = async (nodeId) => {
-  try {
-    setContextMenuRightClick(null);
-    console.log("Adding node:");
-    await addNode(nodeId);
-    console.log("node added:");
-    await loadGraph();
-    console.log("graph updated:");
-  } catch (err) {
-    console.error(err);
-  }
-};
+    const handleAdd = async (nodeId) => {
+      try {
+        setIsProcessing(true);
+        setContextMenuRightClick(null);
+
+        console.log('Adding node', nodeId);
+        await addNode(nodeId);
+        console.log('Node added', nodeId);
+        console.log('Updating Graph');
+        await loadGraph();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsProcessing(false);
+      }
+    };
 
   const handleDeactivate = (nodeId) => {
     console.log("Deactivate node:", nodeId);
@@ -190,6 +199,13 @@ function App() {
                 onDelete={handleDelete}
               />,
               document.body
+            )}
+
+          {isProcessing && (
+              <div className="loading-indicator">
+                <div className="spinner" />
+                <span>Updating Legal Steps...</span>
+              </div>
             )}
 
           </ReactFlowProvider>
