@@ -220,7 +220,7 @@ function App() {
           {isProcessing && (
               <div className="loading-indicator">
                 <div className="spinner" />
-                <span>Updating Legal Steps...</span>
+                <span>Updating Steps...</span>
               </div>
             )}
 

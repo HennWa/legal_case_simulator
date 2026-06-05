@@ -31,13 +31,16 @@ export default function ContextMenuRightClick({
         color: "#2d2d2d",
       }}
     >
-      <MenuItem label="Add node" onClick={() => onAdd(nodeId)} />
       <MenuItem
-        label="Deactivate node"
+        label="Add Step"
+        onClick={() => onAdd(nodeId)}
+      />
+      <MenuItem
+        label="Deactivate Step"
         onClick={() => onDeactivate(nodeId)}
       />
       <MenuItem
-        label="Delete node"
+        label="Delete Step"
         danger
         onClick={() => onDelete(nodeId)}
       />
