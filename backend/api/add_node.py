@@ -19,6 +19,8 @@ def add_node(node_id: str):
     graph = CaseGraph.from_json(path_graph)
     engine = ExpansionEngine(graph, llm)
 
+    print(f'Expanding node with id: {node_id}')
+
     engine.expand_node(node_id)
 
     return {"success": True}

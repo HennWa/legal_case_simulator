@@ -17,6 +17,7 @@ import { layoutGraph } from "./layout";
 
 import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
+import { addNode } from "./api/add_node";
 
 
 function App() {
@@ -43,10 +44,18 @@ function App() {
     };
 
   // ACTIONS ON RIGHT CLICK (EMPTY LOGIC FOR NOW)
-  const handleAdd = (nodeId) => {
-    console.log("Add node from:", nodeId);
+  const handleAdd = async (nodeId) => {
+  try {
     setContextMenuRightClick(null);
-  };
+    console.log("Adding node:");
+    await addNode(nodeId);
+    console.log("node added:");
+    await loadGraph();
+    console.log("graph updated:");
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   const handleDeactivate = (nodeId) => {
     console.log("Deactivate node:", nodeId);
@@ -72,12 +81,12 @@ function App() {
 
   // CLOSE ON OUTSIDE CLICK
   useEffect(() => {
-    if (!contextMenuRightClick) return;
+    //if (!contextMenuRightClick) return;
 
-    const handleClick = () => setContextMenuRightClick(null);
+    //const handleClick = () => setContextMenuRightClick(null);
 
-    window.addEventListener("mousedown", handleClick);
-    return () => window.removeEventListener("mousedown", handleClick);
+    //window.addEventListener("mousedown", handleClick);
+    //return () => window.removeEventListener("mousedown", handleClick);
   }, [contextMenuRightClick]);
 
 
