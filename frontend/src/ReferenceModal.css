@@ -1,0 +1,42 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.reference-modal {
+  background: white;
+  color: black;
+  width: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.reference-detail-card {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.reference-title {
+  font-weight: bold;
+}
+
+.reference-type {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.reference-summary {
+  margin-top: 6px;
+}
