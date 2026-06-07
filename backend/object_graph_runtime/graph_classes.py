@@ -25,13 +25,13 @@ class Actor(BaseModel):
     id: str = Field(description='Unique identifier for the actor')
     name: str = Field(description='Name of the actor')
     role: str = Field(description='Role of the actor in the legal case '
-                                  '(e.g., plaintiff, defendant, judge, lawyer)')
+                                  '(e.g., plaintiff, defendant, judge, lawyer, court)')
 
 
 class ActorStatus(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    actors: Actor = Field(description='Actor of the status')
+    actor: Actor = Field(description='Actor of the status')
     paid: int = Field(description='Sum of paid money for services to lawyers, courts etc.')
     received: int = Field(description='Sum of received money from other actors, refunds etc.')
 
@@ -46,6 +46,23 @@ class Artifact(BaseModel):
     timestamp: str = Field(default_factory=utc_now, description='Timestamp of when the artifact was created in ISO 8601 format')
 
 
+class LegalReference(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    type: str = Field(description='Type of reference, e.g. law, policy etc.')
+    reference: str = Field(description='Legal reference e.g.: § 433 BGB – Vertragstypische Pflichten beim Kaufvertrag')
+    summary: str = Field(description='Summary of the reference')
+
+
+class Deadline(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    type: str = Field(description='Type of deadline')
+    references: LegalReference = Field(description='Legal references that causes the deadline, law, time limit set by actor')
+    summary: str = Field(description='Summary and background info of deadline')
+    due_date: str = Field(default_factory=utc_now, description='Due date in ISO 8601 format')
+
+
 class LegalEdge(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -53,50 +70,65 @@ class LegalEdge(BaseModel):
     source_id: str = Field(description='ID of the source node')
     target_id: str = Field(description='ID of the target node')
 
+    start_time: str = Field(default_factory=utc_now, description='Start time of this action in ISO 8601 format. '
+                                                                 'Begins with end of previous state.')
+    end_time: str = Field(default_factory=utc_now, description='End time of this action in ISO 8601 format. '
+                                                                 'End time is equal to start of following state.')
+
     action_type: str = Field(description='Type of legal action or event that this edge represents '
                                          '(e.g., file_complaint, submit_evidence, hold_hearing)')
     actor_id: Optional[str] = Field(default=None, description='ID of the actor responsible for this '
                                                               'action, if applicable')
     artifacts: List[Artifact] = Field(default_factory=list, description='List of artifacts associated '
-                                                                        'used in this transition, if applicable')
+                                                                        'used in this legal action, if applicable')
 
-    probability: float = Field(default=1.0, description='Probability of this transition occurring, if applicable')
-    conditions: List[str] = Field(default_factory=list, description='List of conditions or legal rules that '
-                                                                    'apply to this transition')
+    probability: float = Field(default=1.0, description='Probability of this legal action occurring, if applicable')
+    conditions: List[str] = Field(default_factory=list, description='List of conditions for the action to be carried out, e.g.'
+                                                                    'person above 18 years, actor has no criminal recors,'
+                                                                    'employment relationship lasting longer than 6 months etc.')
+    legal_references: List[LegalReference] = Field(default_factory=list, description='List of legal references that '
+                                                                                     'are relevant for the action.')
+    lawyer_involved: bool = Field(description='Flag to indicate if lawyer is involved in this action')
 
-class Deadline(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    name: str
-    due_date: str
 
 class LegalState(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    phase: Optional[str] = None
+    start_time: str = Field(default_factory=utc_now, description='Start time of this state in ISO 8601 format. '
+                                                                 'Begins with end of previous action.')
+    end_time: str = Field(default_factory=utc_now, description='End time of this state in ISO 8601 format. '
+                                                                 'End time is equal to start of following action.')
     legal_issue: Optional[str] = None
-    status: Optional[str] = None
+    description: str = Field(description='Detailed description of the state referring to the previous steps and describing '
+                                    'the state of all actors.')
+    legal_issue: str = Field(description='The legal issue that follows from the state, e.g. payment overdue according to law')
+    final_state: bool = Field(description='Bool to indicate if this step is the last step in the legal process')
     actors_status: List[ActorStatus] = Field(default_factory=list, description='Status of each actor that '
                                                                                'is relevant for the legal state.')
+    legal_references: List[LegalReference] = Field(default_factory=list, description='List of legal references that '
+                                                                                     'are relevant for the case and '
+                                                                                     'current state of the process')
+    artifacts: List[Artifact] = Field(default_factory=list, description='List of artifacts associated '
+                                                                        'with this legal state, like contracts, '
+                                                                        'dunning letter, emails etc.')
+    deadlines: List[Deadline] = Field(default_factory=list, description='List of deadlines related to the state, can '
+                                                                        'include response deadlines etc.')
+
 
 class LegalNode(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(description='Unique identifier for the node')
-    title: str = Field(description='Title or brief description of the legal state or event represented by this node')
-    state: LegalState = Field(description='Structured representation of the '
-                                                 'legal state at this node, can include relevant '
-                                                 'facts, legal issues, etc.')
-    deadlines: List[Deadline] = Field(default_factory=list)
-    summary: str = Field(description='Narrative summary of the legal state or event at this node, '
-                                     'for human-readable context')
-
-    artifacts: List[Artifact] = Field(default_factory=list, description='List of artifacts associated '
-                                                                        'with this legal state, ')
-
     incoming: List[str] = Field(default_factory=list, description='List of incoming edge IDs that lead to this node')
     outgoing: List[str] = Field(default_factory=list, description='List of outgoing edge IDs that '
                                                                   'lead to successor nodes')
+
+    title: str = Field(description='Title or brief description of the legal state or event represented by this node')
+    state: LegalState = Field(description='Structured representation of the legal state at this node, can include relevant '
+                                                 'facts, legal issues, etc.')
+
+    summary: str = Field(description='Narrative summary of the legal state or event at this node, '
+                                     'for human-readable context')
 
 
 class LegalBranchNode(BaseModel):
@@ -138,6 +170,10 @@ class CaseGraph:
         self.actors[actor.id] = actor
         return actor
 
+    def add_actor_obj(self, actor: Actor) -> Actor:
+        self.actors[actor.id] = actor
+        return actor
+
     # -------------------------
     # Node
     # -------------------------
@@ -148,6 +184,10 @@ class CaseGraph:
             state=state,
             summary=summary,
         )
+        self.nodes[node.id] = node
+        return node
+
+    def add_node_obj(self, node: LegalNode) -> LegalNode:
         self.nodes[node.id] = node
         return node
 
@@ -176,20 +216,30 @@ class CaseGraph:
         self,
         source_id: str,
         target_id: str,
+        start_time: str,
+        end_time: str,
         action_type: str,
+        artifacts: Optional[List[Artifact]] = None,
         actor_id: Optional[str] = None,
         probability: float = 1.0,
-        conditions: Optional[list[str]] = None,
+        conditions: Optional[List[str]] = None,
+        legal_references: Optional[List[LegalReference]] = None,
+        lawyer_involved: bool =False,
     ) -> LegalEdge:
 
         edge = LegalEdge(
             id=generate_id("edge"),
             source_id=source_id,
             target_id=target_id,
+            start_time= start_time,
+            end_time=end_time,
             action_type=action_type,
+            artifacts=artifacts or [],
             actor_id=actor_id,
             probability=probability,
             conditions=conditions or [],
+            legal_references=legal_references or [],
+            lawyer_involved = lawyer_involved
         )
 
         self.edges[edge.id] = edge
@@ -207,23 +257,15 @@ class CaseGraph:
         self.nodes[branch_node.node.id] = branch_node.node
 
         # Add the edge with unique id
-        edge = LegalEdge(
-            id=generate_id("edge"),
-            source_id=source_id,
-            target_id=branch_node.node.id,
-            action_type=branch_node.edge.action_type,
-            actor_id=branch_node.edge.actor_id,
-            probability=branch_node.edge.probability,
-            conditions=branch_node.edge.conditions,
-        )
-
-        self.edges[edge.id] = edge
+        branch_node.edge.id = generate_id("edge")
+        branch_node.edge.target_id = branch_node.node.id
+        self.edges[branch_node.edge.id] = branch_node.edge
 
         # link nodes safely
-        self.nodes[source_id].outgoing.append(edge.id)
-        self.nodes[branch_node.node.id].incoming = [edge.id]
+        self.nodes[source_id].outgoing.append(branch_node.edge.id)
+        self.nodes[branch_node.node.id].incoming = [branch_node.edge.id]
 
-        return edge
+        return branch_node.edge
 
     # -------------------------
     # Delete

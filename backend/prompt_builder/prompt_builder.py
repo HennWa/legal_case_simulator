@@ -31,22 +31,17 @@ class PromptBuilder:
         SYSTEM_PROMPT = f"""
             You are a legal process simulation engine.
 
-            Your task is to simulate the next most probably step in a legal procedure.
-            Create branches to extend the legal case based on the current state and past events.
-
-            You MUST:
-            - Only output valid JSON
-            - Never output explanations outside JSON
-            - Consider legal procedural logic and realistic human behavior
-            - You may be given given actions that are already contained in the graph as possible actions. You should find a new 
-              action that is not yet contained in the graph but is still a realistic next step with a meaningful 
-              probability.
-            - Estimate the probability of this transition. You may be provided with the existing outgoing probabilities at 
-              the current state, so you can estimate how likely this new transition is in comparison to the existing ones. 
-              The sum of all probabilities should be a value < 1.0.
-            - Ensure next_state is fully structured and consistent
-            - In the node -> state -> actor_status write every existing actor with a random amount in the field paid
-
+            ## TASK
+            Your task is to simulate the next most probably step in a legal procedure. The legal procedure is represented 
+            as a graph, where nodes represent legal states and edges represent legal events or actions that transition 
+            the case from one state to another. Create a branch to extend the legal case based on the current state 
+            and past events.
+            
+            You may be given given actions that are already contained in the graph as possible actions. You should find a new 
+            action that is not yet contained in the graph but is still a realistic next step with a meaningful probability.
+            
+            
+            ## INPUT
             You will receive:
             1. A causal path of past legal events
             2. A narrative summary of the case progression
@@ -54,16 +49,57 @@ class PromptBuilder:
             4. Existing outgoing edges containing the action types of already existing transitions from the current node
             5. Existing outgoing probabilities of already existing transitions from the current node
             
-            Your output must be strictly in this format:
+            
+            ## INSTRUCTIONS STEP BY STEP:
+            step1: Analyze the provided causal path of past legal events, 
+            the narrative summary, and the current legal state to understand the context of the case.
+            
+            step2: Based on this analysis, do a quick research in your legal knowledge to find a realistic 
+            and legally plausible next step that is not yet represented in the graph.
+            
+            step3: Describe the next legal step in detail and research all the necessary information to create a 
+            consistent and structured next step. This includes:
+                
+                1. Describing the legal action or event that occurs (e.g., file_complaint, submit_evidence, hold_hearing).
+                   Check that the action is not already represented in the graph as an outgoing edge from the current node. 
+                2. Identifying the actor responsible for this action, if applicable.
+                3. Describe a conditions that need to be fulfilled for this action to be carried out, 
+                   if applicable (e.g., person above 18 years, actor has no criminal recors, employment 
+                   relationship lasting longer than 6 months etc.)
+                4. Define a start and end time for this action, ensuring that it logically follows the previous events in the case.
+                5. Listing any artifacts associated with this legal action, if applicable (e.g., legal documents, evidence).
+                   Create the artifact or document if it does not exist yet in the graph, and link it to the action.
+                6. Provide all relevant legal references (e.g., laws, regulations, case precedents) that 
+                   support the plausibility of this action, if applicable.
+                7. Estimating the probability of this legal action occurring based on the context of the case and the past events. 
+                   Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
+                   probabilities should be a value < 1.0
+                8. describe if a lawyer needs to involved for this action to be carried out.
+            
+            step4: Ensure that the next state resulting from this action is fully structured and 
+                  consistent with the legal context of the case. This includes:
+                  
+                1. Defining the legal state that results from the action, including all relevant attributes and their values.
+                2. The start and end times fit together.
+                3. The actor status is updated accordingly, including any payments made or received.
+                4. The summary of the new node clearly describes the new legal state and how it relates to the 
+                   previous state and the overall case progression.
+  
+  
+            ## OUTPUT FORMAT:
+            - Only output valid JSON
+            - Never output explanations outside JSON
+            - Your output must be strictly in this format:
 
             {schema_json_single_node}
 
-            Rules:
+            
+            ## GENERAL GUIDELINES:
+            - Consider legal procedural logic and realistic human behavior
+            - Ensure next_state is fully structured and consistent
             - Do not hallucinate laws unless explicitly provided in input
             - Ensure the transition is realistic and legally plausible
-            - Ensure probabilities across all outgoing edges including the new one are < 1
-            - Also describe the resulting state a clear as possible in the summary field to ensure 
-            the state is well connected to the narrative and the path.
+
             """
 
         return SYSTEM_PROMPT

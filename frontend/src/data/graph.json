@@ -1,173 +1,353 @@
 {
   "nodes": {
-    "node_37aab7d5": {
-      "id": "node_37aab7d5",
-      "title": "Invoice Overdue",
-      "state": {
-        "phase": "Payment reminder sent",
-        "legal_issue": "Debtor Andi has not paid the invoice of 5000 Euro after a reminder was sent.",
-        "status": "Overdue",
-        "actors_status": []
-      },
-      "deadlines": [],
-      "summary": "Invoice overdue after reminder.",
-      "artifacts": [],
+    "node_ini": {
+      "id": "node_ini",
       "incoming": [],
       "outgoing": [
-        "edge_05c5a4f5",
-        "edge_301b2c53",
-        "edge_5419e206"
-      ]
-    },
-    "node_56dfd738": {
-      "id": "node_56dfd738",
-      "title": "Second payment reminder sent to debtor",
-      "state": {
-        "phase": "Second payment reminder sent",
-        "legal_issue": "Debtor Andi still has not paid the invoice of 5000 Euro after a second reminder.",
-        "status": "Overdue",
-        "actors_status": [
-          {
-            "actors": {
-              "id": "Andi",
-              "name": "Debtor Andi",
-              "role": "debtor"
-            },
-            "paid": 0,
-            "received": 0
-          }
-        ]
-      },
-      "deadlines": [],
-      "summary": "A second payment reminder was sent to the debtor after the first was ignored.",
-      "artifacts": [],
-      "incoming": [
-        "edge_05c5a4f5"
+        "edge_4db1fd8c",
+        "edge_d648481e",
+        "edge_36ab5f34"
       ],
-      "outgoing": []
-    },
-    "node_3c709d43": {
-      "id": "node_3c709d43",
-      "title": "Complaint for payment filed with the court",
+      "title": "Invoice Overdue",
       "state": {
-        "phase": "Complaint filed",
-        "legal_issue": "Complaint filed for non-payment of 5000 Euro invoice by debtor Andi.",
-        "status": "In litigation",
+        "start_time": "2026-01-05T14:30:00Z",
+        "end_time": "2026-07-05T14:30:00Z",
+        "legal_issue": "Paymen overdue",
+        "description": "Debtor Andi has not paid the invoice of 5000 Euro after a reminder was sent.",
+        "final_state": false,
         "actors_status": [
           {
-            "actors": {
-              "id": "Andi",
-              "name": "Debtor Andi",
-              "role": "debtor"
+            "actor": {
+              "id": "actor_5c4e3121",
+              "name": "Timmy",
+              "role": "plaintiff"
             },
             "paid": 0,
             "received": 0
           },
           {
-            "actors": {
-              "id": "Creditor",
-              "name": "Creditor",
-              "role": "plaintiff"
-            },
-            "paid": 200,
-            "received": 0
-          }
-        ]
-      },
-      "deadlines": [],
-      "summary": "The creditor has decided to initiate legal action by filing a complaint for payment.",
-      "artifacts": [],
-      "incoming": [
-        "edge_301b2c53"
-      ],
-      "outgoing": []
-    },
-    "node_858e8abc": {
-      "id": "node_858e8abc",
-      "title": "Debtor makes a partial payment",
-      "state": {
-        "phase": "Partial payment received",
-        "legal_issue": "Debtor Andi made a partial payment towards the overdue invoice of 5000 Euro.",
-        "status": "Partial payment received",
-        "actors_status": [
-          {
-            "actors": {
-              "id": "Andi",
-              "name": "Debtor Andi",
+            "actor": {
+              "id": "actor_69ea1602",
+              "name": "Andi",
               "role": "debtor"
             },
-            "paid": 1500,
+            "paid": 0,
             "received": 0
-          },
+          }
+        ],
+        "legal_references": [],
+        "artifacts": [],
+        "deadlines": []
+      },
+      "summary": "Invoice overdue after reminder."
+    },
+    "node_33d290c0": {
+      "id": "node_33d290c0",
+      "incoming": [
+        "edge_4db1fd8c"
+      ],
+      "outgoing": [],
+      "title": "Payment Demand Letter Sent to Debtor",
+      "state": {
+        "start_time": "2026-07-06T14:30:00Z",
+        "end_time": "2026-08-06T14:30:00Z",
+        "legal_issue": "Payment demand issued and awaiting debtor response",
+        "description": "Plaintiff Timmy has sent a formal payment demand letter to debtor Andi for the overdue invoice of 5000 Euro and awaits payment or response within the legal timeframe.",
+        "final_state": false,
+        "actors_status": [
           {
-            "actors": {
-              "id": "Creditor",
-              "name": "Creditor",
+            "actor": {
+              "id": "actor_5c4e3121",
+              "name": "Timmy",
               "role": "plaintiff"
             },
             "paid": 0,
-            "received": 1500
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "actor_69ea1602",
+              "name": "Andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "Civil Code - Payment Demands for Overdue Invoices",
+            "summary": "Plaintiff can send a formal payment demand to debtor after invoice due date has expired."
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "artifact_payment_demand_0001",
+            "type": "document",
+            "content": "Formal payment demand letter sent to debtor Andi requesting payment of the overdue invoice of 5000 Euro.",
+            "created_by": "actor_5c4e3121",
+            "timestamp": "2026-07-05T15:00:00Z"
+          }
+        ],
+        "deadlines": [
+          {
+            "type": "response_deadline",
+            "references": {
+              "type": "law",
+              "reference": "Civil Code - Payment Demand Response Period",
+              "summary": "Debtor has 30 days to respond to formal payment demand after receipt."
+            },
+            "summary": "Debtor must pay or respond to payment demand within 30 days.",
+            "due_date": "2026-08-05T14:30:00Z"
           }
         ]
       },
-      "deadlines": [],
-      "summary": "Debtor Andi has made a partial payment, reducing the outstanding invoice amount.",
-      "artifacts": [],
+      "summary": "Plaintiff Timmy has issued a formal payment demand to debtor Andi and is awaiting payment or response within 30 days."
+    },
+    "node_5ee7d770": {
+      "id": "node_5ee7d770",
       "incoming": [
-        "edge_5419e206"
+        "edge_d648481e"
       ],
-      "outgoing": []
+      "outgoing": [],
+      "title": "Complaint Filed for Unpaid Invoice",
+      "state": {
+        "start_time": "2026-07-06T14:30:00Z",
+        "end_time": "2026-10-06T14:30:00Z",
+        "legal_issue": "Complaint filed due to unpaid invoice and debtor non-response",
+        "description": "Plaintiff Timmy files a formal complaint against debtor Andi with the court after failed payment demands.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "actor_5c4e3121",
+              "name": "Timmy",
+              "role": "plaintiff"
+            },
+            "paid": 300,
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "actor_69ea1602",
+              "name": "Andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+            "summary": "Debtor is in default if payment is not made after reminder."
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 253 ZPO - Klageerhebung",
+            "summary": "Plaintiff may file a complaint in court if payment is overdue and reminder ineffective."
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "artifact_complaint_001",
+            "type": "document",
+            "content": "Formal complaint filed by Timmy against Andi for unpaid invoice of 5000 Euro.",
+            "created_by": "actor_5c4e3121",
+            "timestamp": "2026-07-05T15:00:00Z"
+          }
+        ],
+        "deadlines": [
+          {
+            "type": "response_deadline",
+            "references": {
+              "type": "law",
+              "reference": "\u00a7 331 ZPO - Frist f\u00fcr die Klage",
+              "summary": "The court may set deadlines for responses to the complaint."
+            },
+            "summary": "Deadline for debtor Andi to respond to the complaint.",
+            "due_date": "2026-08-06T14:30:00Z"
+          }
+        ]
+      },
+      "summary": "Plaintiff Timmy files a formal complaint against debtor Andi at the court seeking payment of the overdue invoice after previous payment demands failed."
+    },
+    "node_619293eb": {
+      "id": "node_619293eb",
+      "incoming": [
+        "edge_36ab5f34"
+      ],
+      "outgoing": [],
+      "title": "Settlement Offer Made",
+      "state": {
+        "start_time": "2026-07-15T14:31:00Z",
+        "end_time": "2026-08-15T14:31:00Z",
+        "legal_issue": "Settlement offer for overdue payment submitted",
+        "description": "Plaintiff Timmy has made an offer to debtor Andi to settle the invoice debt partially or fully through negotiation.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "actor_5c4e3121",
+              "name": "Timmy",
+              "role": "plaintiff"
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "actor_69ea1602",
+              "name": "Andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "Principle of contractual freedom and amicable settlement",
+            "summary": "Parties may negotiate and settle outstanding payment disputes amicably before court proceedings."
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "artifact_settlement_offer_001",
+            "type": "document",
+            "content": "Settlement offer letter proposing partial payment of 3000 Euro to settle the debt of 5000 Euro.",
+            "created_by": "actor_5c4e3121",
+            "timestamp": "2026-07-05T14:31:00Z"
+          }
+        ],
+        "deadlines": [
+          {
+            "type": "response_deadline",
+            "references": {
+              "type": "policy",
+              "reference": "Customary 30-day response period for settlement offer",
+              "summary": "The debtor has a customary 30-day period to respond to a settlement offer before further legal action."
+            },
+            "summary": "Debtor Andi has 30 days to respond to the settlement offer.",
+            "due_date": "2026-08-15T14:31:00Z"
+          }
+        ]
+      },
+      "summary": "Plaintiff Timmy offers debtor Andi a settlement to resolve the overdue invoice debt amicably, allowing Andi 30 days to respond."
     }
   },
   "edges": {
-    "edge_05c5a4f5": {
-      "id": "edge_05c5a4f5",
-      "source_id": "node_37aab7d5",
-      "target_id": "node_56dfd738",
-      "action_type": "send_second_payment_reminder",
-      "actor_id": null,
-      "artifacts": [],
-      "probability": 0.6,
+    "edge_4db1fd8c": {
+      "id": "edge_4db1fd8c",
+      "source_id": "node_ini",
+      "target_id": "node_33d290c0",
+      "start_time": "2026-07-05T14:30:00Z",
+      "end_time": "2026-07-06T14:30:00Z",
+      "action_type": "send_payment_demand_letter",
+      "actor_id": "actor_5c4e3121",
+      "artifacts": [
+        {
+          "id": "artifact_payment_demand_0001",
+          "type": "document",
+          "content": "Formal payment demand letter sent to debtor Andi requesting payment of the overdue invoice of 5000 Euro.",
+          "created_by": "actor_5c4e3121",
+          "timestamp": "2026-07-05T15:00:00Z"
+        }
+      ],
+      "probability": 0.8,
       "conditions": [
-        "No payment received after first reminder",
-        "Invoice amount due is 5000 Euro"
-      ]
+        "Invoice is unpaid",
+        "Reminder has been sent and payment deadline passed"
+      ],
+      "legal_references": [
+        {
+          "type": "law",
+          "reference": "Civil Code - Payment Demands for Overdue Invoices",
+          "summary": "Plaintiff can send a formal payment demand to debtor after invoice due date has expired."
+        }
+      ],
+      "lawyer_involved": false
     },
-    "edge_301b2c53": {
-      "id": "edge_301b2c53",
-      "source_id": "node_37aab7d5",
-      "target_id": "node_3c709d43",
-      "action_type": "file_complaint_for_payment",
-      "actor_id": null,
-      "artifacts": [],
-      "probability": 0.3,
+    "edge_d648481e": {
+      "id": "edge_d648481e",
+      "source_id": "node_ini",
+      "target_id": "node_5ee7d770",
+      "start_time": "2026-07-05T14:30:00Z",
+      "end_time": "2026-07-06T14:30:00Z",
+      "action_type": "file_complaint",
+      "actor_id": "actor_5c4e3121",
+      "artifacts": [
+        {
+          "id": "artifact_complaint_001",
+          "type": "document",
+          "content": "Formal complaint filed by Timmy against Andi for unpaid invoice of 5000 Euro.",
+          "created_by": "actor_5c4e3121",
+          "timestamp": "2026-07-05T15:00:00Z"
+        }
+      ],
+      "probability": 0.04,
       "conditions": [
-        "Payment overdue despite reminder",
-        "Invoice amount is 5000 Euro"
-      ]
+        "Previous payment demand letters and phone calls have failed",
+        "Debtor did not pay the invoice or respond sufficiently"
+      ],
+      "legal_references": [
+        {
+          "type": "law",
+          "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+          "summary": "Debtor is in default if payment is not made after reminder."
+        },
+        {
+          "type": "law",
+          "reference": "\u00a7 253 ZPO - Klageerhebung",
+          "summary": "Plaintiff may file a complaint in court if payment is overdue and reminder ineffective."
+        }
+      ],
+      "lawyer_involved": true
     },
-    "edge_5419e206": {
-      "id": "edge_5419e206",
-      "source_id": "node_37aab7d5",
-      "target_id": "node_858e8abc",
-      "action_type": "debtor_makes_partial_payment",
-      "actor_id": "Andi",
-      "artifacts": [],
-      "probability": 0.1,
+    "edge_36ab5f34": {
+      "id": "edge_36ab5f34",
+      "source_id": "node_ini",
+      "target_id": "node_619293eb",
+      "start_time": "2026-07-05T14:31:00Z",
+      "end_time": "2026-07-15T14:31:00Z",
+      "action_type": "offer_settlement_negotiation",
+      "actor_id": "actor_5c4e3121",
+      "artifacts": [
+        {
+          "id": "artifact_settlement_offer_001",
+          "type": "document",
+          "content": "Settlement offer letter proposing partial payment of 3000 Euro to settle the debt of 5000 Euro.",
+          "created_by": "actor_5c4e3121",
+          "timestamp": "2026-07-05T14:31:00Z"
+        }
+      ],
+      "probability": 0.14,
       "conditions": [
-        "Debtor willing to pay partially",
-        "Invoice amount overdue"
-      ]
+        "Invoice payment is overdue",
+        "Plaintiff prefers amicable dispute resolution",
+        "No legal complaint filed yet"
+      ],
+      "legal_references": [
+        {
+          "type": "law",
+          "reference": "Principle of contractual freedom and amicable settlement",
+          "summary": "Parties may negotiate and settle outstanding payment disputes amicably before court proceedings."
+        }
+      ],
+      "lawyer_involved": false
     }
   },
   "actors": {
-    "actor_77a5b4ea": {
-      "id": "actor_77a5b4ea",
+    "actor_5c4e3121": {
+      "id": "actor_5c4e3121",
       "name": "Timmy",
       "role": "plaintiff"
     },
-    "actor_b727a1c3": {
-      "id": "actor_b727a1c3",
+    "actor_69ea1602": {
+      "id": "actor_69ea1602",
       "name": "Andi",
       "role": "debtor"
     }
