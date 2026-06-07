@@ -58,7 +58,6 @@ export default function NodeDetailsPanel({
                 }}
               >
                 <strong>{ref.reference}</strong>
-                <p>{ref.summary}</p>
               </div>
             ))
           )}
