@@ -40,3 +40,55 @@
 .reference-summary {
   margin-top: 6px;
 }
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  color: #777;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+
+  transition: all 0.15s ease;
+}
+
+.modal-close-button:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #000;
+}
+
+.modal-close-button:active {
+  transform: scale(0.95);
+}}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+}
+
+.reference-modal {
+  position: relative; /* 🔥 IMPORTANT FIX */
+  width: 500px;
+  background: white;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}

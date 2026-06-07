@@ -21,7 +21,9 @@ export default function NodeDetailsPanel({
       <div className="panel-header">
         <h2>{node.title}</h2>
 
-        <button onClick={onClose}>✕</button>
+        <button className="close-button" onClick={onClose}>
+          ✕
+        </button>
       </div>
 
       <div className="panel-content">

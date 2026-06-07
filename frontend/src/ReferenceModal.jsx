@@ -23,7 +23,9 @@ export default function ReferenceModal({
         <div className="modal-header">
           <h2>Legal References</h2>
 
-          <button onClick={onClose}>✕</button>
+          <button className="modal-close-button" onClick={onClose}>
+              ✕
+            </button>
         </div>
 
         <div className="modal-content">
