@@ -14,6 +14,7 @@ import CustomNode from "./CustomNode";
 import CustomEdge from "./CustomEdge";
 import Sidebar from "./Sidebar";
 import ContextMenuRightClick from "./ContextMenuRightClick";
+import NodeDetailsPanel from "./NodeDetailsPanel";
 import TopBar from "./TopBar";
 import { layoutGraph } from "./layout";
 
@@ -35,6 +36,7 @@ function App() {
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
 
   const [contextMenuRightClick, setContextMenuRightClick] = useState(null);
+  const [detailsNode, setDetailsNode] = useState(null);
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingNodeId, setProcessingNodeId] = useState(null);
@@ -188,13 +190,15 @@ function App() {
                     setContextMenuRightClick(null);
                   }}
               onNodeClick={async (e, node) => {
-                  setSelectedNodeId(node.id);
-
                   try {
                     const data = await fetchNode(node.id);
+
+                    setSelectedNodeId(node.id);
                     setSelectedNodeData(data);
+
+                    setDetailsNode(data);
                   } catch (err) {
-                    console.error("Failed to load node:", err);
+                    console.error(err);
                   }
                 }}
               proOptions={{ hideAttribution: true }}
@@ -203,6 +207,11 @@ function App() {
               <Controls />
               <Background color="#e7d6da" gap={24} />
             </ReactFlow>
+
+            <NodeDetailsPanel
+              node={detailsNode}
+              onClose={() => setDetailsNode(null)}
+            />
 
           {contextMenuRightClick &&
             createPortal(
