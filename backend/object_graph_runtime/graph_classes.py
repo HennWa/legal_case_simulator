@@ -163,6 +163,15 @@ class CaseGraph:
     # -------------------------
     # Edge
     # -------------------------
+    def get_outgoing_edges(self, node_id: str) -> list[LegalEdge]:
+        node = self.get_node(node_id)
+
+        return [
+            self.edges[edge_id]
+            for edge_id in node.outgoing
+        ]
+
+
     def add_edge(
         self,
         source_id: str,
@@ -295,6 +304,33 @@ class CaseGraph:
 
         dfs(node_id)
         return result
+
+    def get_neighbour_nodes(self, node_id: str) -> list[LegalNode]:
+
+        try:
+            node = self.get_node(node_id)
+        except:
+            return []
+
+        # Root node has no parent
+        if not node.incoming:
+            return []
+
+        # Get parent via first incoming edge
+        parent_edge = self.edges[node.incoming[0]]
+        parent_id = parent_edge.source_id
+
+        parent_node = self.nodes[parent_id]
+
+        neighbours = []
+
+        for edge_id in parent_node.outgoing:
+            edge = self.edges[edge_id]
+
+            if edge.target_id != node_id:
+                neighbours.append(self.nodes[edge.target_id])
+
+        return neighbours
 
     # -------------------------
     # Serialization (Pydantic-native)

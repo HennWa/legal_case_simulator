@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from openai import OpenAI
-from object_graph_runtime.graph_classes import LegalBranches
+from object_graph_runtime.graph_classes import LegalBranchNode
 
 
 class BaseLLMProvider(ABC):
 
     @abstractmethod
-    def generate(self, prompt: dict[str, str]) -> LegalBranches:
+    def generate(self, prompt: dict[str, str]) -> LegalBranchNode:
         pass
 
 class MockLLMProvider(BaseLLMProvider):
@@ -16,7 +16,7 @@ class MockLLMProvider(BaseLLMProvider):
         self.model = model
 
 
-    def generate(self, prompt_messages: dict[str, str]) -> LegalBranches:
+    def generate(self, prompt_messages: dict[str, str]) -> LegalBranchNode:
 
         response = self.openai.responses.parse(
             model=self.model,
@@ -24,10 +24,10 @@ class MockLLMProvider(BaseLLMProvider):
                 {"role": "system", "content": prompt_messages['system_prompt']},
                 {"role": "user", "content": prompt_messages['user_prompt']}
             ],
-            text_format=LegalBranches
+            text_format=LegalBranchNode
         )
 
-        result: LegalBranches = response.output_parsed
+        result: LegalBranchNode = response.output_parsed
 
 
         response2 ="""
