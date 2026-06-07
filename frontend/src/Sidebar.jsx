@@ -14,10 +14,10 @@ export default function Sidebar({ selectedNode }) {
   // --------------------------------------------------
     const actorData =
       selectedNode?.state?.actors_status?.map((actorStatus) => ({
-        name: actorStatus.actors.name,
+        name: actorStatus.actor.name,
         paid: actorStatus.paid,
         received: actorStatus.received,
-        role: actorStatus.actors.role,
+        role: actorStatus.actor.role,
       })) || [];
 
   // --------------------------------------------------
