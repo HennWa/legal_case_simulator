@@ -1,0 +1,94 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.artifact-modal {
+  background: white;
+  color: black;
+  width: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.artifact-detail-card {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.artifact-title {
+  font-weight: bold;
+}
+
+.artifact-type {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.artifact-content {
+  margin-top: 6px;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  color: #777;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+
+  transition: all 0.15s ease;
+}
+
+.modal-close-button:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #000;
+}
+
+.modal-close-button:active {
+  transform: scale(0.95);
+}}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+}
+
+.reference-modal {
+  position: relative; /* 🔥 IMPORTANT FIX */
+  width: 500px;
+  background: white;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}

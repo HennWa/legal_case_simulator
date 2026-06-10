@@ -5,10 +5,6 @@ export default function ReferenceModal({
   onClose,
 }) {
 
-  console.log('------------')
-  console.log(references)
-  console.log(references.length === 0 )
-
   if (!Array.isArray(references)) return null;
 
   return (

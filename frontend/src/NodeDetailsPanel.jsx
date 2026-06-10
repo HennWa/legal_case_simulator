@@ -1,12 +1,14 @@
 import "./NodeDetailsPanel.css";
 import { useState } from "react";
 import ReferenceModal from "./ReferenceModal";
+import ArtifactModal from "./ArtifactModal";
 
 export default function NodeDetailsPanel({
   node,
   onClose,
 }) {
   const [selectedReferences, setSelectedReferences] = useState(null);
+  const [selectedArtifacts, setSelectedArtifacts] = useState(null);
 
   if (!node) return null;
 
@@ -65,19 +67,24 @@ export default function NodeDetailsPanel({
 
         {/* ARTIFACTS */}
         <section>
-          <h3>Artifacts</h3>
+          <h3>Documents</h3>
 
           {artifacts.length === 0 ? (
             <p>No artifacts</p>
           ) : (
-            artifacts.map((artifact) => (
+            artifacts.map((art, i) => (
               <div
-                key={artifact.id}
+                key={i}
                 className="artifact-card"
+                onClick={() => setSelectedArtifacts([art])}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setSelectedArtifacts(artifacts);
+                }}
               >
-                <strong>{artifact.type}</strong>
-                <p>{artifact.content}</p>
-                <small>{artifact.timestamp}</small>
+                <strong>{art.type}</strong>
+                <p>{art.content}</p>
+                <small>{art.timestamp}</small>
               </div>
             ))
           )}
@@ -110,6 +117,14 @@ export default function NodeDetailsPanel({
         <ReferenceModal
           references={selectedReferences}
           onClose={() => setSelectedReferences(null)}
+        />
+      )}
+
+      {/* MODAL */}
+      {selectedArtifacts && (
+        <ArtifactModal
+          artifacts={selectedArtifacts}
+          onClose={() => setSelectedArtifacts(null)}
         />
       )}
     </div>
