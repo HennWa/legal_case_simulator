@@ -51,6 +51,7 @@ class LegalReference(BaseModel):
 
     type: str = Field(description='Type of reference, e.g. law, policy etc.')
     reference: str = Field(description='Legal reference e.g.: § 433 BGB – Vertragstypische Pflichten beim Kaufvertrag')
+    extract: str = Field(description='Extract of the reference from the source')
     summary: str = Field(description='Summary of the reference')
 
 

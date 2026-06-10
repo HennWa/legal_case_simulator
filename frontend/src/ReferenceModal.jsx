@@ -45,9 +45,16 @@ export default function ReferenceModal({
                   {ref.type ?? "unknown"}
                 </div>
 
+                <div className="reference-extract">
+                  <p>Extract</p>
+                  {ref.extract ? `"${ref.extract}"` : ""}
+                </div>
+
                 <div className="reference-summary">
+                    <p>Summary</p>
                   {ref.summary ?? ""}
                 </div>
+
               </div>
             ))
           )}
