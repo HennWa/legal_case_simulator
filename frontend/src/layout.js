@@ -14,7 +14,7 @@ export function layoutGraph(nodes, edges) {
 
     // 📏 spacing improvements (this is what you were missing)
     ranksep: 220,
-    nodesep: 80,
+    nodesep: 120,
     marginx: 40,
     marginy: 40,
   });
