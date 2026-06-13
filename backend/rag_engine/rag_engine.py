@@ -43,7 +43,7 @@ if __name__ == "__main__":
     rag_engine = RAGEngine(db_dir)
 
     #topic = 'Haftung des Vereins für Organe'
-    topic = 'Autodiebstahl'
+    topic = 'Willenserklärung'
 
     doc_content = rag_engine.get_docs(topic)
 
