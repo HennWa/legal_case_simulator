@@ -21,7 +21,7 @@ class RAGEngine:
         print(f'Connecting to {db}')
         vectorstore = Chroma(persist_directory=db,
                              embedding_function=embeddings,
-                             collection_name="bgb")
+                             collection_name="laws")
         retriever = vectorstore.as_retriever(search_kwargs={"k": self.k_docs})
         return retriever
 
@@ -37,7 +37,7 @@ class RAGEngine:
 if __name__ == "__main__":
 
     path_db = os.path.join(Path(__file__).resolve().parent.parent, 'local_db/law_vectorstore')
-    db_name = "chroma_bgb"
+    db_name = "chroma_laws"
     db_dir = os.path.join(path_db, db_name)
 
     rag_engine = RAGEngine(db_dir)
