@@ -81,10 +81,9 @@ def get_text(element):
     )
 
 
-def parse_xml(xml_file: str):
+def parse_xml(xml_file: str, law_name: str = "BGB"):
 
     tree = etree.parse(xml_file)
-
     root = tree.getroot()
 
     documents = []
@@ -93,10 +92,6 @@ def parse_xml(xml_file: str):
     current_section = ""
     current_title = ""
     current_subtitle = ""
-
-    #
-    # Die Tags müssen evtl. an dein XML angepasst werden.
-    #
 
     for elem in root.iter():
 
@@ -123,7 +118,6 @@ def parse_xml(xml_file: str):
             )
 
             heading = ""
-
             heading_elem = elem.find(".//enbez")
             if heading_elem is not None:
                 heading = get_text(heading_elem)
@@ -133,26 +127,17 @@ def parse_xml(xml_file: str):
 
             absaetze = []
 
-            #
-            # Oft heißt der Absatztext:
-            # textdaten / text / absatz
-            #
-
             for absatz in elem.findall(".//absatz"):
                 text = get_text(absatz)
-
                 if text:
                     absaetze.append(text)
 
             if not absaetze:
-
-                complete_text = get_text(elem)
-
-                absaetze = [complete_text]
+                absaetze = [get_text(elem)]
 
             hierarchy = "\n".join(
                 x for x in [
-                    "BGB",
+                    law_name,
                     current_book,
                     current_section,
                     current_title,
@@ -177,17 +162,19 @@ def parse_xml(xml_file: str):
                         Document(
                             page_content=content,
                             metadata={
-                                "law": "BGB",
-                                "paragraph": paragraph_number,
-                                "heading": heading,
-                                "title": paragraph_title,
+                                "law": law_name,
                                 "book": current_book,
                                 "section": current_section,
-                                "legal_title": current_title,
+                                "title": current_title,
                                 "subtitle": current_subtitle,
+                                "paragraph": paragraph_number,
+                                "heading": heading,
+                                "paragraph_title": paragraph_title,
                                 "absatz": idx,
                                 "chunk": chunk_idx,
-                                "source": "bgb",
+                                "source_file": xml_file,
+                                "source_type": "law",
+                                "doc_key": f"{law_name}_{paragraph_number}_{idx}_{chunk_idx}",
                             },
                             id=str(uuid4()),
                         )
@@ -195,53 +182,71 @@ def parse_xml(xml_file: str):
 
     return documents
 
-
 # --------------------------------------------------
 # BUILD VECTORSTORE
 # --------------------------------------------------
 
-def build_vectorstore(xml_file, persist_directory):
+def build_vectorstore(law_files, persist_directory):
 
-    docs = parse_xml(xml_file)
-
-    print(f"Created {len(docs)} chunks")
-
-    embeddings = OpenAIEmbeddings(
-        model=EMBEDDING_MODEL
-    )
+    embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
 
     vectorstore = Chroma(
-        collection_name="bgb",
+        collection_name="laws",
         embedding_function=embeddings,
         persist_directory=persist_directory,
     )
 
+    all_docs = []
+
+    for law_name, file_path in law_files:
+
+        print(f"Parsing {law_name} from {file_path}")
+
+        docs = parse_xml(file_path, law_name=law_name)
+        all_docs.extend(docs)
+
+        print(f"{law_name}: {len(docs)} docs")
+
+    print(f"Total documents: {len(all_docs)}")
+
     batch_size = 200
 
-    for i in range(0, len(docs), batch_size):
+    for i in range(0, len(all_docs), batch_size):
 
-        batch = docs[i:i + batch_size]
-
+        batch = all_docs[i:i + batch_size]
         vectorstore.add_documents(batch)
 
-        print(
-            f"Inserted "
-            f"{min(i + batch_size, len(docs))}"
-            f"/{len(docs)}"
-        )
+        print(f"Inserted {min(i + batch_size, len(all_docs))}/{len(all_docs)}")
 
     print("Finished")
 
 
+
 if __name__ == "__main__":
 
-    resources_path = os.path.join(Path(__file__).resolve().parent.parent.parent, 'resources')
-    bgb_path =  os.path.join(resources_path, 'literature', 'bgb')
-    xml_file = "BJNR001950896.xml"
-    full_path_bgb = os.path.join(bgb_path, xml_file)
+    print('starting ingestion')
 
-    path_db = os.path.join(Path(__file__).resolve().parent.parent.parent, 'local_db/law_vectorstore')
-    db_name = "chroma_bgb"
-    persist_directory = os.path.join(path_db, db_name)
+    resources_path = os.path.join(
+        Path(__file__).resolve().parent.parent.parent,
+        "resources",
+        "literature"
+    )
 
-    build_vectorstore(full_path_bgb, persist_directory)
+    law_files = [
+        ("BGB", os.path.join(resources_path, "bgb", "BJNR001950896.xml")),
+        ("StGB", os.path.join(resources_path, "stgb", "BJNR001270871.xml")),
+        ("AO", os.path.join(resources_path, "ao", "BJNR006130976.xml")),
+        ("ErbStG", os.path.join(resources_path, "erbstg", "BJNR109330974.xml")),
+        ("GewStG", os.path.join(resources_path, "gewstg", "BJNR009790936.xml")),
+        ("EStG", os.path.join(resources_path, "estg", "BJNR010050934.xml")),
+        ("KStG", os.path.join(resources_path, "kstg", "BJNR009790936.xml")),
+        ("UStG", os.path.join(resources_path, "ustg", "BJNR119530979.xml")),
+    ]
+
+    db_path = os.path.join(
+        Path(__file__).resolve().parent.parent.parent,
+        "local_db/law_vectorstore",
+        "chroma_laws"
+    )
+
+    build_vectorstore(law_files, db_path)
