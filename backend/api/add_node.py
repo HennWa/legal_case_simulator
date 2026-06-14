@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pathlib import Path
 from object_graph_runtime.graph_classes import CaseGraph
 from expansion_engine.exapnsion_engine import ExpansionEngine
 from llm_interface.llm_interface import MockLLMProvider
@@ -13,7 +14,7 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 @router.post("/add_node/{node_id}")
 def add_node(node_id: str):
 
-    path_graph = r'C:\Users\henni\Desktop\Arbeit-Studium\my_agents\repos\legal_case_simulator\frontend\src\data\graph.json'
+    path_graph = os.path.join(Path(__file__).resolve().parent.parent.parent, 'frontend/src/data/graph.json')
 
     llm = MockLLMProvider(key=openai_api_key)
     graph = CaseGraph.from_json(path_graph)
