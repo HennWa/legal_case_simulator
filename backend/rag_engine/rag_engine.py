@@ -25,7 +25,7 @@ class RAGEngine:
         retriever = vectorstore.as_retriever(search_kwargs={"k": self.k_docs})
         return retriever
 
-    def get_docs(self, question: str):
+    def get_docs(self, question: str) -> str:
         docs = self.retriever.invoke(question)
 
         content = "\n\n" + ("\n" + "=" * 80 + "\n\n").join(
