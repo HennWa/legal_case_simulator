@@ -212,6 +212,14 @@ class CaseGraph:
             for edge_id in node.outgoing
         ]
 
+    def get_incoming_edges(self, node_id: str) -> list[LegalEdge]:
+        node = self.get_node(node_id)
+
+        return [
+            self.edges[edge_id]
+            for edge_id in node.incoming
+        ]
+
 
     def add_edge(
         self,
@@ -251,6 +259,18 @@ class CaseGraph:
 
         return edge
 
+    # -------------------------
+    # Branch
+    # -------------------------
+    def get_branch_of_node(self, node_id) -> LegalBranchNode:
+
+        node = self.get_node(node_id)
+        if len(node.incoming) != 1:
+            raise Exception('Branch for multiple predecessors not defined')
+        edge = self.get_incoming_edges(node_id)[0]
+
+        return LegalBranchNode(node=node, edge=edge)
+
     def add_branch_obj(self, source_id: str, branch_node: LegalBranchNode) -> LegalEdge:
 
         # Add the node with unique id
@@ -267,6 +287,43 @@ class CaseGraph:
         self.nodes[branch_node.node.id].incoming = [branch_node.edge.id]
 
         return branch_node.edge
+
+    def update_branch_obj(self, branch_node: LegalBranchNode) -> None:
+        """
+        Update an existing branch (edge + node) using the IDs contained
+        in branch_node.edge.id and branch_node.node.id.
+
+        Raises:
+            KeyError: if the node or edge does not exist.
+        """
+
+        node_id = branch_node.node.id
+        edge_id = branch_node.edge.id
+
+        if node_id not in self.nodes:
+            raise KeyError(f"Node '{node_id}' does not exist")
+
+        if edge_id not in self.edges:
+            raise KeyError(f"Edge '{edge_id}' does not exist")
+
+        # Preserve graph linkage information
+        incoming = self.nodes[node_id].incoming
+        outgoing = self.nodes[node_id].outgoing
+
+        source_id = self.edges[edge_id].source_id
+        target_id = self.edges[edge_id].target_id
+
+        # Replace node contents
+        updated_node = branch_node.node.model_copy(deep=True)
+        updated_node.incoming = incoming
+        updated_node.outgoing = outgoing
+        self.nodes[node_id] = updated_node
+
+        # Replace edge contents
+        updated_edge = branch_node.edge.model_copy(deep=True)
+        updated_edge.source_id = source_id
+        updated_edge.target_id = target_id
+        self.edges[edge_id] = updated_edge
 
     # -------------------------
     # Delete
