@@ -4,13 +4,12 @@ import os
 from pathlib import Path
 
 from networkx.classes import neighbors
-from object_graph_runtime.graph_classes import CaseGraph, LegalNode
+from object_graph_runtime.graph_classes import CaseGraph, LegalNode, LegalBranchNode
 from prompt_builder.prompt_builder import PromptBuilder
 from llm_interface.llm_interface import BaseLLMProvider
 from rag_engine.rag_engine import RAGEngine
 from utils.utils import get_frontend_dir
 
-from backend.object_graph_runtime.graph_classes import LegalBranchNode
 
 path_db = os.path.join(Path(__file__).resolve().parent.parent, 'local_db/law_vectorstore')
 db_name = "chroma_bgb"
