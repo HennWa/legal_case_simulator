@@ -22,6 +22,7 @@ import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
 import { addNode } from "./api/add_node";
 import { deleteNode } from "./api/delete_node";
+import { legalCheck } from "./api/legal_check";
 
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
   const [detailsNode, setDetailsNode] = useState(null);
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLegalCheck, setIsLegalCheck] = useState(false);
   const [processingNodeId, setProcessingNodeId] = useState(null);
 
 
@@ -58,14 +60,23 @@ function App() {
         setContextMenuRightClick(null);
 
         console.log('Adding node', nodeId);
-        await addNode(nodeId);
-        console.log('Node added', nodeId);
+        let new_branch = await addNode(nodeId);
+        setIsProcessing(false);
+        console.log('Node added', new_branch.node.id);
+
+        console.log('Legal check node', new_branch.node.id);
+        setIsLegalCheck(true);
+        await legalCheck(new_branch.node.id);
+        setIsLegalCheck(false);
+        console.log('Node legally checked', new_branch.node.id);
+
         console.log('Updating Graph');
         await loadGraph();
       } catch (err) {
         console.error(err);
       } finally {
         setIsProcessing(false);
+        setIsLegalCheck(false);
       }
     };
 
@@ -229,7 +240,14 @@ function App() {
           {isProcessing && (
               <div className="loading-indicator">
                 <div className="spinner" />
-                <span>Updating Steps...</span>
+                <span>creating next step...</span>
+              </div>
+            )}
+
+           {isLegalCheck && (
+              <div className="loading-indicator">
+                <div className="spinner" />
+                <span>legal check...</span>
               </div>
             )}
 

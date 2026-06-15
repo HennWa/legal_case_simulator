@@ -22,6 +22,6 @@ def add_node(node_id: str):
 
     print(f'Expanding node with id: {node_id}')
 
-    engine.expand_node(node_id)
+    branch_node = engine.expand_node(node_id)
 
-    return {"success": True}
+    return branch_node.model_dump()

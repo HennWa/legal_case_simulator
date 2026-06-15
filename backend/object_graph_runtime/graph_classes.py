@@ -271,7 +271,7 @@ class CaseGraph:
 
         return LegalBranchNode(node=node, edge=edge)
 
-    def add_branch_obj(self, source_id: str, branch_node: LegalBranchNode) -> LegalEdge:
+    def add_branch_obj(self, source_id: str, branch_node: LegalBranchNode) -> LegalBranchNode:
 
         # Add the node with unique id
         branch_node.node.id = generate_id("node")
@@ -286,7 +286,7 @@ class CaseGraph:
         self.nodes[source_id].outgoing.append(branch_node.edge.id)
         self.nodes[branch_node.node.id].incoming = [branch_node.edge.id]
 
-        return branch_node.edge
+        return branch_node
 
     def update_branch_obj(self, branch_node: LegalBranchNode) -> None:
         """
