@@ -33,12 +33,10 @@ if __name__ == "__main__":
     engine = ExpansionEngine(graph, llm)
 
     # Expand node
-    new_nodes = engine.expand_node(start.id)
+    brach_node = engine.expand_node(start.id)
 
-    print("Created nodes:")
+    print("Created node")
 
-    for n in new_nodes:
-        print("-", n.title)
 
     print("\nSerialized graph:\n")
     print(json.dumps(graph.to_dict(), indent=2))
