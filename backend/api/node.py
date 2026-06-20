@@ -1,11 +1,14 @@
 from fastapi import APIRouter
+import os
 from object_graph_runtime.graph_classes import CaseGraph
+from utils.utils import get_frontend_dir
 
 router = APIRouter()
 
 @router.get("/node/{node_id}")
 def get_node(node_id: str):
-    path_graph = r'C:\Users\henni\Desktop\Arbeit-Studium\my_agents\repos\legal_case_simulator\frontend\src\data\graph.json'
+
+    path_graph = os.path.join(get_frontend_dir(), 'src/data/graph.json')
 
     loaded_graph = CaseGraph.from_json(path_graph)
 

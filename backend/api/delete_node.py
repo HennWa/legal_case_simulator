@@ -4,6 +4,7 @@ from utils.utils import get_frontend_dir
 import os
 from dotenv import load_dotenv
 
+
 router = APIRouter()
 
 load_dotenv(override=True)
@@ -12,7 +13,7 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 @router.post("/delete_node/{node_id}")
 def delete_node(node_id: str):
 
-    path_graph = r'C:\Users\henni\Desktop\Arbeit-Studium\my_agents\repos\legal_case_simulator\frontend\src\data\graph.json'
+    path_graph = os.path.join(get_frontend_dir(), 'src/data/graph.json')
 
     graph = CaseGraph.from_json(path_graph)
 
