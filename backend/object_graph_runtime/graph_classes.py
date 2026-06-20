@@ -17,7 +17,15 @@ def utc_now() -> str:
 
 
 # -------------------------
-# Core Models
+# Case Model
+# -------------------------
+class Case(BaseModel):
+    id: str
+    title: str
+    created_at: str
+
+# -------------------------
+# Graph Components
 # -------------------------
 class Actor(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -68,6 +76,7 @@ class LegalEdge(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(description='Unique identifier for the edge')
+    case_id: str = Field(description='Case ID of the edge')
     source_id: str = Field(description='ID of the source node')
     target_id: str = Field(description='ID of the target node')
 
@@ -99,7 +108,6 @@ class LegalState(BaseModel):
                                                                  'Begins with end of previous action.')
     end_time: str = Field(default_factory=utc_now, description='End time of this state in ISO 8601 format. '
                                                                  'End time is equal to start of following action.')
-    legal_issue: Optional[str] = None
     description: str = Field(description='Detailed description of the state referring to the previous steps and describing '
                                     'the state of all actors.')
     legal_issue: str = Field(description='The legal issue that follows from the state, e.g. payment overdue according to law')
@@ -120,6 +128,7 @@ class LegalNode(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(description='Unique identifier for the node')
+    case_id: str = Field(description='Case ID of the node')
     incoming: List[str] = Field(default_factory=list, description='List of incoming edge IDs that lead to this node')
     outgoing: List[str] = Field(default_factory=list, description='List of outgoing edge IDs that '
                                                                   'lead to successor nodes')
@@ -159,9 +168,13 @@ class PathStep(BaseModel):
 # -------------------------
 class CaseGraph:
     def __init__(self):
+        self.case: Case = Case(id=generate_id("case"), title='my_case', created_at = utc_now())
         self.nodes: dict[str, LegalNode] = {}
         self.edges: dict[str, LegalEdge] = {}
         self.actors: dict[str, Actor] = {}
+
+    def set_case_title(self, title):
+        self.case.title = title
 
     # -------------------------
     # Actor
@@ -185,10 +198,12 @@ class CaseGraph:
             state=state,
             summary=summary,
         )
+        node.case_id = self.case.id
         self.nodes[node.id] = node
         return node
 
     def add_node_obj(self, node: LegalNode) -> LegalNode:
+        node.case_id = self.case.id
         self.nodes[node.id] = node
         return node
 
@@ -238,6 +253,7 @@ class CaseGraph:
 
         edge = LegalEdge(
             id=generate_id("edge"),
+            case_id=self.case.id,
             source_id=source_id,
             target_id=target_id,
             start_time= start_time,
@@ -275,10 +291,12 @@ class CaseGraph:
 
         # Add the node with unique id
         branch_node.node.id = generate_id("node")
+        branch_node.node.case_id = self.case.id
         self.nodes[branch_node.node.id] = branch_node.node
 
         # Add the edge with unique id
         branch_node.edge.id = generate_id("edge")
+        branch_node.edge.case_id = self.case.id
         branch_node.edge.target_id = branch_node.node.id
         self.edges[branch_node.edge.id] = branch_node.edge
 
@@ -437,6 +455,7 @@ class CaseGraph:
     # -------------------------
     def to_dict(self) -> dict:
         return {
+            "case": {self.case.id: self.case.model_dump()},
             "nodes": {nid: node.model_dump() for nid, node in self.nodes.items()},
             "edges": {eid: edge.model_dump() for eid, edge in self.edges.items()},
             "actors": {aid: actor.model_dump() for aid, actor in self.actors.items()},
