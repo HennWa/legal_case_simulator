@@ -21,6 +21,7 @@ def utc_now() -> str:
 # -------------------------
 class Case(BaseModel):
     id: str
+    owner_id: str
     title: str
     created_at: str
 
@@ -169,7 +170,8 @@ class PathStep(BaseModel):
 # -------------------------
 class CaseGraph:
     def __init__(self):
-        self.case: Case = Case(id=generate_id("case"), title='my_case', created_at = utc_now())
+        self.case: Case = Case(id=generate_id("case"), owner_id=generate_id("owner"),
+                               title='my_case', created_at = utc_now())
         self.nodes: dict[str, LegalNode] = {}
         self.edges: dict[str, LegalEdge] = {}
         self.actors: dict[str, Actor] = {}

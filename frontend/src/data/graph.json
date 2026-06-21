@@ -1,8 +1,9 @@
 {
   "case": {
     "id": "7777",
+    "owner_id": "2542365",
     "title": "my_case",
-    "created_at": "2026-06-21T10:58:34.334178+00:00"
+    "created_at": "2026-06-21T11:08:42.371188+00:00"
   },
   "nodes": {
     "12344": {
@@ -10,7 +11,7 @@
       "case_id": "7777",
       "incoming": [],
       "outgoing": [
-        "edge_37b84d64"
+        "edge_2197af2b"
       ],
       "title": "Debtor failed to pay",
       "state": {
@@ -47,19 +48,19 @@
       },
       "summary": "Debtor failed to pay"
     },
-    "node_18fbebc8": {
-      "id": "node_18fbebc8",
+    "node_00b24b3c": {
+      "id": "node_00b24b3c",
       "case_id": "7777",
       "incoming": [
-        "edge_37b84d64"
+        "edge_2197af2b"
       ],
       "outgoing": [],
-      "title": "Claim filed by plaintiff",
+      "title": "Payment reminder issued to debtor",
       "state": {
-        "start_time": "2026-04-27T13:00:01",
-        "end_time": "2026-05-10T13:00:00",
-        "description": "Plaintiff has filed a formal legal claim against debtor for the unpaid invoice after debtor did not pay following reminder.",
-        "legal_issue": "Claim for payment of overdue invoice has been formally initiated.",
+        "start_time": "2026-04-27T13:00:00",
+        "end_time": "2026-05-04T13:00:00",
+        "description": "Plaintiff sent a payment reminder document to the debtor due to non-payment of invoice after initial reminder.",
+        "legal_issue": "Whether debtor will pay following payment reminder or legal action is necessary.",
         "final_state": false,
         "actors_status": [
           {
@@ -86,69 +87,70 @@
         "legal_references": [
           {
             "type": "law",
-            "reference": "\u00a7 286 BGB - Verzug des Schuldners",
-            "extract": "Der Schuldner ger\u00e4t in Verzug, wenn er auf die Mahnung des Gl\u00e4ubigers, die nach dem F\u00e4lligkeitszeitpunkt erfolgt, nicht leistet.",
-            "summary": "Confirms legal ground for claim after debtor's default."
+            "reference": "Civil Code \u00a7286 - Default in payment",
+            "extract": "A debtor is in default if payment is not made after a reminder.",
+            "summary": "Legal basis for the plaintiff to send payment reminders."
           }
         ],
         "artifacts": [
           {
-            "id": "artifact001",
-            "type": "claim_document",
-            "content": "Formal claim filed by Tim against Andi for unpaid invoice following reminder with invoice details and payment demand.",
+            "id": "artifact_001",
+            "type": "document",
+            "content": "Payment reminder sent to debtor for unpaid invoice.",
             "created_by": "123",
-            "timestamp": "2026-04-27T13:00:01"
+            "timestamp": "2026-04-27T13:10:00"
           }
         ],
         "deadlines": [
           {
-            "type": "response deadline",
+            "type": "response_deadline",
             "references": {
               "type": "law",
-              "reference": "\u00a7 294 ZPO - Ladungs- und Fristsetzungen",
-              "extract": "Der Gerichtstermin und die Reaktionsfristen werden vom Gericht gesetzt.",
-              "summary": "Court sets deadlines for debtor's response after a claim is filed."
+              "reference": "Civil Code \u00a7286(2) - Deadline to avoid default",
+              "extract": "Debtor must pay within a reasonable time after reminder to avoid default liabilities.",
+              "summary": "Deadline for debtor payment after reminder is typically set to 7 days."
             },
-            "summary": "Debtor must respond to claim within statutory deadline set by court.",
-            "due_date": "2026-05-10T13:00:00"
+            "summary": "Debtor must pay the invoice within 7 days after receiving the payment reminder.",
+            "due_date": "2026-05-04T13:00:00"
           }
         ]
       },
-      "summary": "Plaintiff has formally filed a legal claim against the debtor for unpaid invoice following failure to pay after reminder."
+      "summary": "Plaintiff Tim issued a formal payment reminder to debtor Andi for the unpaid invoice after initial reminder."
     }
   },
   "edges": {
-    "edge_37b84d64": {
-      "id": "edge_37b84d64",
+    "edge_2197af2b": {
+      "id": "edge_2197af2b",
       "case_id": "7777",
       "source_id": "12344",
-      "target_id": "node_18fbebc8",
-      "start_time": "2026-04-27T13:00:01",
-      "end_time": "2026-05-01T13:00:00",
-      "action_type": "file_claim",
+      "target_id": "node_00b24b3c",
+      "start_time": "2026-04-27T13:00:00",
+      "end_time": "2026-05-04T13:00:00",
+      "action_type": "issue_payment_reminder",
       "actor_id": "123",
       "artifacts": [
         {
-          "id": "artifact001",
-          "type": "claim_document",
-          "content": "Formal claim filed by Tim against Andi for unpaid invoice following reminder with invoice details and payment demand.",
+          "id": "artifact_001",
+          "type": "document",
+          "content": "Payment reminder sent to debtor for unpaid invoice.",
           "created_by": "123",
-          "timestamp": "2026-04-27T13:00:01"
+          "timestamp": "2026-04-27T13:10:00"
         }
       ],
       "probability": 0.8,
       "conditions": [
-        "Debtor has failed to pay invoice despite reminder sent"
+        "Debtor has not yet paid the invoice",
+        "Reminder was not sufficient to prompt payment"
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "\u00a7 286 BGB - Verzug des Schuldners",
-          "extract": "Der Schuldner ger\u00e4t in Verzug, wenn er auf die Mahnung des Gl\u00e4ubigers, die nach dem F\u00e4lligkeitszeitpunkt erfolgt, nicht leistet.",
-          "summary": "Law covering debtor's default after reminder and creditor's right to claim damages."
+          "reference": "Civil Code \u00a7286 - Default in payment",
+          "extract": "A debtor is in default if payment is not made after a reminder.",
+          "summary": "Legal basis to issue payment reminders upon overdue payment."
         }
       ],
-      "lawyer_involved": true
+      "lawyer_involved": false
     }
   },
   "actors": {

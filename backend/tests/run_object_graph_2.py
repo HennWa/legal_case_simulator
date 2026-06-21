@@ -22,6 +22,7 @@ if __name__ == "__main__":
     graph.actors =  {'tim' : tim, 'andi' : andi}
     graph.case = Case(
         id='7777',
+        owner_id = '2542365',
         title='my_case',
         created_at=utc_now()
     )
