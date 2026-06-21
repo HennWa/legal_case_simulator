@@ -31,6 +31,7 @@ class Actor(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(description='Unique identifier for the actor')
+    case_id: str = Field(description='Case ID of the edge')
     name: str = Field(description='Name of the actor')
     role: str = Field(description='Role of the actor in the legal case '
                                   '(e.g., plaintiff, defendant, judge, lawyer, court)')
@@ -181,10 +182,12 @@ class CaseGraph:
     # -------------------------
     def add_actor(self, name: str, role: str) -> Actor:
         actor = Actor(id=generate_id("actor"), name=name, role=role)
+        actor.case_id = self.case.id
         self.actors[actor.id] = actor
         return actor
 
     def add_actor_obj(self, actor: Actor) -> Actor:
+        actor.case_id = self.case.id
         self.actors[actor.id] = actor
         return actor
 

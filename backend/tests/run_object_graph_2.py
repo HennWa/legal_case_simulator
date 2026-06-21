@@ -16,8 +16,8 @@ if __name__ == "__main__":
     graph = CaseGraph()
 
 
-    tim = Actor(id = '123', name='tim', role='plaintiff')
-    andi = Actor(id='1234', name='andi', role='debtor')
+    tim = Actor(id = '123', case_id = '7777', name='tim', role='plaintiff')
+    andi = Actor(id='1234', case_id = '7777', name='andi', role='debtor')
 
     graph.actors =  {'tim' : tim, 'andi' : andi}
     graph.case = Case(

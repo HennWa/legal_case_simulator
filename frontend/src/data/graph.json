@@ -2,7 +2,7 @@
   "case": {
     "id": "7777",
     "title": "my_case",
-    "created_at": "2026-06-21T10:44:42.573366+00:00"
+    "created_at": "2026-06-21T10:58:34.334178+00:00"
   },
   "nodes": {
     "12344": {
@@ -10,7 +10,7 @@
       "case_id": "7777",
       "incoming": [],
       "outgoing": [
-        "edge_549dedb7"
+        "edge_37b84d64"
       ],
       "title": "Debtor failed to pay",
       "state": {
@@ -23,6 +23,7 @@
           {
             "actor": {
               "id": "123",
+              "case_id": "7777",
               "name": "tim",
               "role": "plaintiff"
             },
@@ -32,6 +33,7 @@
           {
             "actor": {
               "id": "1234",
+              "case_id": "7777",
               "name": "andi",
               "role": "debtor"
             },
@@ -45,33 +47,35 @@
       },
       "summary": "Debtor failed to pay"
     },
-    "node_a0abe086": {
-      "id": "node_a0abe086",
+    "node_18fbebc8": {
+      "id": "node_18fbebc8",
       "case_id": "7777",
       "incoming": [
-        "edge_549dedb7"
+        "edge_37b84d64"
       ],
       "outgoing": [],
-      "title": "Payment claim filed by plaintiff",
+      "title": "Claim filed by plaintiff",
       "state": {
-        "start_time": "2026-04-30T13:00:00",
+        "start_time": "2026-04-27T13:00:01",
         "end_time": "2026-05-10T13:00:00",
-        "description": "Plaintiff Tim files a payment claim against debtor Andi due to non-payment of invoice after reminder.",
-        "legal_issue": "Plaintiff initiates legal action to recover unpaid invoice.",
+        "description": "Plaintiff has filed a formal legal claim against debtor for the unpaid invoice after debtor did not pay following reminder.",
+        "legal_issue": "Claim for payment of overdue invoice has been formally initiated.",
         "final_state": false,
         "actors_status": [
           {
             "actor": {
               "id": "123",
+              "case_id": "7777",
               "name": "tim",
               "role": "plaintiff"
             },
-            "paid": 500,
+            "paid": 0,
             "received": 0
           },
           {
             "actor": {
               "id": "1234",
+              "case_id": "7777",
               "name": "andi",
               "role": "debtor"
             },
@@ -82,66 +86,66 @@
         "legal_references": [
           {
             "type": "law",
-            "reference": "\u00a7 286 BGB - Schuldnerverzug",
-            "extract": "Debtor is in default if payment is not made after reminder.",
-            "summary": "Supports filing payment claim due to debtor default."
+            "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+            "extract": "Der Schuldner ger\u00e4t in Verzug, wenn er auf die Mahnung des Gl\u00e4ubigers, die nach dem F\u00e4lligkeitszeitpunkt erfolgt, nicht leistet.",
+            "summary": "Confirms legal ground for claim after debtor's default."
           }
         ],
         "artifacts": [
           {
-            "id": "art_001",
-            "type": "document",
-            "content": "Payment claim document filed by Tim against Andi due to unpaid invoice after reminder.",
+            "id": "artifact001",
+            "type": "claim_document",
+            "content": "Formal claim filed by Tim against Andi for unpaid invoice following reminder with invoice details and payment demand.",
             "created_by": "123",
-            "timestamp": "2026-04-27T13:30:00"
+            "timestamp": "2026-04-27T13:00:01"
           }
         ],
         "deadlines": [
           {
-            "type": "response_deadline",
+            "type": "response deadline",
             "references": {
               "type": "law",
-              "reference": "\u00a7 187 BGB - Berechnung der Fristen",
-              "extract": "Deadlines start at the day after the legal action.",
-              "summary": "Defines calculation of deadlines for debtor response."
+              "reference": "\u00a7 294 ZPO - Ladungs- und Fristsetzungen",
+              "extract": "Der Gerichtstermin und die Reaktionsfristen werden vom Gericht gesetzt.",
+              "summary": "Court sets deadlines for debtor's response after a claim is filed."
             },
-            "summary": "Debtor has 14 days to respond to payment claim.",
-            "due_date": "2026-05-14T13:00:00"
+            "summary": "Debtor must respond to claim within statutory deadline set by court.",
+            "due_date": "2026-05-10T13:00:00"
           }
         ]
       },
-      "summary": "Plaintiff files a formal payment claim initiating legal proceedings."
+      "summary": "Plaintiff has formally filed a legal claim against the debtor for unpaid invoice following failure to pay after reminder."
     }
   },
   "edges": {
-    "edge_549dedb7": {
-      "id": "edge_549dedb7",
+    "edge_37b84d64": {
+      "id": "edge_37b84d64",
       "case_id": "7777",
       "source_id": "12344",
-      "target_id": "node_a0abe086",
-      "start_time": "2026-04-27T13:00:00",
-      "end_time": "2026-04-30T13:00:00",
-      "action_type": "file_payment_claim",
+      "target_id": "node_18fbebc8",
+      "start_time": "2026-04-27T13:00:01",
+      "end_time": "2026-05-01T13:00:00",
+      "action_type": "file_claim",
       "actor_id": "123",
       "artifacts": [
         {
-          "id": "art_001",
-          "type": "document",
-          "content": "Payment claim document filed by Tim against Andi due to unpaid invoice after reminder.",
+          "id": "artifact001",
+          "type": "claim_document",
+          "content": "Formal claim filed by Tim against Andi for unpaid invoice following reminder with invoice details and payment demand.",
           "created_by": "123",
-          "timestamp": "2026-04-27T13:30:00"
+          "timestamp": "2026-04-27T13:00:01"
         }
       ],
-      "probability": 0.7,
+      "probability": 0.8,
       "conditions": [
-        "Debtor has not paid invoice after reminder"
+        "Debtor has failed to pay invoice despite reminder sent"
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "\u00a7 286 BGB - Schuldnerverzug (German Civil Code)",
-          "extract": "If the debtor does not pay on time despite reminder, they are in default of payment.",
-          "summary": "Defines conditions under which debtor is in default after failing to pay following reminder."
+          "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+          "extract": "Der Schuldner ger\u00e4t in Verzug, wenn er auf die Mahnung des Gl\u00e4ubigers, die nach dem F\u00e4lligkeitszeitpunkt erfolgt, nicht leistet.",
+          "summary": "Law covering debtor's default after reminder and creditor's right to claim damages."
         }
       ],
       "lawyer_involved": true
@@ -150,11 +154,13 @@
   "actors": {
     "tim": {
       "id": "123",
+      "case_id": "7777",
       "name": "tim",
       "role": "plaintiff"
     },
     "andi": {
       "id": "1234",
+      "case_id": "7777",
       "name": "andi",
       "role": "debtor"
     }
