@@ -3,7 +3,7 @@
     "id": "7777",
     "owner_id": "2542365",
     "title": "my_case",
-    "created_at": "2026-06-21T11:08:42.371188+00:00"
+    "created_at": "2026-06-21T16:42:50.702735+00:00"
   },
   "nodes": {
     "12344": {
@@ -11,7 +11,7 @@
       "case_id": "7777",
       "incoming": [],
       "outgoing": [
-        "edge_2197af2b"
+        "edge_de70a89c"
       ],
       "title": "Debtor failed to pay",
       "state": {
@@ -48,19 +48,19 @@
       },
       "summary": "Debtor failed to pay"
     },
-    "node_00b24b3c": {
-      "id": "node_00b24b3c",
+    "node_5eb3dad3": {
+      "id": "node_5eb3dad3",
       "case_id": "7777",
       "incoming": [
-        "edge_2197af2b"
+        "edge_de70a89c"
       ],
       "outgoing": [],
-      "title": "Payment reminder issued to debtor",
+      "title": "Complaint Filed for Non-Payment",
       "state": {
-        "start_time": "2026-04-27T13:00:00",
-        "end_time": "2026-05-04T13:00:00",
-        "description": "Plaintiff sent a payment reminder document to the debtor due to non-payment of invoice after initial reminder.",
-        "legal_issue": "Whether debtor will pay following payment reminder or legal action is necessary.",
+        "start_time": "2026-04-29T13:00:00",
+        "end_time": "2026-05-10T13:00:00",
+        "description": "Plaintiff has filed a formal complaint in court against debtor for non-payment of the invoice despite reminder.",
+        "legal_issue": "Formal legal action initiated due to debtor's failure to pay after reminder.",
         "final_state": false,
         "actors_status": [
           {
@@ -87,18 +87,18 @@
         "legal_references": [
           {
             "type": "law",
-            "reference": "Civil Code \u00a7286 - Default in payment",
-            "extract": "A debtor is in default if payment is not made after a reminder.",
-            "summary": "Legal basis for the plaintiff to send payment reminders."
+            "reference": "\u00a7 286 BGB - Schuldnerverzug",
+            "extract": "Debtor is in delay after reminder has been sent.",
+            "summary": "Establishes debtor's default after reminder for payment."
           }
         ],
         "artifacts": [
           {
             "id": "artifact_001",
             "type": "document",
-            "content": "Payment reminder sent to debtor for unpaid invoice.",
+            "content": "Formal complaint filed by plaintiff for non-payment of invoice.",
             "created_by": "123",
-            "timestamp": "2026-04-27T13:10:00"
+            "timestamp": "2026-04-27T13:00:00"
           }
         ],
         "deadlines": [
@@ -106,51 +106,57 @@
             "type": "response_deadline",
             "references": {
               "type": "law",
-              "reference": "Civil Code \u00a7286(2) - Deadline to avoid default",
-              "extract": "Debtor must pay within a reasonable time after reminder to avoid default liabilities.",
-              "summary": "Deadline for debtor payment after reminder is typically set to 7 days."
+              "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
+              "extract": "The defendant must respond to the complaint within a set period.",
+              "summary": "Deadlines for debtor response to complaint."
             },
-            "summary": "Debtor must pay the invoice within 7 days after receiving the payment reminder.",
-            "due_date": "2026-05-04T13:00:00"
+            "summary": "Debtor must file a response to the complaint within two weeks after service.",
+            "due_date": "2026-05-24T13:00:00"
           }
         ]
       },
-      "summary": "Plaintiff Tim issued a formal payment reminder to debtor Andi for the unpaid invoice after initial reminder."
+      "summary": "Plaintiff has escalated the case by filing a legal complaint due to debtor's failure to pay after reminder."
     }
   },
   "edges": {
-    "edge_2197af2b": {
-      "id": "edge_2197af2b",
+    "edge_de70a89c": {
+      "id": "edge_de70a89c",
       "case_id": "7777",
       "source_id": "12344",
-      "target_id": "node_00b24b3c",
+      "target_id": "node_5eb3dad3",
       "start_time": "2026-04-27T13:00:00",
-      "end_time": "2026-05-04T13:00:00",
-      "action_type": "issue_payment_reminder",
+      "end_time": "2026-04-29T13:00:00",
+      "action_type": "file_complaint",
       "actor_id": "123",
       "artifacts": [
         {
           "id": "artifact_001",
           "type": "document",
-          "content": "Payment reminder sent to debtor for unpaid invoice.",
+          "content": "Formal complaint filed by plaintiff for non-payment of invoice.",
           "created_by": "123",
-          "timestamp": "2026-04-27T13:10:00"
+          "timestamp": "2026-04-27T13:00:00"
         }
       ],
       "probability": 0.8,
       "conditions": [
-        "Debtor has not yet paid the invoice",
-        "Reminder was not sufficient to prompt payment"
+        "Debtor has not paid invoice after reminder",
+        "Plaintiff decides to initiate legal proceedings"
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "Civil Code \u00a7286 - Default in payment",
-          "extract": "A debtor is in default if payment is not made after a reminder.",
-          "summary": "Legal basis to issue payment reminders upon overdue payment."
+          "reference": "\u00a7 286 BGB - Verzugsregelungen beim Schuldnerverzug",
+          "extract": "Schuldner ger\u00e4t durch Mahnung oder Fristablauf mit der Leistung in Verzug.",
+          "summary": "Defines conditions under which debtor is in default after reminder."
+        },
+        {
+          "type": "law",
+          "reference": "\u00a7 253 ZPO - Klageerhebung",
+          "extract": "Kl\u00e4ger kann eine Klage beim Gericht einreichen, um Anspr\u00fcche geltend zu machen.",
+          "summary": "Regulates filing of complaints to initiate legal proceedings."
         }
       ],
-      "lawyer_involved": false
+      "lawyer_involved": true
     }
   },
   "actors": {

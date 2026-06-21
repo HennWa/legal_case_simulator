@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 from backend.object_graph_runtime.graph_classes import CaseGraph, LegalState, Actor, ActorStatus, LegalNode, Case, utc_now
 from backend.expansion_engine.exapnsion_engine import ExpansionEngine
 from backend.llm_interface.llm_interface import MockLLMProvider
+from backend.database.repositories.node_repository import NodeRepository
 from utils.utils import get_frontend_dir
 import json
+
 
 if __name__ == "__main__":
 
@@ -76,3 +78,16 @@ if __name__ == "__main__":
     graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
     print("\nSerialized graph:\n")
     #print(json.dumps(graph.to_dict(), indent=2))
+
+
+    # Test Mongo DB
+    repo = NodeRepository()
+    print('save node to mongo db')
+    repo.create(brach_node.node)
+
+    print('read node from mongo db')
+    loaded = repo.get(brach_node.node.id)
+
+    print(type(loaded))
+
+    print(loaded)
