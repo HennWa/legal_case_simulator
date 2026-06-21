@@ -1,10 +1,8 @@
 {
   "case": {
-    "case_45b88773": {
-      "id": "case_45b88773",
-      "title": "my_case",
-      "created_at": "2026-06-20T08:51:03.431478+00:00"
-    }
+    "id": "7777",
+    "title": "my_case",
+    "created_at": "2026-06-21T10:44:42.573366+00:00"
   },
   "nodes": {
     "12344": {
@@ -12,7 +10,7 @@
       "case_id": "7777",
       "incoming": [],
       "outgoing": [
-        "edge_791e6d85"
+        "edge_549dedb7"
       ],
       "title": "Debtor failed to pay",
       "state": {
@@ -47,21 +45,19 @@
       },
       "summary": "Debtor failed to pay"
     },
-    "node_138d2329": {
-      "id": "node_138d2329",
+    "node_a0abe086": {
+      "id": "node_a0abe086",
       "case_id": "7777",
       "incoming": [
-        "edge_791e6d85"
+        "edge_549dedb7"
       ],
-      "outgoing": [
-        "edge_4181474f"
-      ],
-      "title": "Dunning letter sent to debtor",
+      "outgoing": [],
+      "title": "Payment claim filed by plaintiff",
       "state": {
-        "start_time": "2026-04-27T13:00:00",
-        "end_time": "2026-05-04T13:00:00",
-        "description": "Plaintiff has sent a dunning letter to the debtor reminding them of their unpaid invoice and warning of potential legal action if payment is not made within 7 days.",
-        "legal_issue": "Outstanding payment on invoice despite formal dunning letter.",
+        "start_time": "2026-04-30T13:00:00",
+        "end_time": "2026-05-10T13:00:00",
+        "description": "Plaintiff Tim files a payment claim against debtor Andi due to non-payment of invoice after reminder.",
+        "legal_issue": "Plaintiff initiates legal action to recover unpaid invoice.",
         "final_state": false,
         "actors_status": [
           {
@@ -70,7 +66,7 @@
               "name": "tim",
               "role": "plaintiff"
             },
-            "paid": 0,
+            "paid": 500,
             "received": 0
           },
           {
@@ -86,171 +82,69 @@
         "legal_references": [
           {
             "type": "law",
-            "reference": "General Civil Code - Debt Collection Procedures",
-            "extract": "Formal dunning letter serves as a final demand before court proceedings may be initiated.",
-            "summary": "Dunning letter necessary to escalate debt collection legally."
+            "reference": "\u00a7 286 BGB - Schuldnerverzug",
+            "extract": "Debtor is in default if payment is not made after reminder.",
+            "summary": "Supports filing payment claim due to debtor default."
           }
         ],
         "artifacts": [
           {
-            "id": "artifact_001",
+            "id": "art_001",
             "type": "document",
-            "content": "Dunning letter notifying the debtor of the overdue invoice and warning of legal consequences if payment is not received within 7 days.",
+            "content": "Payment claim document filed by Tim against Andi due to unpaid invoice after reminder.",
             "created_by": "123",
-            "timestamp": "2026-04-27T13:00:00"
+            "timestamp": "2026-04-27T13:30:00"
           }
         ],
         "deadlines": [
           {
-            "type": "payment_deadline",
+            "type": "response_deadline",
             "references": {
               "type": "law",
-              "reference": "General Civil Code - Payment Deadlines",
-              "extract": "Debtor must pay the invoiced amount within 7 days after receipt of dunning letter to avoid legal actions.",
-              "summary": "7-day payment deadline following dunning letter."
+              "reference": "\u00a7 187 BGB - Berechnung der Fristen",
+              "extract": "Deadlines start at the day after the legal action.",
+              "summary": "Defines calculation of deadlines for debtor response."
             },
-            "summary": "Deadline for debtor to pay invoice after receiving dunning letter to avoid escalation.",
-            "due_date": "2026-05-04T13:00:00"
+            "summary": "Debtor has 14 days to respond to payment claim.",
+            "due_date": "2026-05-14T13:00:00"
           }
         ]
       },
-      "summary": "Plaintiff has issued a dunning letter demanding payment within 7 days to resolve the overdue invoice."
-    },
-    "node_27aa7b18": {
-      "id": "node_27aa7b18",
-      "case_id": "case_697a1851",
-      "incoming": [
-        "edge_4181474f"
-      ],
-      "outgoing": [],
-      "title": "Debtor has paid the overdue invoice following the dunning letter",
-      "state": {
-        "start_time": "2026-05-04T13:00:00",
-        "end_time": "2026-05-05T13:00:00",
-        "description": "The debtor fulfilled payment of the outstanding invoice just after the 7-day deadline set by the dunning letter. Although the payment occurred after the deadline, the creditor accepted the payment and has not initiated legal proceedings, effectively resolving the dispute.",
-        "legal_issue": "Invoice payment was made after the formal deadline set by the dunning letter, but the creditor's acceptance avoids further legal claims.",
-        "final_state": true,
-        "actors_status": [
-          {
-            "actor": {
-              "id": "123",
-              "name": "tim",
-              "role": "plaintiff"
-            },
-            "paid": 0,
-            "received": 1000
-          },
-          {
-            "actor": {
-              "id": "1234",
-              "name": "andi",
-              "role": "debtor"
-            },
-            "paid": 1000,
-            "received": 0
-          }
-        ],
-        "legal_references": [
-          {
-            "type": "law",
-            "reference": "General Civil Code - Payment Obligations",
-            "extract": "Payment of outstanding debts discharges debtor's obligations and bars further claims for this invoice once accepted.",
-            "summary": "Payment accepted by creditor resolves the legal dispute on the overdue invoice."
-          },
-          {
-            "type": "law",
-            "reference": "General Civil Code - Payment Deadlines",
-            "extract": "Failure to pay within deadline permits creditor to initiate legal proceedings; however, acceptance after deadline may waive such rights.",
-            "summary": "Late payment accepted by creditor prevents initiation of collection lawsuits."
-          }
-        ],
-        "artifacts": [
-          {
-            "id": "artifact_002",
-            "type": "payment_receipt",
-            "content": "Payment receipt confirming debtor's payment of the overdue invoice.",
-            "created_by": "1234",
-            "timestamp": "2026-05-04T15:00:00"
-          }
-        ],
-        "deadlines": []
-      },
-      "summary": "The debtor paid the overdue invoice shortly after the 7-day payment deadline in the dunning letter. Although past the deadline, the creditor accepted the payment, resolving the payment dispute and thus avoiding further legal proceedings."
+      "summary": "Plaintiff files a formal payment claim initiating legal proceedings."
     }
   },
   "edges": {
-    "edge_791e6d85": {
-      "id": "edge_791e6d85",
+    "edge_549dedb7": {
+      "id": "edge_549dedb7",
       "case_id": "7777",
       "source_id": "12344",
-      "target_id": "node_138d2329",
+      "target_id": "node_a0abe086",
       "start_time": "2026-04-27T13:00:00",
-      "end_time": "2026-05-04T13:00:00",
-      "action_type": "send_dunning_letter",
+      "end_time": "2026-04-30T13:00:00",
+      "action_type": "file_payment_claim",
       "actor_id": "123",
       "artifacts": [
         {
-          "id": "artifact_001",
+          "id": "art_001",
           "type": "document",
-          "content": "Dunning letter notifying the debtor of the overdue invoice and warning of legal consequences if payment is not received within 7 days.",
+          "content": "Payment claim document filed by Tim against Andi due to unpaid invoice after reminder.",
           "created_by": "123",
-          "timestamp": "2026-04-27T13:00:00"
+          "timestamp": "2026-04-27T13:30:00"
         }
       ],
-      "probability": 0.8,
+      "probability": 0.7,
       "conditions": [
-        "Invoice remains unpaid after reminder",
-        "Plaintiff intends to proceed with debt collection"
+        "Debtor has not paid invoice after reminder"
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "General Civil Code - Debt Collection Procedures",
-          "extract": "Creditor may send a dunning letter to remind debtor of payment obligation before initiating legal proceedings.",
-          "summary": "Allows creditor to send formal payment reminder as next step in debt collection."
+          "reference": "\u00a7 286 BGB - Schuldnerverzug (German Civil Code)",
+          "extract": "If the debtor does not pay on time despite reminder, they are in default of payment.",
+          "summary": "Defines conditions under which debtor is in default after failing to pay following reminder."
         }
       ],
-      "lawyer_involved": false
-    },
-    "edge_4181474f": {
-      "id": "edge_4181474f",
-      "case_id": "case_697a1851",
-      "source_id": "node_138d2329",
-      "target_id": "node_27aa7b18",
-      "start_time": "2026-05-04T13:00:00",
-      "end_time": "2026-05-05T13:00:00",
-      "action_type": "debtor_makes_payment",
-      "actor_id": "1234",
-      "artifacts": [
-        {
-          "id": "artifact_002",
-          "type": "payment_receipt",
-          "content": "Payment receipt confirming debtor's payment of the overdue invoice.",
-          "created_by": "1234",
-          "timestamp": "2026-05-04T15:00:00"
-        }
-      ],
-      "probability": 0.6,
-      "conditions": [
-        "Debtor has sufficient funds to pay the invoice",
-        "Debtor intended to avoid legal escalation",
-        "Debtor received and understood the dunning letter"
-      ],
-      "legal_references": [
-        {
-          "type": "law",
-          "reference": "General Civil Code - Payment Obligations",
-          "extract": "Once notified by dunning letter, debtor must fulfill payment obligations to stop further legal proceedings.",
-          "summary": "Legal obligation for debtor to pay after dunning letter to settle debt."
-        },
-        {
-          "type": "law",
-          "reference": "General Civil Code - Payment Deadlines",
-          "extract": "Failure to meet the payment deadline in the dunning letter permits creditor to initiate legal collection measures.",
-          "summary": "Deadline for payment set by dunning letter is legally binding to avoid further legal action."
-        }
-      ],
-      "lawyer_involved": false
+      "lawyer_involved": true
     }
   },
   "actors": {

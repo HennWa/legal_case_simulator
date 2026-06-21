@@ -455,7 +455,7 @@ class CaseGraph:
     # -------------------------
     def to_dict(self) -> dict:
         return {
-            "case": {self.case.id: self.case.model_dump()},
+            "case": self.case.model_dump(),
             "nodes": {nid: node.model_dump() for nid, node in self.nodes.items()},
             "edges": {eid: edge.model_dump() for eid, edge in self.edges.items()},
             "actors": {aid: actor.model_dump() for aid, actor in self.actors.items()},
@@ -471,6 +471,9 @@ class CaseGraph:
     @classmethod
     def from_dict(cls, data: dict) -> "CaseGraph":
         graph = cls()
+
+        # Restore case
+        graph.case = Case.model_validate(data.get("case", {}))
 
         # Restore actors
         graph.actors = {
