@@ -32,6 +32,13 @@ class NodeRepository:
             node.model_dump()
         )
 
+    def upsert(self, node: LegalNode):
+        self.collection.replace_one(
+            {"id": node.id},
+            node.model_dump(),
+            upsert=True
+        )
+
     def delete(self, node_id: str):
 
         self.collection.delete_one(

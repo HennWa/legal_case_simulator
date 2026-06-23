@@ -32,6 +32,13 @@ class ActorRepository:
             actor.model_dump()
         )
 
+    def upsert(self, actor: Actor):
+        self.collection.replace_one(
+            {"id": actor.id},
+            actor.model_dump(),
+            upsert=True
+        )
+
     def delete(self, actor_id: str):
 
         self.collection.delete_one(

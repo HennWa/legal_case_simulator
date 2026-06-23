@@ -32,6 +32,13 @@ class CaseRepository:
             case.model_dump()
         )
 
+    def upsert(self, case: Case):
+        self.collection.replace_one(
+            {"id": case.id},
+            case.model_dump(),
+            upsert=True
+        )
+
     def delete(self, case_id: str):
 
         self.collection.delete_one(

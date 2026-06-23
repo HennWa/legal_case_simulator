@@ -32,6 +32,13 @@ class EdgeRepository:
             edge.model_dump()
         )
 
+    def upsert(self, edge: LegalEdge):
+        self.collection.replace_one(
+            {"id": edge.id},
+            edge.model_dump(),
+            upsert=True
+        )
+
     def delete(self, edge_id: str):
 
         self.collection.delete_one(
