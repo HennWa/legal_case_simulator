@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 import os
 from object_graph_runtime.graph_classes import CaseGraph
+from database.repositories.graph_repository import GraphRepository
 from utils.utils import get_frontend_dir
 
 router = APIRouter()
@@ -8,8 +9,11 @@ router = APIRouter()
 @router.get("/node/{node_id}")
 def get_node(node_id: str):
 
-    path_graph = os.path.join(get_frontend_dir(), 'src/data/graph.json')
+    #path_graph = os.path.join(get_frontend_dir(), 'src/data/graph.json')
+    #loaded_graph = CaseGraph.from_json(path_graph)
 
-    loaded_graph = CaseGraph.from_json(path_graph)
+    case_id = '7777'  # temporary
+    repo = GraphRepository()
+    graph = repo.load_graph(case_id)
 
-    return loaded_graph.node_to_dict(node_id)
+    return graph.node_to_dict(node_id)

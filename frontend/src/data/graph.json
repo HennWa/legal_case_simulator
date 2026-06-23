@@ -6,55 +6,15 @@
     "created_at": "2026-06-21T16:42:50.702735+00:00"
   },
   "nodes": {
-    "12344": {
-      "id": "12344",
-      "case_id": "7777",
-      "incoming": [],
-      "outgoing": [
-        "edge_de70a89c"
-      ],
-      "title": "Debtor failed to pay",
-      "state": {
-        "start_time": "2026-04-19T13:00:00",
-        "end_time": "2026-04-27T13:00:00",
-        "description": "Debtor has not paid the invoice after a reminder was sent.",
-        "legal_issue": "Debtor has not paid the invoice after a reminder was sent.",
-        "final_state": false,
-        "actors_status": [
-          {
-            "actor": {
-              "id": "123",
-              "case_id": "7777",
-              "name": "tim",
-              "role": "plaintiff"
-            },
-            "paid": 0,
-            "received": 0
-          },
-          {
-            "actor": {
-              "id": "1234",
-              "case_id": "7777",
-              "name": "andi",
-              "role": "debtor"
-            },
-            "paid": 0,
-            "received": 0
-          }
-        ],
-        "legal_references": [],
-        "artifacts": [],
-        "deadlines": []
-      },
-      "summary": "Debtor failed to pay"
-    },
     "node_5eb3dad3": {
       "id": "node_5eb3dad3",
       "case_id": "7777",
       "incoming": [
         "edge_de70a89c"
       ],
-      "outgoing": [],
+      "outgoing": [
+        "edge_d22db037"
+      ],
       "title": "Complaint Filed for Non-Payment",
       "state": {
         "start_time": "2026-04-29T13:00:00",
@@ -116,6 +76,123 @@
         ]
       },
       "summary": "Plaintiff has escalated the case by filing a legal complaint due to debtor's failure to pay after reminder."
+    },
+    "12344": {
+      "id": "12344",
+      "case_id": "7777",
+      "incoming": [],
+      "outgoing": [
+        "edge_de70a89c"
+      ],
+      "title": "Debtor failed to pay",
+      "state": {
+        "start_time": "2026-04-19T13:00:00",
+        "end_time": "2026-04-27T13:00:00",
+        "description": "Debtor has not paid the invoice after a reminder was sent.",
+        "legal_issue": "Debtor has not paid the invoice after a reminder was sent.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "123",
+              "case_id": "7777",
+              "name": "tim",
+              "role": "plaintiff"
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "1234",
+              "case_id": "7777",
+              "name": "andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [],
+        "artifacts": [],
+        "deadlines": []
+      },
+      "summary": "Debtor failed to pay"
+    },
+    "node_a2f6b70a": {
+      "id": "node_a2f6b70a",
+      "case_id": "7777",
+      "incoming": [
+        "edge_d22db037"
+      ],
+      "outgoing": [],
+      "title": "Debtor files a formal response to complaint",
+      "state": {
+        "start_time": "2026-05-15T13:00:00",
+        "end_time": "2026-05-24T13:00:00",
+        "description": "Debtor has filed a formal written response to the complaint, disputing the plaintiff's claims and asserting defenses within the statutory deadline.",
+        "legal_issue": "Debtor's response to complaint has been filed within the statutory deadline; court awaits to schedule a hearing for further proceedings as required by law.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "123",
+              "case_id": "7777",
+              "name": "tim",
+              "role": "plaintiff"
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "1234",
+              "case_id": "7777",
+              "name": "andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "\u0000a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
+            "extract": "Defendant must file response to complaint within statutory deadline.",
+            "summary": "Debtor complied by filing the response before the legal deadline."
+          },
+          {
+            "type": "law",
+            "reference": "\u0000a7 278 ZPO - Terminsbestimmung durch das Gericht",
+            "extract": "Court schedules hearing date after parties' written submissions.",
+            "summary": "Court is now required to schedule hearing following the completion of written pleadings."
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "artifact_response_001",
+            "type": "document",
+            "content": "Formal response filed by debtor disputing the plaintiff's claims and presenting defenses.",
+            "created_by": "1234",
+            "timestamp": "2026-05-15T12:00:00"
+          }
+        ],
+        "deadlines": [
+          {
+            "type": "hearing_scheduling_deadline",
+            "references": {
+              "type": "law",
+              "reference": "\u0000a7 278 ZPO - Terminsbestimmung durch das Gericht",
+              "extract": "Court schedules hearing date after parties' written submissions.",
+              "summary": "Deadline for court to schedule hearing once parties have submitted their pleadings."
+            },
+            "summary": "Court to schedule hearing date following receipt of response.",
+            "due_date": "2026-05-24T13:00:00"
+          }
+        ]
+      },
+      "summary": "Debtor responded formally to the complaint disputing claims within the legal deadline, advancing the case to the next procedural phase where the court is expected to schedule the hearing in due time."
     }
   },
   "edges": {
@@ -157,16 +234,54 @@
         }
       ],
       "lawyer_involved": true
+    },
+    "edge_d22db037": {
+      "id": "edge_d22db037",
+      "case_id": "7777",
+      "source_id": "node_5eb3dad3",
+      "target_id": "node_a2f6b70a",
+      "start_time": "2026-05-10T13:00:00",
+      "end_time": "2026-05-15T13:00:00",
+      "action_type": "file_response",
+      "actor_id": "1234",
+      "artifacts": [
+        {
+          "id": "artifact_response_001",
+          "type": "document",
+          "content": "Formal response filed by debtor disputing the plaintiff's claims and presenting defenses.",
+          "created_by": "1234",
+          "timestamp": "2026-05-15T12:00:00"
+        }
+      ],
+      "probability": 0.7,
+      "conditions": [
+        "debtor has received formal complaint"
+      ],
+      "legal_references": [
+        {
+          "type": "law",
+          "reference": "\u0000a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
+          "extract": "Defendant must file response to complaint within the statutory deadline to present defenses.",
+          "summary": "Sets deadline and requirement for debtor's response to complaint."
+        },
+        {
+          "type": "law",
+          "reference": "\u0000a7 278 ZPO - Terminsbestimmung durch das Gericht",
+          "extract": "Court schedules hearing date after parties' written submissions.",
+          "summary": "Court's responsibility to schedule hearing after pleadings are complete."
+        }
+      ],
+      "lawyer_involved": true
     }
   },
   "actors": {
-    "tim": {
+    "123": {
       "id": "123",
       "case_id": "7777",
       "name": "tim",
       "role": "plaintiff"
     },
-    "andi": {
+    "1234": {
       "id": "1234",
       "case_id": "7777",
       "name": "andi",
