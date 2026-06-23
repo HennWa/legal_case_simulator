@@ -37,3 +37,15 @@ class ActorRepository:
         self.collection.delete_one(
             {"id": actor_id}
         )
+
+    def get_by_case(self, case_id: str):
+        docs = self.collection.find(
+            {"case_id": case_id}
+        )
+
+        return [
+            Actor.model_validate(
+                {k: v for k, v in doc.items() if k != "_id"}
+            )
+            for doc in docs
+        ]

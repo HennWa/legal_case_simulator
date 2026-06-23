@@ -37,3 +37,15 @@ class NodeRepository:
         self.collection.delete_one(
             {"id": node_id}
         )
+
+    def get_by_case(self, case_id: str):
+        docs = self.collection.find(
+            {"case_id": case_id}
+        )
+
+        return [
+            LegalNode.model_validate(
+                {k: v for k, v in doc.items() if k != "_id"}
+            )
+            for doc in docs
+        ]
