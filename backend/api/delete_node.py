@@ -25,6 +25,6 @@ def delete_node(node_id: str):
     graph.delete_node(node_id)
     graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
 
-    repo.save_graph(graph)
+    repo.sync_to_mongo(graph)
 
     return {"success": True}

@@ -193,6 +193,81 @@
         ]
       },
       "summary": "Debtor responded formally to the complaint disputing claims within the legal deadline, advancing the case to the next procedural phase where the court is expected to schedule the hearing in due time."
+    },
+    "node_c95f6f99": {
+      "id": "node_c95f6f99",
+      "case_id": "7777",
+      "incoming": [
+        "edge_ea60356d"
+      ],
+      "outgoing": [],
+      "title": "Plaintiff sends reminder to debtor after no response to complaint",
+      "state": {
+        "start_time": "2026-05-24T13:00:00",
+        "end_time": "2026-05-31T13:00:00",
+        "description": "Plaintiff has sent a formal reminder to debtor for responding to the complaint after the expiry of the statutory deadline without receiving a response.",
+        "legal_issue": "Debtor's failure to respond to complaint within statutory deadline triggers plaintiff's right to send reminder and potentially escalate further.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "123",
+              "case_id": "7777",
+              "name": "tim",
+              "role": "plaintiff"
+            },
+            "paid": 50,
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "1234",
+              "case_id": "7777",
+              "name": "andi",
+              "role": "debtor"
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "\u00a7 276 ZPO - Pflicht zur Klageerwiderung",
+            "extract": "Defendant has a statutory deadline to respond to complaint; failure allows plaintiff to send reminders or take action.",
+            "summary": "Supports plaintiff action after no defendant response."
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
+            "extract": "The defendant must respond to the complaint within a set period, which is two weeks from service.",
+            "summary": "Establishes the deadline for response after which plaintiff can act."
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "artifact_002",
+            "type": "document",
+            "content": "Reminder letter sent by plaintiff to debtor due to no response received to the complaint.",
+            "created_by": "123",
+            "timestamp": "2026-05-24T13:00:00"
+          }
+        ],
+        "deadlines": [
+          {
+            "type": "response_deadline",
+            "references": {
+              "type": "law",
+              "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
+              "extract": "The defendant must respond to the complaint within a set period.",
+              "summary": "Deadline for debtor response to complaint."
+            },
+            "summary": "Debtor's deadline to respond to complaint expired; reminder sent to debtor after expiry.",
+            "due_date": "2026-05-24T13:00:00"
+          }
+        ]
+      },
+      "summary": "No response was received from debtor to complaint within the statutory deadline; plaintiff has sent a formal reminder letter on the day the deadline expired."
     }
   },
   "edges": {
@@ -269,6 +344,44 @@
           "reference": "\u0000a7 278 ZPO - Terminsbestimmung durch das Gericht",
           "extract": "Court schedules hearing date after parties' written submissions.",
           "summary": "Court's responsibility to schedule hearing after pleadings are complete."
+        }
+      ],
+      "lawyer_involved": true
+    },
+    "edge_ea60356d": {
+      "id": "edge_ea60356d",
+      "case_id": "7777",
+      "source_id": "node_5eb3dad3",
+      "target_id": "node_c95f6f99",
+      "start_time": "2026-05-24T13:00:00",
+      "end_time": "2026-05-31T13:00:00",
+      "action_type": "send_reminder_after_no_response",
+      "actor_id": "123",
+      "artifacts": [
+        {
+          "id": "artifact_002",
+          "type": "document",
+          "content": "Reminder letter sent by plaintiff to debtor due to no response received to the complaint.",
+          "created_by": "123",
+          "timestamp": "2026-05-24T13:00:00"
+        }
+      ],
+      "probability": 0.2,
+      "conditions": [
+        "Defendant has not filed a response within the statutory deadline"
+      ],
+      "legal_references": [
+        {
+          "type": "law",
+          "reference": "\u00a7 276 ZPO - Pflicht zur Klageerwiderung",
+          "extract": "If the defendant fails to respond within the set deadline, plaintiff can send reminders or take further legal steps.",
+          "summary": "Allows plaintiff to act after no response to complaint within deadline."
+        },
+        {
+          "type": "law",
+          "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
+          "extract": "The defendant must respond to the complaint within a set period, which is two weeks from service.",
+          "summary": "Defines the statutory deadline for defendant's response to a complaint."
         }
       ],
       "lawyer_involved": true
