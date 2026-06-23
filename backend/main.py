@@ -7,6 +7,9 @@ from api.graph import router as graph_router
 from api.add_node import router as add_node_router
 from api.delete_node import router as delete_node_router
 from api.legal_check import router as legal_check
+from database.init_db import create_indexes
+
+create_indexes()  # any time called, recognized by Mongo DB
 
 app = FastAPI()
 
