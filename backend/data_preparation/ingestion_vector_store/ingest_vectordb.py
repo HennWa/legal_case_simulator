@@ -183,7 +183,7 @@ def parse_xml(xml_file: str, law_name: str = "BGB"):
     return documents
 
 # --------------------------------------------------
-# BUILD VECTORSTORE
+# BUILD VECTORSTORE LOCALLY
 # --------------------------------------------------
 
 def build_vectorstore(law_files, persist_directory):
@@ -195,6 +195,38 @@ def build_vectorstore(law_files, persist_directory):
         embedding_function=embeddings,
         persist_directory=persist_directory,
     )
+
+    all_docs = []
+
+    for law_name, file_path in law_files:
+
+        print(f"Parsing {law_name} from {file_path}")
+
+        docs = parse_xml(file_path, law_name=law_name)
+        all_docs.extend(docs)
+
+        print(f"{law_name}: {len(docs)} docs")
+
+    print(f"Total documents: {len(all_docs)}")
+
+    batch_size = 200
+
+    for i in range(0, len(all_docs), batch_size):
+
+        batch = all_docs[i:i + batch_size]
+        vectorstore.add_documents(batch)
+
+        print(f"Inserted {min(i + batch_size, len(all_docs))}/{len(all_docs)}")
+
+    print("Finished")
+
+# --------------------------------------------------
+# INGEST TO CLOUD DB
+# --------------------------------------------------
+
+def ingest_embeddings_cloud(law_files, persist_directory):
+
+    embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
 
     all_docs = []
 
