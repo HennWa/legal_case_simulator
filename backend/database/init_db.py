@@ -46,3 +46,11 @@ def create_indexes():
         "id",
         unique=True
     )
+
+    db.law_embeddings.create_index("id", unique=True)
+
+    db.law_embeddings.create_index("law")
+
+    db.law_embeddings.create_index("paragraph")
+
+    db.law_embeddings.create_index("doc_key", unique=True)

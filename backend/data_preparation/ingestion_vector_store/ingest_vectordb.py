@@ -9,6 +9,10 @@ from langchain_core.documents import Document
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
+from openai import OpenAI
+from backend.database.repositories.vector_repository import VectorRepository
+
+
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -21,7 +25,7 @@ load_dotenv(override=True)
 MAX_CHARS = 1500
 OVERLAP = 200
 
-EMBEDDING_MODEL = "text-embedding-3-large"
+EMBEDDING_MODEL = "text-embedding-3-small" # "text-embedding-3-large"
 
 
 # --------------------------------------------------
@@ -158,6 +162,7 @@ def parse_xml(xml_file: str, law_name: str = "BGB"):
                         f"{chunk}"
                     )
 
+                    doc_key = f"{law_name}_{paragraph_number}_{idx}_{chunk_idx}"
                     documents.append(
                         Document(
                             page_content=content,
@@ -174,9 +179,9 @@ def parse_xml(xml_file: str, law_name: str = "BGB"):
                                 "chunk": chunk_idx,
                                 "source_file": xml_file,
                                 "source_type": "law",
-                                "doc_key": f"{law_name}_{paragraph_number}_{idx}_{chunk_idx}",
+                                "doc_key": doc_key,
                             },
-                            id=str(uuid4()),
+                            id=doc_key,
                         )
                     )
 
@@ -224,9 +229,58 @@ def build_vectorstore(law_files, persist_directory):
 # INGEST TO CLOUD DB
 # --------------------------------------------------
 
-def ingest_embeddings_cloud(law_files, persist_directory):
+def upload_documents_to_mongo(
+    all_docs,
+    batch_size: int = 50,
+    embedding_model: str = EMBEDDING_MODEL,
+):
+    """
+    Creates embeddings for LangChain Documents and uploads them
+    to MongoDB Atlas in batches.
+    """
 
-    embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
+    client = OpenAI()
+    repo = VectorRepository()
+
+    total = len(all_docs)
+
+    for start in range(0, total, batch_size):
+
+        try:
+            batch = all_docs[start:start + batch_size]
+
+            texts = [doc.page_content for doc in batch]
+
+            print("Creating embeddings of batch")
+            response = client.embeddings.create(
+                model=embedding_model,
+                input=texts,
+            )
+
+            mongo_docs = []
+
+            print("Uploading to mongo db")
+            for doc, embedding_data in zip(batch, response.data):
+
+                mongo_docs.append(
+                    repo.document_to_mongo_doc(
+                        document=doc,
+                        embedding=embedding_data.embedding,
+                    )
+                )
+
+            repo.upsert_batch(mongo_docs)
+
+            print(
+                f"Uploaded {min(start + batch_size, total):,}/{total:,}"
+            )
+        except:
+            print(f"Error processing batch starting at index {start}. Skipping this batch.")
+            continue
+
+    print("Finished uploading vector store in mongo db.")
+
+def ingest_embeddings_cloud(law_files):
 
     all_docs = []
 
@@ -241,16 +295,7 @@ def ingest_embeddings_cloud(law_files, persist_directory):
 
     print(f"Total documents: {len(all_docs)}")
 
-    batch_size = 200
-
-    for i in range(0, len(all_docs), batch_size):
-
-        batch = all_docs[i:i + batch_size]
-        vectorstore.add_documents(batch)
-
-        print(f"Inserted {min(i + batch_size, len(all_docs))}/{len(all_docs)}")
-
-    print("Finished")
+    return all_docs
 
 
 
@@ -275,10 +320,21 @@ if __name__ == "__main__":
         ("UStG", os.path.join(resources_path, "ustg", "BJNR119530979.xml")),
     ]
 
+
+    # local ingestion
+    '''
     db_path = os.path.join(
         Path(__file__).resolve().parent.parent.parent,
         "local_db/law_vectorstore",
         "chroma_laws"
     )
 
-    build_vectorstore(law_files, db_path)
+    build_vectorstore(law_files, db_path)'''
+
+    # mongo db ingestion
+    print('Clearing mongo DB')
+    repo = VectorRepository()
+    repo.delete_all()
+    print('Mongo DB cleared')
+    all_docs = ingest_embeddings_cloud(law_files)
+    upload_documents_to_mongo(all_docs)
