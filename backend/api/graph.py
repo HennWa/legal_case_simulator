@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from database.repositories.graph_repository import GraphRepository
+from backend.database.repositories.graph_repository import GraphRepository
 
 
 router = APIRouter()

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from expansion_engine.exapnsion_engine import ExpansionEngine
-from llm_interface.llm_interface import MockLLMProvider
-from database.repositories.graph_repository import GraphRepository
+from backend.expansion_engine.exapnsion_engine import ExpansionEngine
+from backend.llm_interface.llm_interface import MockLLMProvider
+from backend.database.repositories.graph_repository import GraphRepository
 import os
 from dotenv import load_dotenv
 

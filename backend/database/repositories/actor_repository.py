@@ -1,5 +1,5 @@
-from database.mongo import db
-from object_graph_runtime.graph_classes import Actor
+from backend.database.mongo import db
+from backend.object_graph_runtime.graph_classes import Actor
 
 class ActorRepository:
 

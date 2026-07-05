@@ -3,10 +3,10 @@ from __future__ import annotations
 import os
 
 from networkx.classes import neighbors
-from object_graph_runtime.graph_classes import CaseGraph, LegalNode, LegalBranchNode
-from prompt_builder.prompt_builder import PromptBuilder
-from llm_interface.llm_interface import BaseLLMProvider
-from utils.utils import get_frontend_dir
+from backend.object_graph_runtime.graph_classes import CaseGraph, LegalNode, LegalBranchNode
+from backend.prompt_builder.prompt_builder import PromptBuilder
+from backend.llm_interface.llm_interface import BaseLLMProvider
+from backend.utils.utils import get_frontend_dir
 
 class ExpansionEngine:
 

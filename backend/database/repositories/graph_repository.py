@@ -1,9 +1,9 @@
-from object_graph_runtime.graph_classes import CaseGraph
+from backend.object_graph_runtime.graph_classes import CaseGraph
 
-from database.repositories.case_repository import CaseRepository
-from database.repositories.node_repository import NodeRepository
-from database.repositories.edge_repository import EdgeRepository
-from database.repositories.actor_repository import ActorRepository
+from backend.database.repositories.case_repository import CaseRepository
+from backend.database.repositories.node_repository import NodeRepository
+from backend.database.repositories.edge_repository import EdgeRepository
+from backend.database.repositories.actor_repository import ActorRepository
 
 
 class GraphRepository:

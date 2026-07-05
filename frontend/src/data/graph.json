@@ -3,86 +3,17 @@
     "id": "7777",
     "owner_id": "2542365",
     "title": "my_case",
-    "created_at": "2026-06-21T16:42:50.702735+00:00"
+    "created_at": "2026-07-05T09:09:06.354679+00:00",
+    "language": "en",
+    "applied_law": "de"
   },
   "nodes": {
-    "node_5eb3dad3": {
-      "id": "node_5eb3dad3",
-      "case_id": "7777",
-      "incoming": [
-        "edge_de70a89c"
-      ],
-      "outgoing": [
-        "edge_d22db037"
-      ],
-      "title": "Complaint Filed for Non-Payment",
-      "state": {
-        "start_time": "2026-04-29T13:00:00",
-        "end_time": "2026-05-10T13:00:00",
-        "description": "Plaintiff has filed a formal complaint in court against debtor for non-payment of the invoice despite reminder.",
-        "legal_issue": "Formal legal action initiated due to debtor's failure to pay after reminder.",
-        "final_state": false,
-        "actors_status": [
-          {
-            "actor": {
-              "id": "123",
-              "case_id": "7777",
-              "name": "tim",
-              "role": "plaintiff"
-            },
-            "paid": 0,
-            "received": 0
-          },
-          {
-            "actor": {
-              "id": "1234",
-              "case_id": "7777",
-              "name": "andi",
-              "role": "debtor"
-            },
-            "paid": 0,
-            "received": 0
-          }
-        ],
-        "legal_references": [
-          {
-            "type": "law",
-            "reference": "\u00a7 286 BGB - Schuldnerverzug",
-            "extract": "Debtor is in delay after reminder has been sent.",
-            "summary": "Establishes debtor's default after reminder for payment."
-          }
-        ],
-        "artifacts": [
-          {
-            "id": "artifact_001",
-            "type": "document",
-            "content": "Formal complaint filed by plaintiff for non-payment of invoice.",
-            "created_by": "123",
-            "timestamp": "2026-04-27T13:00:00"
-          }
-        ],
-        "deadlines": [
-          {
-            "type": "response_deadline",
-            "references": {
-              "type": "law",
-              "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
-              "extract": "The defendant must respond to the complaint within a set period.",
-              "summary": "Deadlines for debtor response to complaint."
-            },
-            "summary": "Debtor must file a response to the complaint within two weeks after service.",
-            "due_date": "2026-05-24T13:00:00"
-          }
-        ]
-      },
-      "summary": "Plaintiff has escalated the case by filing a legal complaint due to debtor's failure to pay after reminder."
-    },
     "12344": {
       "id": "12344",
       "case_id": "7777",
       "incoming": [],
       "outgoing": [
-        "edge_de70a89c"
+        "edge_1c59f6e4"
       ],
       "title": "Debtor failed to pay",
       "state": {
@@ -97,7 +28,12 @@
               "id": "123",
               "case_id": "7777",
               "name": "tim",
-              "role": "plaintiff"
+              "role": "plaintiff",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
             },
             "paid": 0,
             "received": 0
@@ -107,7 +43,12 @@
               "id": "1234",
               "case_id": "7777",
               "name": "andi",
-              "role": "debtor"
+              "role": "debtor",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
             },
             "paid": 0,
             "received": 0
@@ -119,94 +60,22 @@
       },
       "summary": "Debtor failed to pay"
     },
-    "node_a2f6b70a": {
-      "id": "node_a2f6b70a",
+    "node_94de9e42": {
+      "id": "node_94de9e42",
       "case_id": "7777",
       "incoming": [
-        "edge_d22db037"
+        "edge_1c59f6e4"
       ],
-      "outgoing": [],
-      "title": "Debtor files a formal response to complaint",
-      "state": {
-        "start_time": "2026-05-15T13:00:00",
-        "end_time": "2026-05-24T13:00:00",
-        "description": "Debtor has filed a formal written response to the complaint, disputing the plaintiff's claims and asserting defenses within the statutory deadline.",
-        "legal_issue": "Debtor's response to complaint has been filed within the statutory deadline; court awaits to schedule a hearing for further proceedings as required by law.",
-        "final_state": false,
-        "actors_status": [
-          {
-            "actor": {
-              "id": "123",
-              "case_id": "7777",
-              "name": "tim",
-              "role": "plaintiff"
-            },
-            "paid": 0,
-            "received": 0
-          },
-          {
-            "actor": {
-              "id": "1234",
-              "case_id": "7777",
-              "name": "andi",
-              "role": "debtor"
-            },
-            "paid": 0,
-            "received": 0
-          }
-        ],
-        "legal_references": [
-          {
-            "type": "law",
-            "reference": "\u0000a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
-            "extract": "Defendant must file response to complaint within statutory deadline.",
-            "summary": "Debtor complied by filing the response before the legal deadline."
-          },
-          {
-            "type": "law",
-            "reference": "\u0000a7 278 ZPO - Terminsbestimmung durch das Gericht",
-            "extract": "Court schedules hearing date after parties' written submissions.",
-            "summary": "Court is now required to schedule hearing following the completion of written pleadings."
-          }
-        ],
-        "artifacts": [
-          {
-            "id": "artifact_response_001",
-            "type": "document",
-            "content": "Formal response filed by debtor disputing the plaintiff's claims and presenting defenses.",
-            "created_by": "1234",
-            "timestamp": "2026-05-15T12:00:00"
-          }
-        ],
-        "deadlines": [
-          {
-            "type": "hearing_scheduling_deadline",
-            "references": {
-              "type": "law",
-              "reference": "\u0000a7 278 ZPO - Terminsbestimmung durch das Gericht",
-              "extract": "Court schedules hearing date after parties' written submissions.",
-              "summary": "Deadline for court to schedule hearing once parties have submitted their pleadings."
-            },
-            "summary": "Court to schedule hearing date following receipt of response.",
-            "due_date": "2026-05-24T13:00:00"
-          }
-        ]
-      },
-      "summary": "Debtor responded formally to the complaint disputing claims within the legal deadline, advancing the case to the next procedural phase where the court is expected to schedule the hearing in due time."
-    },
-    "node_c95f6f99": {
-      "id": "node_c95f6f99",
-      "case_id": "7777",
-      "incoming": [
-        "edge_ea60356d"
+      "outgoing": [
+        "edge_5e72a7fb",
+        "edge_984aba26"
       ],
-      "outgoing": [],
-      "title": "Plaintiff sends reminder to debtor after no response to complaint",
+      "title": "Complaint filed against Debtor for non-payment",
       "state": {
-        "start_time": "2026-05-24T13:00:00",
+        "start_time": "2026-05-01T13:00:00",
         "end_time": "2026-05-31T13:00:00",
-        "description": "Plaintiff has sent a formal reminder to debtor for responding to the complaint after the expiry of the statutory deadline without receiving a response.",
-        "legal_issue": "Debtor's failure to respond to complaint within statutory deadline triggers plaintiff's right to send reminder and potentially escalate further.",
+        "description": "Plaintiff Tim has filed a formal complaint against debtor Andi for failing to pay the invoice after a reminder. The case is now pending court proceedings.",
+        "legal_issue": "Non-payment and default leading to initiation of legal proceedings.",
         "final_state": false,
         "actors_status": [
           {
@@ -214,9 +83,14 @@
               "id": "123",
               "case_id": "7777",
               "name": "tim",
-              "role": "plaintiff"
+              "role": "plaintiff",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
             },
-            "paid": 50,
+            "paid": 0,
             "received": 0
           },
           {
@@ -224,7 +98,12 @@
               "id": "1234",
               "case_id": "7777",
               "name": "andi",
-              "role": "debtor"
+              "role": "debtor",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
             },
             "paid": 0,
             "received": 0
@@ -233,24 +112,19 @@
         "legal_references": [
           {
             "type": "law",
-            "reference": "\u00a7 276 ZPO - Pflicht zur Klageerwiderung",
-            "extract": "Defendant has a statutory deadline to respond to complaint; failure allows plaintiff to send reminders or take action.",
-            "summary": "Supports plaintiff action after no defendant response."
-          },
-          {
-            "type": "law",
-            "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
-            "extract": "The defendant must respond to the complaint within a set period, which is two weeks from service.",
-            "summary": "Establishes the deadline for response after which plaintiff can act."
+            "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+            "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
+            "summary": "Confirms debtor is in default after failure to pay following reminder."
           }
         ],
         "artifacts": [
           {
-            "id": "artifact_002",
+            "id": "art_0001",
             "type": "document",
-            "content": "Reminder letter sent by plaintiff to debtor due to no response received to the complaint.",
+            "title": "Complaint Filing Document",
+            "content": "Complaint filed by plaintiff Tim against debtor Andi for failure to pay invoice despite reminder.",
             "created_by": "123",
-            "timestamp": "2026-05-24T13:00:00"
+            "timestamp": "2026-04-27T14:00:00"
           }
         ],
         "deadlines": [
@@ -258,133 +132,297 @@
             "type": "response_deadline",
             "references": {
               "type": "law",
-              "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
-              "extract": "The defendant must respond to the complaint within a set period.",
-              "summary": "Deadline for debtor response to complaint."
+              "reference": "Court procedural rules",
+              "extract": "Deadlines for response to complaint typically set by court procedural regulations.",
+              "summary": "Deadline for debtor to respond to complaint."
             },
-            "summary": "Debtor's deadline to respond to complaint expired; reminder sent to debtor after expiry.",
-            "due_date": "2026-05-24T13:00:00"
+            "summary": "Debtor must respond to complaint within court-specified time limit.",
+            "due_date": "2026-05-31T13:00:00"
           }
         ]
       },
-      "summary": "No response was received from debtor to complaint within the statutory deadline; plaintiff has sent a formal reminder letter on the day the deadline expired."
+      "summary": "Plaintiff files complaint initiating court proceedings due to non-payment after reminder."
+    },
+    "node_4915b61e": {
+      "id": "node_4915b61e",
+      "case_id": "7777",
+      "incoming": [
+        "edge_5e72a7fb"
+      ],
+      "outgoing": [],
+      "title": "Response Submitted by Debtor",
+      "state": {
+        "start_time": "2026-05-31T13:00:00",
+        "end_time": "2026-06-10T13:00:00",
+        "description": "Debtor Andi has submitted a formal response to the complaint filed by plaintiff Tim. The content of the response addresses the claims of non-payment, either accepting, contesting, or justifying the situation. The case progresses to evaluation of the response by the court.",
+        "legal_issue": "Debtor's formal response to complaint within procedural rules.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "123",
+              "case_id": "7777",
+              "name": "tim",
+              "role": "plaintiff",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "1234",
+              "case_id": "7777",
+              "name": "andi",
+              "role": "debtor",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "Court procedural rules",
+            "extract": "The defendant is required to respond to the complaint within a set deadline to participate effectively in the legal proceedings.",
+            "summary": "Confirms procedural requirement for response submission."
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "art_response_0001",
+            "type": "document",
+            "title": "Debtor's Response to Complaint",
+            "content": "Formal response submitted by debtor Andi addressing the complaint filed by plaintiff Tim regarding non-payment of the invoice.",
+            "created_by": "1234",
+            "timestamp": "2026-05-31T13:30:00"
+          }
+        ],
+        "deadlines": [
+          {
+            "type": "hearing_date_deadline",
+            "references": {
+              "type": "law",
+              "reference": "Court procedural rules",
+              "extract": "A hearing date is typically scheduled after the response to the complaint is received, allowing parties to prepare.",
+              "summary": "Deadline for setting hearing after response."
+            },
+            "summary": "Deadline by which the court must schedule a hearing date post response.",
+            "due_date": "2026-06-20T13:00:00"
+          }
+        ]
+      },
+      "summary": "Debtor Andi has submitted a formal written response to the complaint from plaintiff Tim, marking progression to the court's review of arguments."
+    },
+    "node_a2245566": {
+      "id": "node_a2245566",
+      "case_id": "7777",
+      "incoming": [
+        "edge_984aba26"
+      ],
+      "outgoing": [],
+      "title": "Court Sets Payment Deadline After No Response",
+      "state": {
+        "start_time": "2026-05-31T13:00:00",
+        "end_time": "2026-06-15T13:00:00",
+        "description": "After debtor Andi failed to respond to the complaint within the court-specified deadline, the court issued an order setting a new payment deadline of 15 days to settle the outstanding invoice with plaintiff Tim. The case awaits debtor's compliance with the court order.",
+        "legal_issue": "Non-payment continues despite complaint and court order; debtor now under formal payment deadline for settlement.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "123",
+              "case_id": "7777",
+              "name": "tim",
+              "role": "plaintiff",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
+            },
+            "paid": 0,
+            "received": 0
+          },
+          {
+            "actor": {
+              "id": "1234",
+              "case_id": "7777",
+              "name": "andi",
+              "role": "debtor",
+              "gender": null,
+              "age": null,
+              "nationality": null,
+              "profession": null,
+              "background": null
+            },
+            "paid": 0,
+            "received": 0
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "\u00a7 331 ZPO - Court's power to set deadlines",
+            "extract": "Das Gericht kann Fristen setzen, um den Fortgang des Verfahrens zu sichern.",
+            "summary": "Court's authority to impose procedural deadlines."
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+            "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
+            "summary": "Confirms debtor is in default after failure to pay following reminder."
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "art_0002",
+            "type": "document",
+            "title": "Court Order Setting Payment Deadline",
+            "content": "Court issues an order setting a new payment deadline for debtor Andi to settle the invoice with plaintiff Tim within 15 days upon debtor's failure to respond adequately to complaint.",
+            "created_by": null,
+            "timestamp": "2026-05-31T15:00:00"
+          }
+        ],
+        "deadlines": [
+          {
+            "type": "payment_deadline",
+            "references": {
+              "type": "law",
+              "reference": "\u00a7 331 ZPO - Court's power to set deadlines",
+              "extract": "Das Gericht kann Fristen setzen, um den Fortgang des Verfahrens zu sichern.",
+              "summary": "Court set deadline for debtor payment after non-response."
+            },
+            "summary": "Debtor must pay invoice within 15 days of court order.",
+            "due_date": "2026-06-15T13:00:00"
+          }
+        ]
+      },
+      "summary": "Court issues order setting a new 15-day payment deadline after debtor fails to respond to complaint."
     }
   },
   "edges": {
-    "edge_de70a89c": {
-      "id": "edge_de70a89c",
+    "edge_1c59f6e4": {
+      "id": "edge_1c59f6e4",
       "case_id": "7777",
       "source_id": "12344",
-      "target_id": "node_5eb3dad3",
+      "target_id": "node_94de9e42",
       "start_time": "2026-04-27T13:00:00",
-      "end_time": "2026-04-29T13:00:00",
+      "end_time": "2026-05-01T13:00:00",
       "action_type": "file_complaint",
       "actor_id": "123",
       "artifacts": [
         {
-          "id": "artifact_001",
+          "id": "art_0001",
           "type": "document",
-          "content": "Formal complaint filed by plaintiff for non-payment of invoice.",
+          "title": "Complaint Filing Document",
+          "content": "Complaint filed by plaintiff Tim against debtor Andi for failure to pay invoice despite reminder.",
           "created_by": "123",
-          "timestamp": "2026-04-27T13:00:00"
+          "timestamp": "2026-04-27T14:00:00"
         }
       ],
       "probability": 0.8,
       "conditions": [
-        "Debtor has not paid invoice after reminder",
-        "Plaintiff decides to initiate legal proceedings"
+        "Debtor has failed to pay invoice after reminder period elapsed",
+        "Plaintiff wishes to initiate formal legal proceedings"
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "\u00a7 286 BGB - Verzugsregelungen beim Schuldnerverzug",
-          "extract": "Schuldner ger\u00e4t durch Mahnung oder Fristablauf mit der Leistung in Verzug.",
-          "summary": "Defines conditions under which debtor is in default after reminder."
-        },
-        {
-          "type": "law",
-          "reference": "\u00a7 253 ZPO - Klageerhebung",
-          "extract": "Kl\u00e4ger kann eine Klage beim Gericht einreichen, um Anspr\u00fcche geltend zu machen.",
-          "summary": "Regulates filing of complaints to initiate legal proceedings."
+          "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+          "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
+          "summary": "Legal basis for debtor being in default after reminder period."
         }
       ],
       "lawyer_involved": true
     },
-    "edge_d22db037": {
-      "id": "edge_d22db037",
+    "edge_5e72a7fb": {
+      "id": "edge_5e72a7fb",
       "case_id": "7777",
-      "source_id": "node_5eb3dad3",
-      "target_id": "node_a2f6b70a",
-      "start_time": "2026-05-10T13:00:00",
-      "end_time": "2026-05-15T13:00:00",
-      "action_type": "file_response",
+      "source_id": "node_94de9e42",
+      "target_id": "node_4915b61e",
+      "start_time": "2026-05-31T13:00:00",
+      "end_time": "2026-06-10T13:00:00",
+      "action_type": "submit_response",
       "actor_id": "1234",
       "artifacts": [
         {
-          "id": "artifact_response_001",
+          "id": "art_response_0001",
           "type": "document",
-          "content": "Formal response filed by debtor disputing the plaintiff's claims and presenting defenses.",
+          "title": "Debtor's Response to Complaint",
+          "content": "Formal response submitted by debtor Andi addressing the complaint filed by plaintiff Tim regarding non-payment of the invoice. The response may accept, contest, or provide justification for non-payment.",
           "created_by": "1234",
-          "timestamp": "2026-05-15T12:00:00"
+          "timestamp": "2026-05-31T13:30:00"
         }
       ],
       "probability": 0.7,
       "conditions": [
-        "debtor has received formal complaint"
+        "Debtor has received the complaint document",
+        "Debtor is within the deadline to submit a response"
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "\u0000a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
-          "extract": "Defendant must file response to complaint within the statutory deadline to present defenses.",
-          "summary": "Sets deadline and requirement for debtor's response to complaint."
+          "reference": "Court procedural rules",
+          "extract": "The defendant must submit a response to the complaint within the specified deadline to proceed with the defense in court.",
+          "summary": "Legal obligation for debtor to respond to the complaint within the deadline."
         },
         {
           "type": "law",
-          "reference": "\u0000a7 278 ZPO - Terminsbestimmung durch das Gericht",
-          "extract": "Court schedules hearing date after parties' written submissions.",
-          "summary": "Court's responsibility to schedule hearing after pleadings are complete."
+          "reference": "Court procedural rules",
+          "extract": "The defendant is required to respond to the complaint within a set deadline to participate effectively in the legal proceedings.",
+          "summary": "Confirms procedural requirement for response submission."
         }
       ],
-      "lawyer_involved": true
+      "lawyer_involved": false
     },
-    "edge_ea60356d": {
-      "id": "edge_ea60356d",
+    "edge_984aba26": {
+      "id": "edge_984aba26",
       "case_id": "7777",
-      "source_id": "node_5eb3dad3",
-      "target_id": "node_c95f6f99",
-      "start_time": "2026-05-24T13:00:00",
-      "end_time": "2026-05-31T13:00:00",
-      "action_type": "send_reminder_after_no_response",
-      "actor_id": "123",
+      "source_id": "node_94de9e42",
+      "target_id": "node_a2245566",
+      "start_time": "2026-05-31T13:00:00",
+      "end_time": "2026-06-15T13:00:00",
+      "action_type": "court_order_payment_deadline",
+      "actor_id": null,
       "artifacts": [
         {
-          "id": "artifact_002",
+          "id": "art_0002",
           "type": "document",
-          "content": "Reminder letter sent by plaintiff to debtor due to no response received to the complaint.",
-          "created_by": "123",
-          "timestamp": "2026-05-24T13:00:00"
+          "title": "Court Order Setting Payment Deadline",
+          "content": "Court issues an order setting a new payment deadline for debtor Andi to settle the invoice with plaintiff Tim within 15 days upon debtor's failure to respond adequately to complaint.",
+          "created_by": null,
+          "timestamp": "2026-05-31T15:00:00"
         }
       ],
-      "probability": 0.2,
+      "probability": 0.25,
       "conditions": [
-        "Defendant has not filed a response within the statutory deadline"
+        "Debtor failed to submit a valid or timely response to the complaint within the court-specified deadline"
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "\u00a7 276 ZPO - Pflicht zur Klageerwiderung",
-          "extract": "If the defendant fails to respond within the set deadline, plaintiff can send reminders or take further legal steps.",
-          "summary": "Allows plaintiff to act after no response to complaint within deadline."
+          "reference": "\u00a7 331 ZPO - Court's power to set deadlines",
+          "extract": "Das Gericht kann Fristen setzen, um den Fortgang des Verfahrens zu sichern.",
+          "summary": "Court is empowered to set procedural deadlines including payment deadlines when debtor does not respond."
         },
         {
           "type": "law",
-          "reference": "\u00a7 276 ZPO - Frist zur Einreichung einer Klageerwiderung",
-          "extract": "The defendant must respond to the complaint within a set period, which is two weeks from service.",
-          "summary": "Defines the statutory deadline for defendant's response to a complaint."
+          "reference": "\u00a7 286 BGB - Verzug des Schuldners",
+          "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
+          "summary": "Debtor is in default after failure to pay following a reminder."
         }
       ],
-      "lawyer_involved": true
+      "lawyer_involved": false
     }
   },
   "actors": {
@@ -392,13 +430,23 @@
       "id": "123",
       "case_id": "7777",
       "name": "tim",
-      "role": "plaintiff"
+      "role": "plaintiff",
+      "gender": null,
+      "age": null,
+      "nationality": null,
+      "profession": null,
+      "background": null
     },
     "1234": {
       "id": "1234",
       "case_id": "7777",
       "name": "andi",
-      "role": "debtor"
+      "role": "debtor",
+      "gender": null,
+      "age": null,
+      "nationality": null,
+      "profession": null,
+      "background": null
     }
   }
 }

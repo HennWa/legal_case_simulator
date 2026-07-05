@@ -5,7 +5,8 @@ from backend.object_graph_runtime.graph_classes import CaseGraph, LegalState, Ac
 from backend.expansion_engine.exapnsion_engine import ExpansionEngine
 from backend.llm_interface.llm_interface import MockLLMProvider
 from backend.database.repositories.node_repository import NodeRepository
-from utils.utils import get_frontend_dir
+from backend.database.repositories.graph_repository import GraphRepository
+from backend.utils.utils import get_frontend_dir
 import json
 
 
@@ -81,12 +82,19 @@ if __name__ == "__main__":
 
 
     # Test Mongo DB
-    repo = NodeRepository()
-    print('save node to mongo db')
-    repo.create(brach_node.node)
+    #repo = NodeRepository()
+    #print('save node to mongo db')
+    #repo.create(brach_node.node)
+    #print('read node from mongo db')
+    #loaded = repo.get(brach_node.node.id)
 
+    repo = GraphRepository()
+    print('save node to mongo db')
+    repo.save_graph(graph)
     print('read node from mongo db')
-    loaded = repo.get(brach_node.node.id)
+    loaded = repo.load_graph('7777')
+
+
 
     print(type(loaded))
 

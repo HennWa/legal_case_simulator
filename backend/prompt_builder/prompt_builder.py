@@ -1,7 +1,7 @@
 import json
-from object_graph_runtime.graph_classes import LegalBranchNode, LegalBranches
+from backend.object_graph_runtime.graph_classes import LegalBranchNode, LegalBranches
 
-from object_graph_runtime.graph_classes import CaseGraph
+from backend.object_graph_runtime.graph_classes import CaseGraph
 
 
 

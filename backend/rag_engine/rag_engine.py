@@ -4,7 +4,7 @@ from pathlib import Path
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
-from database.repositories.vector_repository import VectorRepository
+from backend.database.repositories.vector_repository import VectorRepository
 
 from dotenv import load_dotenv
 

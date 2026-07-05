@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from openai import OpenAI
-from object_graph_runtime.graph_classes import LegalBranchNode
+from backend.object_graph_runtime.graph_classes import LegalBranchNode
 
 
 class BaseLLMProvider(ABC):

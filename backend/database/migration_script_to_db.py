@@ -1,7 +1,7 @@
 import os
-from utils.utils import get_frontend_dir
-from object_graph_runtime.graph_classes import CaseGraph
-from database.repositories.graph_repository import GraphRepository
+from backend.utils.utils import get_frontend_dir
+from backend.object_graph_runtime.graph_classes import CaseGraph
+from backend.database.repositories.graph_repository import GraphRepository
 
 print("migration to mongo db")
 

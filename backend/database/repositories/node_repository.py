@@ -1,5 +1,5 @@
-from database.mongo import db
-from object_graph_runtime.graph_classes import LegalNode
+from backend.database.mongo import db
+from backend.object_graph_runtime.graph_classes import LegalNode
 
 class NodeRepository:
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from legal_services.legal_services import LegalServices
-from llm_interface.llm_interface import MockLLMProvider
-from database.repositories.graph_repository import GraphRepository
+from backend.legal_services.legal_services import LegalServices
+from backend.llm_interface.llm_interface import MockLLMProvider
+from backend.database.repositories.graph_repository import GraphRepository
 import os
 from dotenv import load_dotenv
 

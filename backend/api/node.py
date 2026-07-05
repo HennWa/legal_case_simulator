@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 import os
-from object_graph_runtime.graph_classes import CaseGraph
-from database.repositories.graph_repository import GraphRepository
-from utils.utils import get_frontend_dir
+from backend.object_graph_runtime.graph_classes import CaseGraph
+from backend.database.repositories.graph_repository import GraphRepository
+from backend.utils.utils import get_frontend_dir
 
 router = APIRouter()
 

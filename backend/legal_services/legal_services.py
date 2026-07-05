@@ -4,11 +4,11 @@ import os
 from pathlib import Path
 
 from networkx.classes import neighbors
-from object_graph_runtime.graph_classes import CaseGraph, LegalNode, LegalBranchNode
-from prompt_builder.prompt_builder import PromptBuilder
-from llm_interface.llm_interface import BaseLLMProvider
-from rag_engine.rag_engine import RAGEngine
-from utils.utils import get_frontend_dir
+from backend.object_graph_runtime.graph_classes import CaseGraph, LegalNode, LegalBranchNode
+from backend.prompt_builder.prompt_builder import PromptBuilder
+from backend.llm_interface.llm_interface import BaseLLMProvider
+from backend.rag_engine.rag_engine import RAGEngine
+from backend.utils.utils import get_frontend_dir
 
 
 #path_db = os.path.join(Path(__file__).resolve().parent.parent, 'local_db/law_vectorstore')

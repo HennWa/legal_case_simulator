@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.node import router as node_router
-from api.cases import router as cases_router
-from api.graph import router as graph_router
-from api.add_node import router as add_node_router
-from api.delete_node import router as delete_node_router
-from api.legal_check import router as legal_check
-from database.init_db import create_indexes
+from backend.api.node import router as node_router
+from backend.api.cases import router as cases_router
+from backend.api.graph import router as graph_router
+from backend.api.add_node import router as add_node_router
+from backend.api.delete_node import router as delete_node_router
+from backend.api.legal_check import router as legal_check
+from backend.database.init_db import create_indexes
 
 create_indexes()  # any time called, recognized by Mongo DB
 

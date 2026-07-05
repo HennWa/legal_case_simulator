@@ -3,7 +3,7 @@
 # Create indexes in db. Script can be called any time a client is build since Mong DB
 # cannot duplicate indices
 
-from database.mongo import db
+from backend.database.mongo import db
 
 def create_indexes():
 

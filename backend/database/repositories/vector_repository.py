@@ -5,7 +5,7 @@ from pymongo.collection import Collection
 from langchain_core.documents import Document
 from openai import OpenAI
 
-from database.mongo import db
+from backend.database.mongo import db
 
 
 class VectorRepository:
