@@ -4,6 +4,7 @@ import re
 import os
 
 from lxml import etree
+import hashlib
 
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
@@ -162,7 +163,8 @@ def parse_xml(xml_file: str, law_name: str = "BGB"):
                         f"{chunk}"
                     )
 
-                    doc_key = f"{law_name}_{paragraph_number}_{idx}_{chunk_idx}"
+                    doc_key = hashlib.md5(content.encode()).hexdigest()
+
                     documents.append(
                         Document(
                             page_content=content,
@@ -231,7 +233,7 @@ def build_vectorstore(law_files, persist_directory):
 
 def upload_documents_to_mongo(
     all_docs,
-    batch_size: int = 50,
+    batch_size: int = 10,
     embedding_model: str = EMBEDDING_MODEL,
 ):
     """
@@ -274,8 +276,10 @@ def upload_documents_to_mongo(
             print(
                 f"Uploaded {min(start + batch_size, total):,}/{total:,}"
             )
-        except:
-            print(f"Error processing batch starting at index {start}. Skipping this batch.")
+
+        except Exception as e:
+            print(f"Batch failed at index {start}")
+            print(e)
             continue
 
     print("Finished uploading vector store in mongo db.")
