@@ -18,6 +18,7 @@ import NodeDetailsPanel from "./NodeDetailsPanel";
 import TopBar from "./TopBar";
 import { layoutGraph } from "./layout";
 
+import { fetchCases } from "./api/cases";
 import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
 import { addNode } from "./api/add_node";
@@ -29,6 +30,9 @@ function App() {
 
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [cases, setCases] = useState([]);
+  const [selectedCaseId, setSelectedCaseId] = useState(null);
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedNodeData, setSelectedNodeData] = useState(null);
@@ -42,6 +46,22 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLegalCheck, setIsLegalCheck] = useState(false);
   const [processingNodeId, setProcessingNodeId] = useState(null);
+
+
+const loadCases = async () => {
+  try {
+    const default_owner_id = '111';
+    const data = await fetchCases(default_owner_id);
+
+    setCases(data);
+
+    if (data.length > 0 && !selectedCaseId) {
+      setSelectedCaseId(data[0].id);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 
   const loadGraph = async () => {
@@ -124,6 +144,11 @@ function App() {
   // SET GRAPH
   useEffect(() => {
       loadGraph();
+    }, []);
+
+  // SET CASES
+  useEffect(() => {
+      loadCases();
     }, []);
 
 // SET NODES & EDGES

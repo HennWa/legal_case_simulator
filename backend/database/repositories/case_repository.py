@@ -44,3 +44,15 @@ class CaseRepository:
         self.collection.delete_one(
             {"id": case_id}
         )
+
+    def get_by_owner_id(self, owner_id: str):
+        docs = self.collection.find(
+            {"owner_id": owner_id}
+        )
+
+        return [
+            Case.model_validate(
+                {k: v for k, v in doc.items() if k != "_id"}
+            )
+            for doc in docs
+        ]
