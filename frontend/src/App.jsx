@@ -192,7 +192,21 @@ const loadCases = async () => {
       }}
     >
       {/* TOP BAR */}
-      <TopBar />
+      <TopBar
+          cases={cases}
+          selectedCaseId={selectedCaseId}
+          onSelectCase={setSelectedCaseId}
+          onCreateCase={async () => {
+            try {
+              //const newCase = await createCase();   // your API function
+
+              //setCases((prev) => [...prev, newCase]);
+              //setSelectedCaseId(newCase.id);
+            } catch (err) {
+              console.error(err);
+            }
+          }}
+        />
 
       {/* MAIN AREA */}
       <div style={{ display: "flex", flex: 1 }}>
