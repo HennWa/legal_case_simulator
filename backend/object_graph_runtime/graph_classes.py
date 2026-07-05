@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, Dict, List, Any
+from enum import Enum
 import uuid
 import json
 from datetime import datetime, timezone
@@ -19,11 +20,22 @@ def utc_now() -> str:
 # -------------------------
 # Case Model
 # -------------------------
+class Language(str, Enum):
+    GERMAN = "de"
+    ENGLISH = "en"
+    FRENCH  = "fr"
+
+class AppliedLaw(str, Enum):
+    GERMAN = "de"
+    US = "us"
+
 class Case(BaseModel):
     id: str
     owner_id: str
     title: str
     created_at: str
+    language: Language = Language.ENGLISH
+    applied_law: AppliedLaw = AppliedLaw.GERMAN
 
 # -------------------------
 # Graph Components
@@ -36,6 +48,11 @@ class Actor(BaseModel):
     name: str = Field(description='Name of the actor')
     role: str = Field(description='Role of the actor in the legal case '
                                   '(e.g., plaintiff, defendant, judge, lawyer, court)')
+    gender: Optional[str] = Field(default=None, description='Gender of the actor, if applicable')
+    age: Optional[int] = Field(default=None, description='Age of the actor, if applicable')
+    nationality: Optional[str] = Field(default=None, description='Nationality of the actor, if applicable')
+    profession: Optional[str] = Field(default=None, description='Profession of the actor, if applicable')
+    background: Optional[str] = Field(default=None, description='Background information of the actor, if applicable')
 
 
 class ActorStatus(BaseModel):
@@ -51,8 +68,10 @@ class Artifact(BaseModel):
 
     id: str = Field(description='Unique identifier for the artifact')
     type: str = Field(description='Type of the artifact (e.g., document, evidence, testimony)')
-    content: str = Field(description='Content of the artifact, can be text or a reference to an external resource')
-    created_by: Optional[str] = Field(default=None, description='ID of the actor who created the artifact')
+    title: str = Field(description='Title or brief description of the artifact, e.g., "Contract between A and B"')
+    content: str = Field(description='Full content of the artifact, can be text or a reference to an external resource')
+    created_by: Optional[str] = Field(default=None, description='ID of the actor who created the artifact '
+                                                                '(Person, court, lawyer etc.)')
     timestamp: str = Field(default_factory=utc_now, description='Timestamp of when the artifact was created in ISO 8601 format')
 
 
@@ -61,7 +80,7 @@ class LegalReference(BaseModel):
 
     type: str = Field(description='Type of reference, e.g. law, policy etc.')
     reference: str = Field(description='Legal reference e.g.: § 433 BGB – Vertragstypische Pflichten beim Kaufvertrag')
-    extract: str = Field(description='Extract of the reference from the source')
+    extract: str = Field(description='Long extract of the reference from the source')
     summary: str = Field(description='Summary of the reference')
 
 
