@@ -66,7 +66,7 @@ const loadCases = async () => {
 
   const loadGraph = async () => {
       try {
-        const data = await fetchGraph();
+        const data = await fetchGraph(selectedCaseId);
         setGraphData(data);
       } catch (err) {
         console.error(err);
@@ -141,15 +141,18 @@ const loadCases = async () => {
   }, [contextMenuRightClick]);
 
 
-  // SET GRAPH
-  useEffect(() => {
-      loadGraph();
-    }, []);
 
   // SET CASES
   useEffect(() => {
       loadCases();
     }, []);
+
+  // SET GRAPH
+  useEffect(() => {
+      if (selectedCaseId) {
+        loadGraph(selectedCaseId);
+      }
+    }, [selectedCaseId]);
 
 // SET NODES & EDGES
   const { nodes, edges } = useMemo(() => {

@@ -4,10 +4,10 @@ from backend.database.repositories.graph_repository import GraphRepository
 
 router = APIRouter()
 
-@router.get("/graph")
-def get_graph():
+@router.get("/graph/{case_id}")
+def get_graph(case_id: str):
 
-    case_id = '7777'  # temporary
+
     repo = GraphRepository()
     graph = repo.load_graph(case_id)
 
