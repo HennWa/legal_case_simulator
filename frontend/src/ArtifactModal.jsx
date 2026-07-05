@@ -34,7 +34,7 @@ export default function ArtifactModal({
                 className="artifact-detail-card"
               >
                 <div className="artifact-title">
-                  {art.type ?? "No title"}
+                  {art.title ?? "No title"}
                 </div>
 
                 <div className="artifact-type">
