@@ -11,9 +11,9 @@ from rag_engine.rag_engine import RAGEngine
 from utils.utils import get_frontend_dir
 
 
-path_db = os.path.join(Path(__file__).resolve().parent.parent, 'local_db/law_vectorstore')
-db_name = "chroma_bgb"
-db_dir = os.path.join(path_db, db_name)
+#path_db = os.path.join(Path(__file__).resolve().parent.parent, 'local_db/law_vectorstore')
+#db_name = "chroma_bgb"
+#db_dir = os.path.join(path_db, db_name)
 
 
 class LegalServices:
@@ -28,7 +28,8 @@ class LegalServices:
         # Legal law research RAG
         print(f'RAG research for: {node_id}')
         narrative = self.graph.build_narrative(self.graph.build_path(node_id))
-        rag_engine = RAGEngine(db_dir)
+        rag_engine = RAGEngine()
+        #rag_engine = RAGEngine(db_dir)
         rag_results_law = rag_engine.get_docs(narrative)
         print(f'RAG research done for: {node_id}')
 
