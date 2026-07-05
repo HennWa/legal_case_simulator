@@ -1,10 +1,14 @@
-export async function addNode(nodeId: string) {
-  const res = await fetch(
-    `http://localhost:8000/api/add_node/${nodeId}`,
-    {
-      method: "POST",
-    }
-  );
+export async function addNode(caseId: string, nodeId: string) {
+  const res = await fetch("http://localhost:8000/api/add_node", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      case_id: caseId,
+      node_id: nodeId,
+    }),
+  });
 
   if (!res.ok) {
     throw new Error(`Failed to add node ${nodeId}`);
@@ -12,3 +16,5 @@ export async function addNode(nodeId: string) {
 
   return res.json();
 }
+
+

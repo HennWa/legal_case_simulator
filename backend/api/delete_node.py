@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 from backend.database.repositories.graph_repository import GraphRepository
 from backend.utils.utils import get_frontend_dir
 import os
@@ -10,15 +11,17 @@ router = APIRouter()
 load_dotenv(override=True)
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
-@router.post("/delete_node/{node_id}")
-def delete_node(node_id: str):
+class DeleteNodeRequest(BaseModel):
+    case_id: str
+    node_id: str
 
-    case_id = '7777'  # temporary
+@router.post("/delete_node")
+def delete_node(payload: DeleteNodeRequest):
+
     repo = GraphRepository()
-    graph = repo.load_graph(case_id)
+    graph = repo.load_graph(payload.case_id)
 
-    print(f'Delete node with id: {node_id}')
-    graph.delete_node(node_id)
+    graph.delete_node(payload.node_id)
     graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
 
     repo.sync_to_mongo(graph)

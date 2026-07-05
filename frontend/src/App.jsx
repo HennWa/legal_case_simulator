@@ -80,13 +80,13 @@ const loadCases = async () => {
         setContextMenuRightClick(null);
 
         console.log('Adding node', nodeId);
-        let new_branch = await addNode(nodeId);
+        let new_branch = await addNode(selectedCaseId, nodeId);
         setIsProcessing(false);
         console.log('Node added', new_branch.node.id);
 
         console.log('Legal check node', new_branch.node.id);
         setIsLegalCheck(true);
-        await legalCheck(new_branch.node.id);
+        await legalCheck(selectedCaseId, new_branch.node.id);
         setIsLegalCheck(false);
         console.log('Node legally checked', new_branch.node.id);
 
@@ -110,7 +110,7 @@ const loadCases = async () => {
         setContextMenuRightClick(null);
 
         console.log('Deleting node', nodeId);
-        await deleteNode(nodeId);
+        await deleteNode(selectedCaseId, nodeId);
         console.log('Node deleted', nodeId);
         await loadGraph();
       } catch (err) {
@@ -244,7 +244,7 @@ const loadCases = async () => {
                   }}
               onNodeClick={async (e, node) => {
                   try {
-                    const data = await fetchNode(node.id);
+                    const data = await fetchNode(selectedCaseId, node.id);
 
                     setSelectedNodeId(node.id);
                     setSelectedNodeData(data);
