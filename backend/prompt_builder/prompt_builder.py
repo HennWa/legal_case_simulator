@@ -67,7 +67,7 @@ class PromptBuilder:
                    Check that the action is not already represented in the graph as an outgoing edge from the current node. 
                 2. Identifying the actor responsible for this action, if applicable.
                 3. Describe a conditions that need to be fulfilled for this action to be carried out, 
-                   if applicable (e.g., person above 18 years, actor has no criminal recors, employment 
+                   if applicable (e.g., person above 18 years, actor has no criminal records, employment 
                    relationship lasting longer than 6 months etc.)
                 4. Define a start and end time for this action, ensuring that it logically follows the previous events in the case.
                 5. Listing any artifacts associated with this legal action, if applicable (e.g., legal documents, evidence).
@@ -77,9 +77,17 @@ class PromptBuilder:
                 7. Estimating the probability of this legal action occurring based on the context of the case and the past events. 
                    Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
                    probabilities should be a value < 1.0
-                8. describe if a lawyer needs to involved for this action to be carried out.
+                8. Describe if a lawyer needs to involved for this action to be carried out.
+                
+            step4: Generate the content of all relevant artifacts and documents that are associated with this legal 
+            action, if applicable. 
+                - Provide full documents like emails, letters, contracts etc. that are relevant for the legal action and 
+                state.
+                - The content must be written in a formal and legally plausible way, as if it were written by a lawyer. 
+                  The document should have the quality so that they can be directly used in a real legal case. 
+                - The document maust be consistent with the legal action and state.
             
-            step4: Ensure that the next state resulting from this action is fully structured and 
+            step5: Ensure that the next state resulting from this action is fully structured and 
                   consistent with the legal context of the case. This includes:
                   
                 1. Defining the legal state that results from the action, including all relevant attributes and their values.
