@@ -16,8 +16,9 @@ if __name__ == "__main__":
     load_dotenv(override=True)
     openai_api_key = os.getenv('OPENAI_API_KEY')
 
-    graph = CaseGraph()
+    # -------------------------------- 1. case --------------------------------
 
+    graph = CaseGraph()
 
     tim = Actor(id = '123', case_id = '7777', name='tim', role='plaintiff')
     andi = Actor(id='1234', case_id = '7777', name='andi', role='debtor')
@@ -82,20 +83,87 @@ if __name__ == "__main__":
 
 
     # Test Mongo DB
-    #repo = NodeRepository()
-    #print('save node to mongo db')
-    #repo.create(brach_node.node)
-    #print('read node from mongo db')
-    #loaded = repo.get(brach_node.node.id)
-
     repo = GraphRepository()
     print('save node to mongo db')
     repo.save_graph(graph)
     print('read node from mongo db')
     loaded = repo.load_graph('7777')
 
-
-
     print(type(loaded))
 
     print(loaded)
+
+
+    #-------------------------------- 2. case --------------------------------
+
+
+    graph2 = CaseGraph()
+
+    sebo = Actor(id = '2543353', case_id = '555', name='sebo', role='thief')
+    georg = Actor(id='3767', case_id = '555', name='georg', role='car owner')
+
+    graph2.actors =  {'sebo' : sebo, 'georg' : georg}
+    graph2.case = Case(
+        id='555',
+        owner_id = '111',
+        title='thief_case',
+        created_at=utc_now()
+    )
+
+    status_sebo = ActorStatus(actor=sebo,
+                             paid=0,
+                             received=0,
+    )
+    status_georg = ActorStatus(actor=georg,
+                             paid=0,
+                             received=0,
+                             )
+
+    state2 = LegalState(
+        start_time= '2026-04-19T13:00:00',
+        end_time='2026-04-27T13:00:00',
+        legal_issue="car theft",
+        description="Georg has stolen the car of Sebo",
+        final_state=False,
+        actors_status=[status_sebo, status_georg],
+        legal_references=[],
+        artifacts=[],
+        deadlines=[]
+    )
+
+    init_node2 = LegalNode(
+        id ='26537373758',
+        case_id=graph2.case.id,
+        incoming=[],
+        outgoing=[],
+        title='Car theft',
+        state=state2,
+        summary='Georg has stolen the car of Sebo',
+    )
+
+
+    # Initial node
+    start2 = graph2.add_node_obj(init_node2)
+
+    # Expansion engine
+    llm = MockLLMProvider(key=openai_api_key)
+
+    engine = ExpansionEngine(graph2, llm)
+
+    # Expand node
+    print("Creating new node")
+    brach_node = engine.expand_node(start2.id)
+
+    print("Created node")
+
+
+    # Test Mongo DB
+    repo = GraphRepository()
+    print('save node to mongo db')
+    repo.save_graph(graph2)
+    print('read node from mongo db')
+    loaded = repo.load_graph('555')
+
+
+
+
