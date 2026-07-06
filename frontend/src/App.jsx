@@ -16,6 +16,8 @@ import Sidebar from "./Sidebar";
 import ContextMenuRightClick from "./ContextMenuRightClick";
 import NodeDetailsPanel from "./NodeDetailsPanel";
 import TopBar from "./TopBar";
+import CreateCaseModal from "./CreateCaseModal/CreateCaseModal";
+
 import { layoutGraph } from "./layout";
 
 import { fetchCases } from "./api/cases";
@@ -42,6 +44,8 @@ function App() {
 
   const [contextMenuRightClick, setContextMenuRightClick] = useState(null);
   const [detailsNode, setDetailsNode] = useState(null);
+
+  const [createCaseModalOpen, setCreateCaseModalOpen] = useState(false);
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLegalCheck, setIsLegalCheck] = useState(false);
@@ -199,16 +203,7 @@ const loadCases = async () => {
           cases={cases}
           selectedCaseId={selectedCaseId}
           onSelectCase={setSelectedCaseId}
-          onCreateCase={async () => {
-            try {
-              //const newCase = await createCase();   // your API function
-
-              //setCases((prev) => [...prev, newCase]);
-              //setSelectedCaseId(newCase.id);
-            } catch (err) {
-              console.error(err);
-            }
-          }}
+          onCreateCase={() => setCreateCaseModalOpen(true)}
         />
 
       {/* MAIN AREA */}
@@ -295,6 +290,21 @@ const loadCases = async () => {
 
           </ReactFlowProvider>
         </div>
+
+        {/* Create Case Modal */}
+        <CreateCaseModal
+          open={createCaseModalOpen}
+          onClose={() => setCreateCaseModalOpen(false)}
+          onCreate={async (payload) => {
+            console.log("CREATE CASE PAYLOAD", payload);
+
+            // later:
+            // const newCase = await createCase(payload);
+            // setCases((prev) => [...prev, newCase]);
+            // setSelectedCaseId(newCase.id);
+          }}
+        />
+
       </div>
     </div>
   );

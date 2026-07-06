@@ -1,0 +1,273 @@
+/* ===========================================================
+   Overlay
+=========================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+}
+
+
+/* ===========================================================
+   Modal
+=========================================================== */
+
+.actor-modal {
+  position: relative;
+
+  width: 650px;
+  max-width: 95vw;
+
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background: linear-gradient(
+      180deg,
+      #20161a 0%,
+      #171114 100%
+  );
+
+  color: #f4ecee;
+
+  border: 1px solid rgba(192,132,151,.35);
+
+  border-radius: 12px;
+
+  box-shadow:
+      0 18px 50px rgba(0,0,0,.45);
+
+  padding: 28px;
+}
+
+
+/* ===========================================================
+   Title
+=========================================================== */
+
+.modal-title {
+  margin: 0 0 24px 0;
+
+  font-size: 22px;
+  font-weight: 600;
+
+  color: #ffffff;
+}
+
+
+/* ===========================================================
+   Form
+=========================================================== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 18px;
+}
+
+.form-label {
+  margin-bottom: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #c08497;
+}
+
+.form-help {
+  margin-top: 4px;
+
+  font-size: 12px;
+
+  color: rgba(255,255,255,.55);
+}
+
+
+/* ===========================================================
+   Inputs
+=========================================================== */
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border-radius: 8px;
+
+  border: 1px solid rgba(192,132,151,.35);
+
+  background: rgba(255,255,255,.05);
+
+  color: white;
+
+  padding: 10px 12px;
+
+  font-size: 14px;
+
+  transition: .18s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+
+  border-color: #c08497;
+
+  box-shadow: 0 0 0 3px rgba(192,132,151,.18);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255,255,255,.35);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+
+/* ===========================================================
+   Two-column layout
+=========================================================== */
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+
+/* ===========================================================
+   Buttons
+=========================================================== */
+
+.modal-actions {
+  margin-top: 28px;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.button {
+  border: none;
+
+  border-radius: 8px;
+
+  padding: 10px 18px;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: .18s;
+}
+
+.button-secondary {
+  background: rgba(255,255,255,.06);
+
+  color: white;
+}
+
+.button-secondary:hover {
+  background: rgba(255,255,255,.12);
+}
+
+.button-primary {
+  background: #c08497;
+
+  color: white;
+
+  font-weight: 600;
+}
+
+.button-primary:hover {
+  background: #d293a5;
+}
+
+
+/* ===========================================================
+   Close Button
+=========================================================== */
+
+.modal-close {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: rgba(255,255,255,.65);
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  transition: .18s;
+}
+
+.modal-close:hover {
+  background: rgba(255,255,255,.08);
+
+  color: white;
+}
+
+
+/* ===========================================================
+   Scrollbar
+=========================================================== */
+
+.actor-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.actor-modal::-webkit-scrollbar-thumb {
+  background: rgba(192,132,151,.35);
+  border-radius: 10px;
+}
+
+.actor-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+/* ===========================================================
+   Responsive
+=========================================================== */
+
+@media (max-width: 700px) {
+
+  .actor-modal {
+    width: calc(100vw - 24px);
+    padding: 20px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+}
