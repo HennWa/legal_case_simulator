@@ -3,6 +3,7 @@ import "./CreateCaseModal.css";
 import ActorModal from "./ActorModal";
 
 const EMPTY_CASE = {
+  owner_id: "111",
   title: "",
   applied_law: "de",
   description: "",

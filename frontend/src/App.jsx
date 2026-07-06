@@ -21,6 +21,7 @@ import CreateCaseModal from "./CreateCaseModal/CreateCaseModal";
 import { layoutGraph } from "./layout";
 
 import { fetchCases } from "./api/cases";
+import { createCase } from "./api/create_case";
 import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
 import { addNode } from "./api/add_node";
@@ -52,20 +53,33 @@ function App() {
   const [processingNodeId, setProcessingNodeId] = useState(null);
 
 
-const loadCases = async () => {
-  try {
-    const default_owner_id = '111';
-    const data = await fetchCases(default_owner_id);
+  const createCase_ = async (payload) => {
+      try {
+        const newCase = await createCase(payload);
 
-    setCases(data);
+        setCases((prev) => [...prev, newCase]);
+        setSelectedCaseId(newCase.id);
 
-    if (data.length > 0 && !selectedCaseId) {
-      setSelectedCaseId(data[0].id);
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+
+    const loadCases = async (payload) => {
+      try {
+        const default_owner_id = '111';
+        const data = await fetchCases(default_owner_id);
+
+        setCases(data);
+
+        if (data.length > 0 && !selectedCaseId) {
+          setSelectedCaseId(data[0].id);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
 
   const loadGraph = async () => {
@@ -297,11 +311,7 @@ const loadCases = async () => {
           onClose={() => setCreateCaseModalOpen(false)}
           onCreate={async (payload) => {
             console.log("CREATE CASE PAYLOAD", payload);
-
-            // later:
-            // const newCase = await createCase(payload);
-            // setCases((prev) => [...prev, newCase]);
-            // setSelectedCaseId(newCase.id);
+            createCase_(payload);
           }}
         />
 
