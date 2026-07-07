@@ -143,6 +143,8 @@ class LegalState(BaseModel):
                                                                         'dunning letter, emails etc.')
     deadlines: List[Deadline] = Field(default_factory=list, description='List of deadlines related to the state, can '
                                                                         'include response deadlines etc.')
+    potential_next_states: List[str] = Field(default_factory=list, description='List of potential next states that '
+                                                                               'can follow from this state')
 
 
 class LegalNode(BaseModel):

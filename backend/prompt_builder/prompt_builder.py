@@ -78,6 +78,8 @@ class PromptBuilder:
                    Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
                    probabilities should be a value < 1.0
                 8. Describe if a lawyer needs to involved for this action to be carried out.
+                9. Describe the five most likely potential next actions that could follow this action in a list. 
+                   Use not more than four word s for each action.
                 
             step4: Generate the content of all relevant artifacts and documents that are associated with this legal 
             action, if applicable. 
@@ -305,7 +307,7 @@ class PromptBuilder:
             
             step3: Summarize all relevant law references and add them to the legal action and state.
             
-            step4: If the are any non compliant actions involved, try to correct the legal action so that it 
+            step4: If there are any non compliant actions involved, try to correct the legal action so that it 
             conforms with the law. ONLY IF YOU CORRECT IT, update the given legal action so that it is consistent and 
             structured. This includes:
                 
@@ -324,6 +326,8 @@ class PromptBuilder:
                    Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
                    probabilities should be a value < 1.0
                 8. describe if a lawyer needs to involved for this action to be carried out.
+                9. Describe the five most likely potential next actions that could follow this action in a list. 
+                   Use not more than four word s for each action.
             
             step5: Ensure that the resulting output is fully structured and 
                   consistent with the legal context of the case. This includes:
