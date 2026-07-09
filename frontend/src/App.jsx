@@ -10,13 +10,13 @@ import "reactflow/dist/style.css";
 
 import "./App.css";
 
-import CustomNode from "./CustomNode";
-import CustomEdge from "./CustomEdge";
-import Sidebar from "./Sidebar";
-import ContextMenuRightClick from "./ContextMenuRightClick";
-import NodeDetailsPanel from "./NodeDetailsPanel";
-import TopBar from "./TopBar";
-import CreateCaseModal from "./CreateCaseModal/CreateCaseModal";
+import CustomNode from "./AppComponents/CustomNode";
+import CustomEdge from "./AppComponents/CustomEdge";
+import Sidebar from "./AppComponents/Sidebar";
+import ContextMenuRightClick from "./AppComponents/ContextMenuRightClick";
+import NodeDetailsPanel from "./AppComponents/NodeDetailsPanel/NodeDetailsPanel";
+import TopBar from "./AppComponents/TopBar";
+import CreateCaseModal from "./AppComponents/CreateCaseModal/CreateCaseModal";
 
 import { layoutGraph } from "./layout";
 

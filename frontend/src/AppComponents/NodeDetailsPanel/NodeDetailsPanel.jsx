@@ -1,7 +1,7 @@
 import "./NodeDetailsPanel.css";
 import { useState } from "react";
-import ReferenceModal from "./ReferenceModal";
-import ArtifactModal from "./ArtifactModal";
+import ReferenceModal from "../ReferenceModal/ReferenceModal";
+import ArtifactModal from "../ArtifactModal/ArtifactModal";
 
 export default function NodeDetailsPanel({
   node,

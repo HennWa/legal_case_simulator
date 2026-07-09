@@ -1,4 +1,4 @@
-import statistics from "./data/statistics.json";
+import statistics from "../data/statistics.json";
 import {
   BarChart,
   Bar,

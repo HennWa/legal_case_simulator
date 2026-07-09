@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import logo from "./assets/logos/logo.png";
+import logo from "../assets/logos/logo.png";
 
 export default function TopBar({
   cases,
