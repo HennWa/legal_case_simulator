@@ -5,6 +5,7 @@ from backend.api.create_case import router as create_case_router
 from backend.api.node import router as node_router
 from backend.api.cases import router as cases_router
 from backend.api.graph import router as graph_router
+from backend.api.add_node_by_action import router as add_node_by_action_router
 from backend.api.add_node import router as add_node_router
 from backend.api.delete_node import router as delete_node_router
 from backend.api.legal_check import router as legal_check
@@ -30,6 +31,7 @@ app.include_router(graph_router, prefix="/api")
 app.include_router(node_router, prefix="/api")
 app.include_router(cases_router, prefix="/api")
 app.include_router(add_node_router, prefix="/api")
+app.include_router(add_node_by_action_router, prefix="/api")
 app.include_router(delete_node_router, prefix="/api")
 app.include_router(legal_check, prefix="/api")
 app.include_router(create_case_router, prefix="/api")

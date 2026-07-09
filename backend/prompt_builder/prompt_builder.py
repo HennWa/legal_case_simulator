@@ -18,6 +18,144 @@ schema_json_single_node = json.dumps(
 
 class PromptBuilder:
 
+    # --------------------------------- node expansion prompts ---------------------------------
+
+    @staticmethod
+    def create_expand_node_by_action_prompt(graph: CaseGraph, node_id: str, action:str) -> dict[str, str]:
+
+        system_prompt = PromptBuilder.create_expand_node_by_action_system_prompt()
+        user_prompt = PromptBuilder.create_expand_node_by_action_user_prompt(graph, node_id, action)
+
+        return {'system_prompt': system_prompt, 'user_prompt': user_prompt}
+
+    @staticmethod
+    def create_expand_node_by_action_system_prompt() -> str:
+        SYSTEM_PROMPT = f"""
+            You are a legal process simulation engine.
+
+            ## TASK
+            Your task is to simulate the next most step in a legal procedure based on a given legal action. 
+            
+            The legal procedure is represented 
+            as a graph, where nodes represent legal states and edges represent legal events or actions that transition 
+            the case from one state to another. Create a branch to extend the legal case based on the current state, the
+            past events and the given legal action.
+
+            ## INPUT
+            You will receive:
+            1. A causal path of past legal events
+            2. A narrative summary of the case progression
+            3. The current legal state
+            4. A legal action that is to be carried out as a next step in the legal procedure.
+        
+
+            ## INSTRUCTIONS STEP BY STEP:
+            step1: Analyze the provided causal path of past legal events, 
+            the narrative summary, and the current legal state to understand the context of the case.
+
+            step3: Based on the given legal action, describe the next legal step in detail and research all the 
+            necessary information to create a consistent and structured next step. This includes:
+
+                1. Describing the legal action or event that occurs (e.g., file_complaint, submit_evidence, hold_hearing).
+                   Check that the action is not already represented in the graph as an outgoing edge from the current node. 
+                2. Identifying the actor responsible for this action, if applicable.
+                3. Describe a conditions that need to be fulfilled for this action to be carried out, 
+                   if applicable (e.g., person above 18 years, actor has no criminal records, employment 
+                   relationship lasting longer than 6 months etc.)
+                4. Define a start and end time for this action, ensuring that it logically follows the previous events in the case.
+                5. Listing any artifacts associated with this legal action, if applicable (e.g., legal documents, evidence).
+                   Create the artifact or document if it does not exist yet in the graph, and link it to the action.
+                6. Provide all relevant legal references (e.g., laws, regulations, case precedents) that 
+                   support the plausibility of this action, if applicable.
+                7. Estimating the probability of this legal action occurring based on the context of the case and the past events. 
+                   Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
+                   probabilities should be a value < 1.0
+                8. Describe if a lawyer needs to involved for this action to be carried out.
+                9. Describe the five most likely potential next actions that could follow this action in a list. 
+                   Use not more than four word s for each action.
+
+            step4: Generate the content of all relevant artifacts and documents that are associated with this legal 
+            action, if applicable. 
+                - Provide full documents like emails, letters, contracts etc. that are relevant for the legal action and 
+                state.
+                - The content must be written in a formal and legally plausible way, as if it were written by a lawyer. 
+                  The document should have the quality so that they can be directly used in a real legal case. 
+                - The document maust be consistent with the legal action and state.
+
+            step5: Ensure that the next state resulting from this action is fully structured and 
+                  consistent with the legal context of the case. This includes:
+
+                1. Defining the legal state that results from the action, including all relevant attributes and their values.
+                2. The start and end times fit together.
+                3. The actor status is updated accordingly, including any payments made or received.
+                4. The summary of the new node clearly describes the new legal state and how it relates to the 
+                   previous state and the overall case progression.
+
+
+            ## OUTPUT FORMAT:
+            - Only output valid JSON
+            - Never output explanations outside JSON
+            - Your output must be strictly in this format:
+
+            {schema_json_single_node}
+
+
+            ## GENERAL GUIDELINES:
+            - Consider legal procedural logic and realistic human behavior
+            - Ensure next_state is fully structured and consistent
+            - Do not hallucinate laws unless explicitly provided in input
+            - Ensure the transition is realistic and legally plausible
+
+            """
+
+        return SYSTEM_PROMPT
+
+    @staticmethod
+    def create_expand_node_by_action_user_prompt(graph: CaseGraph, node_id: str, action: str) -> str:
+        # 1. Build path
+        path = graph.build_path(node_id)
+
+        # 2. Build narrative
+        narrative = graph.build_narrative(path)
+
+        # 3. Current node
+        node = graph.nodes[node_id]
+
+        return f"""
+               # CAUSAL PATH (STRUCTURED)
+
+               {json.dumps([step.model_dump() for step in path], indent=2)}
+
+               ---
+
+               # NARRATIVE SUMMARY
+
+               {narrative}
+
+               ---
+
+               # CURRENT LEGAL STATE
+
+               {json.dumps(node.state.model_dump(), indent=2)}
+
+               ---
+
+               # CURRENT NODE SUMMARY
+
+               {node.summary}
+
+               ---
+
+               # NEXT LEGAl ACTION TO BE CARRIED OUT
+
+               {action}
+
+               ---
+
+               TASK:
+               Generate the branch of the legal action consisting of a legal edge and node from the current state.
+               """
+
     #--------------------------------- node expansion prompts ---------------------------------
 
     @staticmethod
@@ -177,6 +315,7 @@ class PromptBuilder:
                Generate the most possible next branch consisting of a legal edge and node from the current state.
                """
 
+    # --------------------------------- create prompts ---------------------------------
 
     @staticmethod
     def create_prompt_messages(graph: CaseGraph, node_id: str) -> dict[str,str]:
@@ -325,8 +464,9 @@ class PromptBuilder:
                 7. Estimating the probability of this legal action occurring based on the context of the case and the past events. 
                    Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
                    probabilities should be a value < 1.0
-                8. describe if a lawyer needs to involved for this action to be carried out.
+                8. Describe if a lawyer needs to involved for this action to be carried out.
                 9. Describe the five most likely potential next actions that could follow this action in a list. 
+                   Use your legal knowledge to find the most realistic following options for actions.
                    Use not more than four word s for each action.
             
             step5: Ensure that the resulting output is fully structured and 

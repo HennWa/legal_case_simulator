@@ -25,6 +25,7 @@ import { createCase } from "./api/create_case";
 import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
 import { addNode } from "./api/add_node";
+import { addNodeByAction } from "./api/add_node_by_action";
 import { deleteNode } from "./api/delete_node";
 import { legalCheck } from "./api/legal_check";
 
@@ -118,6 +119,36 @@ function App() {
       }
     };
 
+    const handleAddByAction = async (nodeId, action) => {
+      try {
+        setIsProcessing(true);
+        setContextMenuRightClick(null);
+
+        console.log("Adding node by action", nodeId, action);
+
+        const new_branch = await addNodeByAction(
+          selectedCaseId,
+          nodeId,
+          action
+        );
+
+        setIsProcessing(false);
+
+        console.log("Node added", new_branch.node.id);
+
+        setIsLegalCheck(true);
+        await legalCheck(selectedCaseId, new_branch.node.id);
+        setIsLegalCheck(false);
+
+        await loadGraph();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsProcessing(false);
+        setIsLegalCheck(false);
+      }
+    };
+
   const handleDeactivate = (nodeId) => {
     console.log("Deactivate node:", nodeId);
     setContextMenuRightClick(null);
@@ -142,10 +173,11 @@ function App() {
       console.log("🟢 STEP 1: React Flow detected right click", node?.id);
 
       setContextMenuRightClick({
-        x: event.clientX,
-        y: event.clientY,
-        nodeId: node.id,
-      });
+          x: event.clientX,
+          y: event.clientY,
+          nodeId: node.id,
+          potentialNextStates: node.data?.state?.potential_next_states || [],
+        });
     };
 
   // CLOSE ON OUTSIDE CLICK
@@ -278,13 +310,16 @@ function App() {
           {contextMenuRightClick &&
             createPortal(
               <ContextMenuRightClick
-                x={contextMenuRightClick.x}
-                y={contextMenuRightClick.y}
-                nodeId={contextMenuRightClick.nodeId}
-                onAdd={handleAdd}
-                onDeactivate={handleDeactivate}
-                onDelete={handleDelete}
-              />,
+                  x={contextMenuRightClick.x}
+                  y={contextMenuRightClick.y}
+                  nodeId={contextMenuRightClick.nodeId}
+                  potentialNextStates={contextMenuRightClick.potentialNextStates}
+                  onAdd={handleAdd}
+                  onAddByAction={handleAddByAction}
+                  onDeactivate={handleDeactivate}
+                  onDelete={handleDelete}
+                  onClose={() => setContextMenuRightClick(null)}
+                />,
               document.body
             )}
 

@@ -18,8 +18,20 @@ class ExpansionEngine:
 
     def expand_node(self, node_id: str) -> LegalBranchNode:
 
-
         prompt_messages = self.prompt_builder.create_expand_node_prompt(self.graph, node_id)
+        branch_node = self.llm.generate(prompt_messages)
+
+        if branch_node.node.id in self.graph.nodes:
+            raise ValueError(f"Node with id {branch_node.node.id} already exists in the graph. ID collision detected.")
+
+        branch_node = self.graph.add_branch_obj(source_id=node_id, branch_node=branch_node)
+        self.graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
+
+        return branch_node
+
+    def expand_node_by_action(self, node_id: str, action: str) -> LegalBranchNode:
+
+        prompt_messages = self.prompt_builder.create_expand_node_by_action_prompt(self.graph, node_id, action)
         branch_node = self.llm.generate(prompt_messages)
 
         if branch_node.node.id in self.graph.nodes:
