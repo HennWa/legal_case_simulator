@@ -79,46 +79,26 @@
   transform: rotate(-30deg);
 }
 
-.case-graph-preview::before,
-.case-graph-preview::after {
-  content: "";
+.case-graph-preview {
   position: absolute;
-  border-top: 4px dashed rgba(82, 66, 72, 0.55);
+  right: -45px;
+  top: 150px;
+
+  width: min(58vw, 760px);
+
+  pointer-events: none;
+  user-select: none;
 }
 
-.case-graph-preview::before {
-  width: 390px;
-  top: 145px;
-  left: 40px;
-}
+.case-graph-image {
+  display: block;
+  width: 100%;
+  height: auto;
 
-.case-graph-preview::after {
-  width: 260px;
-  top: 245px;
-  left: 120px;
-}
+  object-fit: contain;
 
-.preview-card {
-  position: absolute;
-  width: 150px;
-  height: 58px;
-  background: white;
-  color: #755864;
-  border-radius: 14px;
-  border: 3px solid #77656b;
-  box-shadow: 8px 10px 0 rgba(0,0,0,0.28);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
+  filter: drop-shadow(0 24px 26px rgba(39, 20, 27, 0.18));
 }
-
-.card-1 { left: 10px; top: 190px; }
-.card-2 { left: 190px; top: 110px; }
-.card-3 { left: 285px; top: 235px; }
-.card-4 { left: 390px; top: 40px; }
 
 .about-section {
   padding: 54px 20px 70px;

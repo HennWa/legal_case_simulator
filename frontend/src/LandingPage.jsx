@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from "./assets/logos/logo.png";
+import caseGraphImage from "./assets/landing/case_graph.png";
+
 import "./LandingPage.css";
 
 export default function LandingPage() {
@@ -26,10 +28,11 @@ export default function LandingPage() {
         </div>
 
         <div className="case-graph-preview">
-          <div className="preview-card card-1">State 1<br />Case opened</div>
-          <div className="preview-card card-2">State 2<br />Claim reviewed</div>
-          <div className="preview-card card-3">State 3<br />Deadline checked</div>
-          <div className="preview-card card-4">State 4<br />Legal options</div>
+          <img
+            src={caseGraphImage}
+            alt="Example legal case simulation graph"
+            className="case-graph-image"
+          />
         </div>
       </section>
 
