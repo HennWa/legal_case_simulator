@@ -84,13 +84,9 @@ export default function LandingPage() {
 
         <div className="hero-layout">
           <div className="hero-content">
-            <div className="hero-status">
-              <span className="hero-status-dot" />
-              AI-assisted legal case exploration
-            </div>
 
             <p className="hero-eyebrow">
-              Graph-based legal reasoning
+              Graph-based legal AI-assistant
             </p>
 
             <h1>
