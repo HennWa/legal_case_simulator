@@ -32,6 +32,7 @@ body {
   min-height: 100vh;
 
   overflow-x: hidden;
+  overflow-y: visible;
 
   background: var(--landing-light);
   color: var(--landing-text);
@@ -52,10 +53,11 @@ body {
 
 .landing-hero {
   position: relative;
+  z-index: 2;
 
   min-height: 690px;
 
-  overflow: hidden;
+  overflow: visible;
 
   color: var(--landing-white);
 
@@ -223,10 +225,10 @@ body {
 
 .case-graph-preview {
   position: absolute;
-  z-index: 2;
+  z-index: 10;
 
   right: -55px;
-  bottom: -24px;
+  bottom: -85px;
 
   width: min(62vw, 790px);
 
@@ -243,7 +245,7 @@ body {
   object-fit: contain;
 
   filter:
-    drop-shadow(0 26px 28px rgba(50, 29, 37, 0.16));
+    drop-shadow(0 28px 30px rgba(50, 29, 37, 0.22));
 }
 
 /* =========================================================
@@ -279,7 +281,10 @@ body {
    ========================================================= */
 
 .about-section {
-  padding: 82px 24px 92px;
+  position: relative;
+  z-index: 1;
+
+  padding: 150px 24px 92px;
 
   background: var(--landing-dark-soft);
   color: var(--landing-white);
@@ -305,6 +310,9 @@ body {
    ========================================================= */
 
 .features-section {
+  position: relative;
+  z-index: 1;
+
   padding: 76px 24px 108px;
 
   background: #f2f0f0;
@@ -456,9 +464,13 @@ body {
 
   .case-graph-preview {
     right: -100px;
-    bottom: -25px;
+    bottom: -70px;
 
     width: min(86vw, 760px);
+  }
+
+  .about-section {
+    padding-top: 140px;
   }
 
   .feature-grid {
@@ -477,7 +489,9 @@ body {
 
     min-height: auto;
 
-    padding-bottom: 24px;
+    padding-bottom: 0;
+
+    overflow: visible;
 
     background: var(--landing-pink);
   }
@@ -521,11 +535,12 @@ body {
     width: calc(100% + 80px);
 
     margin-top: 34px;
+    margin-bottom: -50px;
     margin-left: -40px;
   }
 
   .about-section {
-    padding: 66px 22px 72px;
+    padding: 110px 22px 72px;
   }
 
   .features-section {
