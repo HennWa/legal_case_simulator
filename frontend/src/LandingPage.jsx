@@ -86,7 +86,7 @@ export default function LandingPage() {
           <div className="hero-content">
 
             <p className="hero-eyebrow">
-              Graph-based legal AI-assistant
+              Graph-based legal reasoning
             </p>
 
             <h1>
@@ -114,67 +114,20 @@ export default function LandingPage() {
             </div>
           </div>
 
-
           <div className="hero-visual">
-              <figure className="case-analysis-preview">
-                <div className="case-analysis-header">
-                  <div className="case-analysis-heading">
-                    <span className="case-analysis-icon" aria-hidden="true">
-                      <GraphSmallIcon />
-                    </span>
+            <div className="graph-background-composition">
+              <div
+                className="graph-background-glow"
+                aria-hidden="true"
+              />
 
-                    <div>
-                      <span className="case-analysis-label">
-                        Case structure
-                      </span>
-
-                      <strong>Legal process overview</strong>
-                    </div>
-                  </div>
-
-                  <span className="case-analysis-status">
-                    Simulation preview
-                  </span>
-                </div>
-
-                <div className="case-analysis-canvas">
-                  <img
-                    src={caseGraphImage}
-                    alt="Example of a structured legal case graph"
-                    className="case-analysis-image"
-                  />
-                </div>
-
-                <figcaption className="case-analysis-caption">
-                  <div>
-                    <span className="case-analysis-caption-label">
-                      Structured case analysis
-                    </span>
-
-                    <p>
-                      Legal states, actions and alternative developments presented
-                      in one connected overview.
-                    </p>
-                  </div>
-
-                  <div className="case-analysis-legend">
-                    <span>
-                      <i className="legend-marker legend-marker-state" />
-                      Legal states
-                    </span>
-
-                    <span>
-                      <i className="legend-marker legend-marker-action" />
-                      Possible actions
-                    </span>
-                  </div>
-                </figcaption>
-              </figure>
+              <img
+                src={caseGraphImage}
+                alt="Structured visualization of a legal case and its possible developments"
+                className="graph-background-image"
+              />
             </div>
-
-
-
-
+          </div>
         </div>
 
         <div className="hero-bottom-strip">
@@ -429,22 +382,6 @@ function CheckIcon() {
       focusable="false"
     >
       <path d="M4 10L8 14L16 6" />
-    </svg>
-  );
-}
-
-function GraphSmallIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      role="presentation"
-      focusable="false"
-    >
-      <circle cx="6" cy="12" r="2.4" />
-      <circle cx="18" cy="6" r="2.4" />
-      <circle cx="18" cy="18" r="2.4" />
-      <path d="M8.2 10.9L15.8 7.1" />
-      <path d="M8.2 13.1L15.8 16.9" />
     </svg>
   );
 }
