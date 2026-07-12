@@ -112,23 +112,6 @@ export default function LandingPage() {
                 <DownArrowIcon />
               </a>
             </div>
-
-            <div className="hero-trust-row">
-              <div className="hero-trust-item">
-                <CheckIcon />
-                <span>Structured reasoning</span>
-              </div>
-
-              <div className="hero-trust-item">
-                <CheckIcon />
-                <span>Legal references</span>
-              </div>
-
-              <div className="hero-trust-item">
-                <CheckIcon />
-                <span>Alternative paths</span>
-              </div>
-            </div>
           </div>
 
 
