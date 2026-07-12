@@ -131,94 +131,67 @@ export default function LandingPage() {
             </div>
           </div>
 
+
           <div className="hero-visual">
-            <div className="graph-window">
-              <div className="graph-window-header">
-                <div className="graph-window-title">
-                  <span className="graph-window-icon">
-                    <GraphSmallIcon />
-                  </span>
+              <figure className="case-analysis-preview">
+                <div className="case-analysis-header">
+                  <div className="case-analysis-heading">
+                    <span className="case-analysis-icon" aria-hidden="true">
+                      <GraphSmallIcon />
+                    </span>
 
-                  <div>
-                    <strong>Case Simulation</strong>
-                    <span>Employment law · Germany</span>
+                    <div>
+                      <span className="case-analysis-label">
+                        Case structure
+                      </span>
+
+                      <strong>Legal process overview</strong>
+                    </div>
                   </div>
-                </div>
 
-                <div className="window-controls" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-              </div>
-
-              <div className="graph-window-body">
-                <div className="graph-grid" aria-hidden="true" />
-
-                <img
-                  src={caseGraphImage}
-                  alt="Preview of a legal case graph"
-                  className="case-graph-image"
-                />
-
-                <div className="graph-floating-card graph-floating-card-top">
-                  <span className="floating-card-icon floating-card-icon-law">
-                    §
-                  </span>
-
-                  <span>
-                    <small>Legal reference</small>
-                    <strong>§ 623 BGB</strong>
+                  <span className="case-analysis-status">
+                    Simulation preview
                   </span>
                 </div>
 
-                <div className="graph-floating-card graph-floating-card-bottom">
-                  <span className="floating-card-icon">
-                    <CheckIcon />
-                  </span>
-
-                  <span>
-                    <small>Verification</small>
-                    <strong>Legal check complete</strong>
-                  </span>
+                <div className="case-analysis-canvas">
+                  <img
+                    src={caseGraphImage}
+                    alt="Example of a structured legal case graph"
+                    className="case-analysis-image"
+                  />
                 </div>
 
-                <div
-                  className="graph-pulse graph-pulse-one"
-                  aria-hidden="true"
-                />
-                <div
-                  className="graph-pulse graph-pulse-two"
-                  aria-hidden="true"
-                />
-              </div>
+                <figcaption className="case-analysis-caption">
+                  <div>
+                    <span className="case-analysis-caption-label">
+                      Structured case analysis
+                    </span>
 
-              <div className="graph-window-footer">
-                <div className="graph-metric">
-                  <span>Case states</span>
-                  <strong>08</strong>
-                </div>
+                    <p>
+                      Legal states, actions and alternative developments presented
+                      in one connected overview.
+                    </p>
+                  </div>
 
-                <div className="graph-metric">
-                  <span>Possible actions</span>
-                  <strong>12</strong>
-                </div>
+                  <div className="case-analysis-legend">
+                    <span>
+                      <i className="legend-marker legend-marker-state" />
+                      Legal states
+                    </span>
 
-                <div className="graph-metric">
-                  <span>References</span>
-                  <strong>06</strong>
-                </div>
-              </div>
+                    <span>
+                      <i className="legend-marker legend-marker-action" />
+                      Possible actions
+                    </span>
+                  </div>
+                </figcaption>
+              </figure>
             </div>
 
-            <div className="hero-decorative-label hero-label-one">
-              Explore alternatives
-            </div>
 
-            <div className="hero-decorative-label hero-label-two">
-              Understand consequences
-            </div>
-          </div>
+
+
         </div>
 
         <div className="hero-bottom-strip">
@@ -236,7 +209,7 @@ export default function LandingPage() {
             <p className="section-eyebrow">The platform</p>
 
             <h2>
-              Legal reasoning becomes easier when you can
+              Legal decisions become easier when you can
               <span> see the whole path.</span>
             </h2>
           </div>
