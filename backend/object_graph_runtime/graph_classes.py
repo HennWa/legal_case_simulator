@@ -69,10 +69,16 @@ class Artifact(BaseModel):
     id: str = Field(description='Unique identifier for the artifact')
     type: str = Field(description='Type of the artifact (e.g., document, evidence, testimony)')
     title: str = Field(description='Title or brief description of the artifact, e.g., "Contract between A and B"')
-    content: str = Field(description='Full content of the artifact, can be text or a reference to an external resource')
+    original_document_reference: Optional[str] = Field(default=None, description='Reference to the original document '
+                                                                                 'or source of the artifact')
+    content_original_document: Optional[str] = Field(default=None, description='Content parsed from original document, if applicable')
+    content: str = Field(description='Full content of the artifact')
     created_by: Optional[str] = Field(default=None, description='ID of the actor who created the artifact '
                                                                 '(Person, court, lawyer etc.)')
+
     timestamp: str = Field(default_factory=utc_now, description='Timestamp of when the artifact was created in ISO 8601 format')
+    timestamp_upload: Optional[str] = Field(default_factory=utc_now,
+                           description='Timestamp of when the original document was uploaded in ISO 8601 format')
 
 
 class LegalReference(BaseModel):
