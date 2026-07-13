@@ -73,7 +73,7 @@ export default function CustomNode({ data }) {
           marginBottom: 8,
         }}
       >
-        EVENT
+        STATE {data.number || ""}
       </div>
 
       {/* TITLE */}

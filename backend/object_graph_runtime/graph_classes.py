@@ -156,6 +156,11 @@ class LegalNode(BaseModel):
     outgoing: List[str] = Field(default_factory=list, description='List of outgoing edge IDs that '
                                                                   'lead to successor nodes')
 
+    number: Optional[str] = Field(
+        default=None,
+        description="Dynamic human-readable number derived from the graph structure",
+    )
+
     title: str = Field(description='Title or brief description of the legal state or event represented by this node')
     state: LegalState = Field(description='Structured representation of the legal state at this node, can include relevant '
                                                  'facts, legal issues, etc.')
@@ -324,11 +329,14 @@ class CaseGraph:
         branch_node.edge.id = generate_id("edge")
         branch_node.edge.case_id = self.case.id
         branch_node.edge.target_id = branch_node.node.id
+        branch_node.edge.source_id = source_id
         self.edges[branch_node.edge.id] = branch_node.edge
 
         # link nodes safely
         self.nodes[source_id].outgoing.append(branch_node.edge.id)
         self.nodes[branch_node.node.id].incoming = [branch_node.edge.id]
+
+        self.update_node_numbers()
 
         return branch_node
 
@@ -372,7 +380,6 @@ class CaseGraph:
     # -------------------------
     # Delete
     # -------------------------
-
     def delete_node(self, node_id: str) -> None:
         if node_id not in self.nodes:
             raise KeyError(f"Node '{node_id}' does not exist")
@@ -411,6 +418,10 @@ class CaseGraph:
         for nid in to_delete_nodes:
             if nid in self.nodes:
                 del self.nodes[nid]
+
+        # 5. Recalculate display numbers
+        if self.nodes:
+            self.update_node_numbers()
 
 
     # -------------------------
@@ -632,3 +643,221 @@ class CaseGraph:
             "payment_info": payment_info,
             "state_periods": state_periods,
         }
+    # -------------------------
+    # Node numbering (not th ID, but the hierarchical display number)
+    # -------------------------
+    def update_node_numbers(self) -> None:
+        """
+        Recalculate compact display numbers for all nodes.
+
+        Numbering rules
+        ---------------
+        A linear sequence increments only the step number:
+
+            A-01
+            A-02
+            A-03
+
+        When a node has multiple outgoing edges, each child starts
+        a new branch segment:
+
+            A-03
+            ├── A1-01
+            └── A2-01
+
+        Linear nodes inside those branches continue incrementing:
+
+            A1-01
+            A1-02
+            A1-03
+
+        A later nested branch introduces another branch level:
+
+            A1-03
+            ├── A1.1-01
+            └── A1.2-01
+
+        The sibling order is determined by the order of edge IDs in
+        the parent's `outgoing` list.
+
+        Raises
+        ------
+        ValueError
+            If the graph has no root, multiple roots, cycles,
+            disconnected nodes, invalid edges, or nodes with multiple
+            parents.
+        """
+
+        if not self.nodes:
+            return
+
+        # Reset old display numbers before recalculating.
+        for node in self.nodes.values():
+            node.number = None
+
+        # This numbering describes one unique path per node.
+        # Therefore, every non-root node must have exactly one parent.
+        nodes_with_multiple_parents = [
+            node.id
+            for node in self.nodes.values()
+            if len(node.incoming) > 1
+        ]
+
+        if nodes_with_multiple_parents:
+            raise ValueError(
+                "Cannot assign unique path numbers because the following "
+                "nodes have multiple parents: "
+                f"{sorted(nodes_with_multiple_parents)}"
+            )
+
+        roots = [
+            node
+            for node in self.nodes.values()
+            if len(node.incoming) == 0
+        ]
+
+        if not roots:
+            raise ValueError(
+                "Cannot number graph because no root node was found. "
+                "The graph may contain a cycle."
+            )
+
+        if len(roots) > 1:
+            raise ValueError(
+                "Cannot number graph because more than one root node was found: "
+                f"{sorted(node.id for node in roots)}"
+            )
+
+        root = roots[0]
+
+        visited: set[str] = set()
+        active_path: set[str] = set()
+
+        def format_number(
+            branch_path: tuple[int, ...],
+            step_number: int,
+        ) -> str:
+            """
+            Convert internal numbering information to the display format.
+
+            Examples:
+                ()       + 3 -> A-03
+                (1,)     + 2 -> A1-02
+                (2,)     + 7 -> A2-07
+                (1, 2)   + 4 -> A1.2-04
+            """
+
+            if not branch_path:
+                branch_code = "A"
+            else:
+                first_branch = str(branch_path[0])
+                nested_branches = "".join(
+                    f".{branch_number}"
+                    for branch_number in branch_path[1:]
+                )
+
+                branch_code = f"A{first_branch}{nested_branches}"
+
+            return f"{branch_code}-{step_number:02d}"
+
+        def get_valid_outgoing_edges(node: LegalNode) -> list[LegalEdge]:
+            """
+            Return outgoing edges in their stored order and validate them.
+            """
+
+            outgoing_edges = []
+
+            for edge_id in node.outgoing:
+                if edge_id not in self.edges:
+                    raise ValueError(
+                        f"Node '{node.id}' references missing outgoing "
+                        f"edge '{edge_id}'."
+                    )
+
+                edge = self.edges[edge_id]
+
+                if edge.source_id != node.id:
+                    raise ValueError(
+                        f"Outgoing edge '{edge.id}' is stored on node "
+                        f"'{node.id}', but its source is '{edge.source_id}'."
+                    )
+
+                if edge.target_id not in self.nodes:
+                    raise ValueError(
+                        f"Edge '{edge.id}' points to missing target node "
+                        f"'{edge.target_id}'."
+                    )
+
+                outgoing_edges.append(edge)
+
+            return outgoing_edges
+
+        def assign_number(
+            node_id: str,
+            branch_path: tuple[int, ...],
+            step_number: int,
+        ) -> None:
+            if node_id in active_path:
+                raise ValueError(
+                    f"Cannot number graph because a cycle was detected "
+                    f"at node '{node_id}'."
+                )
+
+            if node_id in visited:
+                raise ValueError(
+                    f"Node '{node_id}' was reached more than once. "
+                    "The graph is not a single-parent tree."
+                )
+
+            active_path.add(node_id)
+            visited.add(node_id)
+
+            node = self.nodes[node_id]
+
+            node.number = format_number(
+                branch_path=branch_path,
+                step_number=step_number,
+            )
+
+            outgoing_edges = get_valid_outgoing_edges(node)
+
+            if len(outgoing_edges) == 1:
+                # Continue the same linear branch segment.
+                edge = outgoing_edges[0]
+
+                assign_number(
+                    node_id=edge.target_id,
+                    branch_path=branch_path,
+                    step_number=step_number + 1,
+                )
+
+            elif len(outgoing_edges) > 1:
+                # A real split occurred. Each child starts a new branch
+                # segment and resets its local step counter to 1.
+                for branch_index, edge in enumerate(
+                    outgoing_edges,
+                    start=1,
+                ):
+                    assign_number(
+                        node_id=edge.target_id,
+                        branch_path=branch_path + (branch_index,),
+                        step_number=1,
+                    )
+
+            active_path.remove(node_id)
+
+        assign_number(
+            node_id=root.id,
+            branch_path=(),
+            step_number=1,
+        )
+
+        unvisited_nodes = set(self.nodes) - visited
+
+        if unvisited_nodes:
+            raise ValueError(
+                "The following nodes are not reachable from the root node "
+                f"'{root.id}': {sorted(unvisited_nodes)}"
+            )
+
+
