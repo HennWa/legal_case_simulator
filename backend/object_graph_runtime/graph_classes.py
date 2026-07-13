@@ -587,3 +587,48 @@ class CaseGraph:
             )
 
         return "\n".join(text)
+
+    # -------------------------
+    # Get path info (payment info and state periods)
+    # -------------------------
+    def get_path_info(self, node_id: str) -> dict:
+
+        path = self.build_path(node_id)
+        payment_info = {}
+        state_periods = {}
+        state_counter = {}
+
+        # -------------------------
+        # Payment information
+        # -------------------------
+        for actor_status in self.get_node(node_id).state.actors_status:
+            actor_name = actor_status.actor.name
+
+            payment_info[actor_name] = {
+                "paid": actor_status.paid,
+                "received": actor_status.received,
+            }
+
+        for step in path:
+            state = step.state_snapshot
+            node = self.nodes[step.node_id]
+
+            # -------------------------
+            # State periods
+            # -------------------------
+            state_name = node.title
+
+            state_counter[state_name] = state_counter.get(state_name, 0) + 1
+
+            if state_counter[state_name] > 1:
+                state_name = f"{state_name} [{state_counter[state_name]}]"
+
+            state_periods[state_name] = {
+                "start": state.start_time,
+                "end": state.end_time,
+            }
+
+        return {
+            "payment_info": payment_info,
+            "state_periods": state_periods,
+        }

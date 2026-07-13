@@ -8,7 +8,8 @@ from backend.api.graph import router as graph_router
 from backend.api.add_node_by_action import router as add_node_by_action_router
 from backend.api.add_node import router as add_node_router
 from backend.api.delete_node import router as delete_node_router
-from backend.api.legal_check import router as legal_check
+from backend.api.legal_check import router as legal_check_router
+from backend.api.sidebar_stats import router as sidebar_stats_router
 from backend.database.init_db import create_indexes
 
 
@@ -33,6 +34,7 @@ app.include_router(cases_router, prefix="/api")
 app.include_router(add_node_router, prefix="/api")
 app.include_router(add_node_by_action_router, prefix="/api")
 app.include_router(delete_node_router, prefix="/api")
-app.include_router(legal_check, prefix="/api")
+app.include_router(legal_check_router, prefix="/api")
 app.include_router(create_case_router, prefix="/api")
+app.include_router(sidebar_stats_router, prefix="/api")
 

@@ -24,6 +24,7 @@ import { fetchCases } from "./api/cases";
 import { createCase } from "./api/create_case";
 import { fetchNode } from "./api/node";
 import { fetchGraph } from "./api/graph";
+import { fetchSidebarStats } from "./api/sidebar_stats";
 import { addNode } from "./api/add_node";
 import { addNodeByAction } from "./api/add_node_by_action";
 import { deleteNode } from "./api/delete_node";
@@ -40,6 +41,8 @@ function SimulatorApp() {
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedNodeData, setSelectedNodeData] = useState(null);
+
+  const [selectedSidebarStats, setSelectedSidebarStats] = useState(null);
 
   const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
@@ -263,7 +266,7 @@ function SimulatorApp() {
             overflowY: "auto",
           }}
         >
-          <Sidebar selectedNode={selectedNodeData} />
+          <Sidebar selectedNode={selectedSidebarStats} />
         </div>
 
         {/* GRAPH */}
@@ -291,6 +294,12 @@ function SimulatorApp() {
                     setSelectedNodeData(data);
 
                     setDetailsNode(data);
+
+                    const stats = await fetchSidebarStats(selectedCaseId, node.id);
+                    setSelectedSidebarStats(stats);
+
+                    console.log(stats);
+
                   } catch (err) {
                     console.error(err);
                   }
