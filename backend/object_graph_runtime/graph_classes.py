@@ -38,6 +38,36 @@ class Case(BaseModel):
     applied_law: AppliedLaw = AppliedLaw.GERMAN
 
 # -------------------------
+# Artifact Model
+# -------------------------
+class Artifact(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(description='Unique identifier for the artifact')
+    case_id: str = Field(description='Case ID of the artifact')
+
+    type: str = Field(description='Type of the artifact (e.g., document, evidence, testimony)')
+    title: str = Field(description='Title or brief description of the artifact, e.g., "Contract between A and B"')
+
+    source_type: str = Field(description='Source type of the artifact (e.g., uploaded, generated, external)')
+    original_filename: Optional[str] = Field(default=None, description='If the artifact was uploaded, this is the '
+                                                                       'original filename of the uploaded file')
+    original_file_url: Optional[str] = Field(default=None, description='If the artifact was uploaded, this is the URL '
+                                                                       'or path to the ')
+
+    extracted_content: Optional[str] = Field(default=None, description='Content parsed from original document, if applicable')
+    content: str = Field(description='Full content of the artifact')
+    created_by: Optional[str] = Field(default=None, description='ID of the actor who created the artifact '
+                                                                '(Person, court, lawyer etc.)')
+
+    timestamp_created: str = Field(default_factory=utc_now, description='Timestamp of when the artifact was created in ISO 8601 format')
+    timestamp_uploaded: Optional[str] = Field(default_factory=utc_now,
+                           description='Timestamp of when the original document was uploaded in ISO 8601 format')
+
+class ArtifactCollection(BaseModel):
+    artifacts: List[Artifact]
+
+# -------------------------
 # Graph Components
 # -------------------------
 class Actor(BaseModel):
@@ -61,24 +91,6 @@ class ActorStatus(BaseModel):
     actor: Actor = Field(description='Actor of the status')
     paid: int = Field(description='Sum of paid money for services to lawyers, courts etc.')
     received: int = Field(description='Sum of received money from other actors, refunds etc.')
-
-
-class Artifact(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    id: str = Field(description='Unique identifier for the artifact')
-    type: str = Field(description='Type of the artifact (e.g., document, evidence, testimony)')
-    title: str = Field(description='Title or brief description of the artifact, e.g., "Contract between A and B"')
-    original_document_reference: Optional[str] = Field(default=None, description='Reference to the original document '
-                                                                                 'or source of the artifact')
-    content_original_document: Optional[str] = Field(default=None, description='Content parsed from original document, if applicable')
-    content: str = Field(description='Full content of the artifact')
-    created_by: Optional[str] = Field(default=None, description='ID of the actor who created the artifact '
-                                                                '(Person, court, lawyer etc.)')
-
-    timestamp: str = Field(default_factory=utc_now, description='Timestamp of when the artifact was created in ISO 8601 format')
-    timestamp_upload: Optional[str] = Field(default_factory=utc_now,
-                           description='Timestamp of when the original document was uploaded in ISO 8601 format')
 
 
 class LegalReference(BaseModel):
@@ -116,10 +128,10 @@ class LegalEdge(BaseModel):
                                          '(e.g., file_complaint, submit_evidence, hold_hearing)')
     actor_id: Optional[str] = Field(default=None, description='ID of the actor responsible for this '
                                                               'action, if applicable')
-    artifacts: List[Artifact] = Field(default_factory=list, description='List of artifacts associated '
-                                                                        'used in this legal action, if applicable')
+    artifact_ids: List[str] = Field(default_factory=list, description='List of artifacts ids associated '
+                                                                        'with this legal action, if applicable')
 
-    probability: float = Field(default=1.0, description='Probability of this legal action occurring, if applicable')
+    probability: float = Field(default=1.0, description='Probability of this legal action is carried out successfully, if applicable')
     conditions: List[str] = Field(default_factory=list, description='List of conditions for the action to be carried out, e.g.'
                                                                     'person above 18 years, actor has no criminal recors,'
                                                                     'employment relationship lasting longer than 6 months etc.')
@@ -144,7 +156,7 @@ class LegalState(BaseModel):
     legal_references: List[LegalReference] = Field(default_factory=list, description='List of legal references that '
                                                                                      'are relevant for the case and '
                                                                                      'current state of the process')
-    artifacts: List[Artifact] = Field(default_factory=list, description='List of artifacts associated '
+    artifact_ids: List[str] = Field(default_factory=list, description='List of artifacts associated '
                                                                         'with this legal state, like contracts, '
                                                                         'dunning letter, emails etc.')
     deadlines: List[Deadline] = Field(default_factory=list, description='List of deadlines related to the state, can '
@@ -492,6 +504,19 @@ class CaseGraph:
                 neighbours.append(self.nodes[edge.target_id])
 
         return neighbours
+
+    # -------------------------
+    # Artifacts
+    # -------------------------
+    def add_artifact(self, artifact: Artifact, edge_id: str) -> Artifact:
+
+        # Add the artifact with unique id
+        artifact.id = generate_id("art")
+
+        self.edges[edge_id].artifact_ids.append(artifact.id)
+        self.nodes[self.edges[edge_id].target_id].state.artifact_ids.append(artifact.id)
+
+        return artifact
 
     # -------------------------
     # Serialization (Pydantic-native)

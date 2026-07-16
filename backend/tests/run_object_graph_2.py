@@ -48,7 +48,7 @@ if __name__ == "__main__":
         final_state=False,
         actors_status=[status_tim, status_andi],
         legal_references=[],
-        artifacts=[],
+        artifact_ids=[],
         deadlines=[]
     )
 
@@ -127,7 +127,7 @@ if __name__ == "__main__":
         final_state=False,
         actors_status=[status_sebo, status_georg],
         legal_references=[],
-        artifacts=[],
+        artifact_ids=[],
         deadlines=[]
     )
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
 
     # Expand node
     print("Creating new node")
-    brach_node = engine.expand_node(start2.id)
+    branch_node = engine.expand_node(start2.id)
 
     print("Created node")
 

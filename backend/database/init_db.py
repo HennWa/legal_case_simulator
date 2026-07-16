@@ -47,6 +47,15 @@ def create_indexes():
         unique=True
     )
 
+    db.artifacts.create_index(
+        "id",
+        unique=True
+    )
+
+    db.artifacts.create_index(
+        "case_id"
+    )
+
     db.law_embeddings.create_index("id", unique=True)
 
     db.law_embeddings.create_index("law")

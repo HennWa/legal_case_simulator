@@ -29,6 +29,7 @@ import { addNode } from "./api/add_node";
 import { addNodeByAction } from "./api/add_node_by_action";
 import { deleteNode } from "./api/delete_node";
 import { legalCheck } from "./api/legal_check";
+import { createArtifacts } from "./api/create_artifacts";
 
 
 function SimulatorApp() {
@@ -54,6 +55,7 @@ function SimulatorApp() {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLegalCheck, setIsLegalCheck] = useState(false);
+  const [isCreatingArtifacts, setIsCreatingArtifacts] = useState(false);
   const [processingNodeId, setProcessingNodeId] = useState(null);
 
 
@@ -104,15 +106,15 @@ function SimulatorApp() {
         console.log('Adding node', nodeId);
         let new_branch = await addNode(selectedCaseId, nodeId);
         setIsProcessing(false);
-        console.log('Node added', new_branch.node.id);
 
-        console.log('Legal check node', new_branch.node.id);
+        setIsCreatingArtifacts(true);
+        await createArtifacts(selectedCaseId, new_branch.edge.id);
+        setIsCreatingArtifacts(false);
+
         setIsLegalCheck(true);
         await legalCheck(selectedCaseId, new_branch.node.id);
         setIsLegalCheck(false);
-        console.log('Node legally checked', new_branch.node.id);
 
-        console.log('Updating Graph');
         await loadGraph();
       } catch (err) {
         console.error(err);
@@ -126,22 +128,21 @@ function SimulatorApp() {
       try {
         setIsProcessing(true);
         setContextMenuRightClick(null);
-
         console.log("Adding node by action", nodeId, action);
-
         const new_branch = await addNodeByAction(
           selectedCaseId,
           nodeId,
           action
         );
-
         setIsProcessing(false);
-
-        console.log("Node added", new_branch.node.id);
 
         setIsLegalCheck(true);
         await legalCheck(selectedCaseId, new_branch.node.id);
         setIsLegalCheck(false);
+
+        setIsCreatingArtifacts(true);
+        await createArtifacts(selectedCaseId, new_branch.edge.id);
+        setIsCreatingArtifacts(false);
 
         await loadGraph();
       } catch (err) {
@@ -343,6 +344,13 @@ function SimulatorApp() {
               <div className="loading-indicator">
                 <div className="spinner" />
                 <span>legal check...</span>
+              </div>
+            )}
+
+           {isCreatingArtifacts && (
+              <div className="loading-indicator">
+                <div className="spinner" />
+                <span>creating documents...</span>
               </div>
             )}
 
