@@ -47,7 +47,7 @@ class EdgeRepository:
 
     def delete_by_case(self, case_id: str):
 
-        self.collection.delete_one(
+        self.collection.delete_many(
             {"case_id": case_id}
         )
 
