@@ -210,7 +210,7 @@ class PathStep(BaseModel):
 
 
 # -------------------------
-# Graph Engine (non-Pydantic)
+# Graph Engine and Helper Classes
 # -------------------------
 class CaseGraph:
     def __init__(self):
@@ -399,48 +399,95 @@ class CaseGraph:
     # Delete
     # -------------------------
     def delete_node(self, node_id: str) -> None:
+        """
+        Delete the selected node and all successor nodes.
+
+        The method removes the corresponding nodes and edges from the
+        in-memory graph and reports which artifact references were removed.
+
+        Actual artifact documents should be deleted by the repository after
+        checking whether they remain referenced elsewhere in the graph.
+        """
+
         if node_id not in self.nodes:
             raise KeyError(f"Node '{node_id}' does not exist")
 
-        # 1. Collect all nodes to delete (including root)
-        to_delete_nodes = {node_id}
+        # ---------------------------------------------------------
+        # 1. Collect selected node and all successor nodes
+        # ---------------------------------------------------------
+        to_delete_node_ids: set[str] = {node_id}
 
-        successors = self.get_successor_nodes(node_id)
-        to_delete_nodes.update(n.id for n in successors)
+        successor_nodes = self.get_successor_nodes(node_id)
 
-        # 2. Collect edges to delete
-        to_delete_edges = set()
+        to_delete_node_ids.update(
+            successor.id
+            for successor in successor_nodes
+        )
 
-        for nid in to_delete_nodes:
-            node = self.nodes[nid]
-            to_delete_edges.update(node.incoming)
-            to_delete_edges.update(node.outgoing)
+        # ---------------------------------------------------------
+        # 2. Collect all affected edges
+        # ---------------------------------------------------------
+        to_delete_edge_ids: set[str] = set()
 
-        # 3. Remove edges from graph
-        for eid in to_delete_edges:
-            if eid in self.edges:
-                edge = self.edges[eid]
+        for current_node_id in to_delete_node_ids:
+            current_node = self.nodes[current_node_id]
 
-                # clean references in connected nodes (if they still exist)
-                if edge.source_id in self.nodes:
-                    if eid in self.nodes[edge.source_id].outgoing:
-                        self.nodes[edge.source_id].outgoing.remove(eid)
+            to_delete_edge_ids.update(current_node.incoming)
+            to_delete_edge_ids.update(current_node.outgoing)
 
-                if edge.target_id in self.nodes:
-                    if eid in self.nodes[edge.target_id].incoming:
-                        self.nodes[edge.target_id].incoming.remove(eid)
+        # ---------------------------------------------------------
+        # 3. Collect artifact IDs referenced by deleted objects
+        # ---------------------------------------------------------
+        removed_artifact_ids: set[str] = set()
 
-                del self.edges[eid]
+        for current_node_id in to_delete_node_ids:
+            node = self.nodes[current_node_id]
+            removed_artifact_ids.update(node.state.artifact_ids)
 
-        # 4. Remove nodes
-        for nid in to_delete_nodes:
-            if nid in self.nodes:
-                del self.nodes[nid]
+        for edge_id in to_delete_edge_ids:
+            edge = self.edges.get(edge_id)
 
-        # 5. Recalculate display numbers
+            if edge is not None:
+                removed_artifact_ids.update(edge.artifact_ids)
+
+        # ---------------------------------------------------------
+        # 4. Remove edges and clean node references
+        # ---------------------------------------------------------
+        for edge_id in to_delete_edge_ids:
+            edge = self.edges.get(edge_id)
+
+            if edge is None:
+                continue
+
+            source_node = self.nodes.get(edge.source_id)
+
+            if (
+                    source_node is not None
+                    and edge_id in source_node.outgoing
+            ):
+                source_node.outgoing.remove(edge_id)
+
+            target_node = self.nodes.get(edge.target_id)
+
+            if (
+                    target_node is not None
+                    and edge_id in target_node.incoming
+            ):
+                target_node.incoming.remove(edge_id)
+
+            del self.edges[edge_id]
+
+        # ---------------------------------------------------------
+        # 5. Remove nodes
+        # ---------------------------------------------------------
+        for current_node_id in to_delete_node_ids:
+            self.nodes.pop(current_node_id, None)
+
+        # ---------------------------------------------------------
+        # 6. Recalculate display numbers
+        # ---------------------------------------------------------
         if self.nodes:
             self.update_node_numbers()
-
 
     # -------------------------
     # Traversal
@@ -517,6 +564,18 @@ class CaseGraph:
         self.nodes[self.edges[edge_id].target_id].state.artifact_ids.append(artifact.id)
 
         return artifact
+
+    def get_referenced_artifact_ids(self) -> set[str]:
+
+        artifact_ids: set[str] = set()
+
+        for node in self.nodes.values():
+            artifact_ids.update(node.state.artifact_ids)
+
+        for edge in self.edges.values():
+            artifact_ids.update(edge.artifact_ids)
+
+        return artifact_ids
 
     # -------------------------
     # Serialization (Pydantic-native)
