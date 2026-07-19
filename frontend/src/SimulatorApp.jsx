@@ -475,6 +475,10 @@ function SimulatorApp() {
                     onNodeContextMenuRightClick
                   }
                   onPaneClick={() => {
+                      setSelectedNodeId(null);
+                    setSelectedNodeData(null);
+                    setSelectedSidebarStats(null);
+                    setDetailsNode(null);
                     setContextMenuRightClick(
                       null
                     );
