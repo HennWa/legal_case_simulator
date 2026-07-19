@@ -62,3 +62,33 @@ class ArtifactRepository:
             )
             for doc in docs
         ]
+
+    def get_many(self, artifact_ids: list[str]) -> list[Artifact]:
+        if not artifact_ids:
+            return []
+
+        documents = self.collection.find(
+            {
+                "id": {
+                    "$in": artifact_ids,
+                }
+            }
+        )
+
+        artifacts_by_id = {
+            document["id"]: Artifact.model_validate(
+                {
+                    key: value
+                    for key, value in document.items()
+                    if key != "_id"
+                }
+            )
+            for document in documents
+        }
+
+        # Preserve the order supplied by the frontend.
+        return [
+            artifacts_by_id[artifact_id]
+            for artifact_id in artifact_ids
+            if artifact_id in artifacts_by_id
+        ]

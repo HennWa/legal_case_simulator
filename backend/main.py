@@ -11,6 +11,7 @@ from backend.api.delete_node import router as delete_node_router
 from backend.api.legal_check import router as legal_check_router
 from backend.api.sidebar_stats import router as sidebar_stats_router
 from backend.api.create_artifacts import router as create_artifacts_router
+from backend.api.artifact import router as artifact_router
 from backend.database.init_db import create_indexes
 
 
@@ -40,4 +41,5 @@ app.include_router(legal_check_router, prefix="/api")
 app.include_router(create_case_router, prefix="/api")
 app.include_router(sidebar_stats_router, prefix="/api")
 app.include_router(create_artifacts_router, prefix="/api")
+app.include_router(artifact_router, prefix="/api")
 

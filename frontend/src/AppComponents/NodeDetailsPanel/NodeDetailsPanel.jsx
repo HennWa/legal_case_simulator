@@ -1,7 +1,9 @@
 import "./NodeDetailsPanel.css";
-import { useState } from "react";
+import "./ArtifactCard.css";
+import { useEffect, useState } from "react";
 import ReferenceModal from "../ReferenceModal/ReferenceModal";
 import ArtifactModal from "../ArtifactModal/ArtifactModal";
+import { fetchArtifacts } from "../../api/artifact";
 
 export default function NodeDetailsPanel({
   node,
@@ -10,13 +12,43 @@ export default function NodeDetailsPanel({
   const [selectedReferences, setSelectedReferences] = useState(null);
   const [selectedArtifacts, setSelectedArtifacts] = useState(null);
 
-  if (!node) return null;
+  const [artifacts, setArtifacts] = useState([]);
+  const [loadingArtifacts, setLoadingArtifacts] = useState(false);
+  const [artifactError, setArtifactError] = useState(null);
 
-  const state = node.state ?? {};
+  const state = node?.state ?? {};
 
   const legalReferences = state.legal_references ?? [];
-  const artifacts = state.artifacts ?? [];
+  const artifactIds = state.artifact_ids ?? [];
   const actorsStatus = state.actors_status ?? [];
+
+  useEffect(() => {
+    const loadArtifacts = async () => {
+      if (artifactIds.length === 0) {
+        setArtifacts([]);
+        setArtifactError(null);
+        return;
+      }
+
+      try {
+        setLoadingArtifacts(true);
+        setArtifactError(null);
+
+        const loadedArtifacts = await fetchArtifacts(artifactIds);
+        setArtifacts(loadedArtifacts);
+      } catch (error) {
+        console.error("Failed to load artifacts:", error);
+        setArtifacts([]);
+        setArtifactError("Failed to load documents.");
+      } finally {
+        setLoadingArtifacts(false);
+      }
+    };
+
+    loadArtifacts();
+  }, [node?.id]);
+
+  if (!node) return null;
 
   return (
     <div className="node-details-panel">
@@ -69,12 +101,16 @@ export default function NodeDetailsPanel({
         <section>
           <h3>Documents</h3>
 
-          {artifacts.length === 0 ? (
+          {loadingArtifacts ? (
+            <p>Loading documents...</p>
+          ) : artifactError ? (
+            <p>{artifactError}</p>
+          ) : artifacts.length === 0 ? (
             <p>No artifacts</p>
           ) : (
-            artifacts.map((art, i) => (
+            artifacts.map((art) => (
               <div
-                key={i}
+                key={art.id}
                 className="artifact-card"
                 onClick={() => setSelectedArtifacts([art])}
                 onContextMenu={(e) => {
@@ -82,9 +118,23 @@ export default function NodeDetailsPanel({
                   setSelectedArtifacts(artifacts);
                 }}
               >
-                <strong>{art.type}</strong>
-                <p>{art.content}</p>
-                <small>{art.timestamp}</small>
+                <div className="artifact-header">
+                  <span className="artifact-type">{art.type}</span>
+
+                  <span className="artifact-date">
+                    {new Date(art.timestamp_created).toLocaleDateString()}
+                  </span>
+                </div>
+
+                <div className="artifact-title">
+                  {art.title}
+                </div>
+
+                <p className="artifact-preview">
+                  {art.extracted_content?.slice(0, 180) ??
+                    art.content.slice(0, 180)}
+                  ...
+                </p>
               </div>
             ))
           )}
@@ -112,7 +162,6 @@ export default function NodeDetailsPanel({
         </section>
       </div>
 
-      {/* MODAL */}
       {selectedReferences && (
         <ReferenceModal
           references={selectedReferences}
@@ -120,7 +169,6 @@ export default function NodeDetailsPanel({
         />
       )}
 
-      {/* MODAL */}
       {selectedArtifacts && (
         <ArtifactModal
           artifacts={selectedArtifacts}
