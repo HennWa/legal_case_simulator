@@ -349,10 +349,63 @@ function SimulatorApp() {
   }, []);
 
   useEffect(() => {
+    setSelectedNodeId(null);
+    setSelectedNodeData(null);
+    setSelectedSidebarStats(null);
+    setDetailsNode(null);
+
     if (selectedCaseId) {
       loadGraph();
     }
   }, [selectedCaseId]);
+
+  const highlightedPath = useMemo(() => {
+    const nodeIds = new Set();
+    const edgeIds = new Set();
+
+    if (!graphData || !selectedNodeId) {
+      return { nodeIds, edgeIds };
+    }
+
+    const graphNodes = graphData.nodes ?? {};
+    const graphEdges = graphData.edges ?? {};
+
+    let currentNodeId = selectedNodeId;
+    const visitedNodeIds = new Set();
+
+    while (
+      currentNodeId &&
+      !visitedNodeIds.has(currentNodeId)
+    ) {
+      visitedNodeIds.add(currentNodeId);
+      nodeIds.add(currentNodeId);
+
+      const currentNode = graphNodes[currentNodeId];
+
+      if (!currentNode) {
+        break;
+      }
+
+      const incomingEdgeId =
+        currentNode.incoming?.[0];
+
+      if (!incomingEdgeId) {
+        break;
+      }
+
+      const incomingEdge =
+        graphEdges[incomingEdgeId];
+
+      if (!incomingEdge) {
+        break;
+      }
+
+      edgeIds.add(incomingEdgeId);
+      currentNodeId = incomingEdge.source_id;
+    }
+
+    return { nodeIds, edgeIds };
+  }, [graphData, selectedNodeId]);
 
   const { nodes, edges } = useMemo(() => {
     if (!graphData) {
@@ -369,36 +422,72 @@ function SimulatorApp() {
       Object.values(graphData.edges);
 
     const flowNodes = rawNodes.map(
-      (node) => ({
-        id: node.id,
-        type: "custom",
-        data: node,
-        position: {
-          x: 0,
-          y: 0,
-        },
-      })
+      (node) => {
+        const isOnSelectedPath =
+          highlightedPath.nodeIds.has(node.id);
+
+        const isSelected =
+          node.id === selectedNodeId;
+
+        return {
+          id: node.id,
+          type: "custom",
+          data: node,
+          position: {
+            x: 0,
+            y: 0,
+          },
+          className: [
+            isOnSelectedPath
+              ? "selected-path-node"
+              : "",
+            isSelected
+              ? "selected-path-node-current"
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" "),
+        };
+      }
     );
 
     const flowEdges = rawEdges.map(
-      (edge) => ({
-        id: edge.id,
-        source: edge.source_id,
-        target: edge.target_id,
-        type: "custom",
-        data: edge,
-        style: {
-          stroke: "#c08497",
-          strokeWidth: 2,
-        },
-      })
+      (edge) => {
+        const isOnSelectedPath =
+          highlightedPath.edgeIds.has(edge.id);
+
+        return {
+          id: edge.id,
+          source: edge.source_id,
+          target: edge.target_id,
+          type: "custom",
+          data: edge,
+          className: isOnSelectedPath
+            ? "selected-path-edge"
+            : "",
+          animated: isOnSelectedPath,
+          style: {
+            stroke: "#c08497",
+            strokeWidth: isOnSelectedPath
+              ? 3
+              : 2,
+            filter: isOnSelectedPath
+              ? "drop-shadow(0 0 5px rgba(156, 88, 102, 0.65))"
+              : "none",
+          },
+        };
+      }
     );
 
     return layoutGraph(
       flowNodes,
       flowEdges
     );
-  }, [graphData]);
+  }, [
+    graphData,
+    highlightedPath,
+    selectedNodeId,
+  ]);
 
   return (
     <div
@@ -474,11 +563,11 @@ function SimulatorApp() {
                   onNodeContextMenu={
                     onNodeContextMenuRightClick
                   }
-                  onPaneClick={() => {
-                      setSelectedNodeId(null);
+                  onPaneClick={() => {setSelectedNodeId(null);
                     setSelectedNodeData(null);
                     setSelectedSidebarStats(null);
                     setDetailsNode(null);
+
                     setContextMenuRightClick(
                       null
                     );

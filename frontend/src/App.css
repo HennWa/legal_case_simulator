@@ -228,3 +228,52 @@
 
   animation: spin 0.8s linear infinite;
 }
+
+/* =========================================================
+   SELECTED GRAPH PATH HIGHLIGHT
+   ========================================================= */
+
+.react-flow__node.selected-path-node {
+  z-index: 2 !important;
+}
+
+.react-flow__node.selected-path-node > div {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 0 0 2px rgba(192, 132, 151, 0.3),
+    0 0 22px rgba(192, 132, 151, 0.34) !important;
+
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.react-flow__node.selected-path-node-current {
+  z-index: 3 !important;
+}
+
+.react-flow__node.selected-path-node-current > div {
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.09),
+    0 0 0 3px rgba(156, 88, 102, 0.48),
+    0 0 30px rgba(156, 88, 102, 0.5) !important;
+
+  transform: translateY(-2px);
+}
+
+.react-flow__edge.selected-path-edge {
+  z-index: 1;
+}
+
+.react-flow__edge.selected-path-edge .react-flow__edge-path {
+  transition:
+    stroke-width 180ms ease,
+    filter 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__node.selected-path-node > div,
+  .react-flow__edge.selected-path-edge .react-flow__edge-path {
+    transition: none;
+  }
+}
