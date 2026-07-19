@@ -162,6 +162,14 @@ export default function NodeDetailsPanel({
         </section>
       </div>
 
+      <div className="node-question-box">
+        <textarea
+          className="node-question-input"
+          placeholder="Any questions about this step?"
+          rows={2}
+        />
+      </div>
+
       {selectedReferences && (
         <ReferenceModal
           references={selectedReferences}
