@@ -36,3 +36,16 @@ def get_artifacts(payload: ArtifactIdsRequest):
         artifact.model_dump()
         for artifact in artifacts
     ]
+
+@router.get("/cases/{case_id}/artifacts")
+def get_artifacts_by_case(case_id: str):
+    repository = ArtifactRepository()
+
+    artifacts = repository.get_by_case(
+        case_id
+    )
+
+    return [
+        artifact.model_dump()
+        for artifact in artifacts
+    ]

@@ -38,3 +38,23 @@ export async function fetchArtifacts(artifactIds) {
 
   return response.json();
 }
+
+export async function fetchArtifactsByCase(
+  caseId
+) {
+  if (!caseId) {
+    return [];
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/cases/${caseId}/artifacts`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch artifacts for case '${caseId}'`
+    );
+  }
+
+  return response.json();
+}

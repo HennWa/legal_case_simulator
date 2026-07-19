@@ -1,11 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";  // for rendering context menu outside of React Flow's canvas
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import { createPortal } from "react-dom";
+
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
   ReactFlowProvider,
 } from "reactflow";
+
 import "reactflow/dist/style.css";
 
 import "./App.css";
@@ -14,9 +21,14 @@ import CustomNode from "./AppComponents/CustomNode";
 import CustomEdge from "./AppComponents/CustomEdge";
 import Sidebar from "./AppComponents/Sidebar";
 import ContextMenuRightClick from "./AppComponents/ContextMenuRightClick";
+
 import NodeDetailsPanel from "./AppComponents/NodeDetailsPanel/NodeDetailsPanel";
+
 import TopBar from "./AppComponents/TopBar";
+
 import CreateCaseModal from "./AppComponents/CreateCaseModal/CreateCaseModal";
+
+import DocumentsView from "./AppComponents/DocumentsView/DocumentsView";
 
 import { layoutGraph } from "./layout";
 
@@ -31,210 +43,361 @@ import { deleteNode } from "./api/delete_node";
 import { legalCheck } from "./api/legal_check";
 import { createArtifacts } from "./api/create_artifacts";
 
-
 function SimulatorApp() {
+  const [graphData, setGraphData] =
+    useState(null);
 
-  const [graphData, setGraphData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
-  const [cases, setCases] = useState([]);
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
+  const [cases, setCases] =
+    useState([]);
 
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
-  const [selectedNodeData, setSelectedNodeData] = useState(null);
+  const [
+    selectedCaseId,
+    setSelectedCaseId,
+  ] = useState(null);
 
-  const [selectedSidebarStats, setSelectedSidebarStats] = useState(null);
+  const [activeTab, setActiveTab] =
+    useState("graph");
 
-  const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
-  const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
+  const [
+    selectedNodeId,
+    setSelectedNodeId,
+  ] = useState(null);
 
-  const [contextMenuRightClick, setContextMenuRightClick] = useState(null);
-  const [detailsNode, setDetailsNode] = useState(null);
+  const [
+    selectedNodeData,
+    setSelectedNodeData,
+  ] = useState(null);
 
-  const [createCaseModalOpen, setCreateCaseModalOpen] = useState(false);
+  const [
+    selectedSidebarStats,
+    setSelectedSidebarStats,
+  ] = useState(null);
 
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isLegalCheck, setIsLegalCheck] = useState(false);
-  const [isCreatingArtifacts, setIsCreatingArtifacts] = useState(false);
-  const [processingNodeId, setProcessingNodeId] = useState(null);
+  const nodeTypes = useMemo(
+    () => ({
+      custom: CustomNode,
+    }),
+    []
+  );
 
+  const edgeTypes = useMemo(
+    () => ({
+      custom: CustomEdge,
+    }),
+    []
+  );
+
+  const [
+    contextMenuRightClick,
+    setContextMenuRightClick,
+  ] = useState(null);
+
+  const [detailsNode, setDetailsNode] =
+    useState(null);
+
+  const [
+    createCaseModalOpen,
+    setCreateCaseModalOpen,
+  ] = useState(false);
+
+  const [
+    isProcessing,
+    setIsProcessing,
+  ] = useState(false);
+
+  const [
+    isLegalCheck,
+    setIsLegalCheck,
+  ] = useState(false);
+
+  const [
+    isCreatingArtifacts,
+    setIsCreatingArtifacts,
+  ] = useState(false);
+
+  const [
+    processingNodeId,
+    setProcessingNodeId,
+  ] = useState(null);
 
   const createCase_ = async (payload) => {
-      try {
-        const newCase = await createCase(payload);
+    try {
+      const newCase =
+        await createCase(payload);
 
-        setCases((prev) => [...prev, newCase]);
-        setSelectedCaseId(newCase.id);
+      setCases((previousCases) => [
+        ...previousCases,
+        newCase,
+      ]);
 
-      } catch (err) {
-        console.error(err);
+      setSelectedCaseId(newCase.id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const loadCases = async () => {
+    try {
+      const defaultOwnerId = "111";
+
+      const data =
+        await fetchCases(defaultOwnerId);
+
+      setCases(data);
+
+      if (
+        data.length > 0 &&
+        !selectedCaseId
+      ) {
+        setSelectedCaseId(data[0].id);
       }
-    };
-
-
-    const loadCases = async (payload) => {
-      try {
-        const default_owner_id = '111';
-        const data = await fetchCases(default_owner_id);
-
-        setCases(data);
-
-        if (data.length > 0 && !selectedCaseId) {
-          setSelectedCaseId(data[0].id);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const loadGraph = async () => {
-      try {
-        const data = await fetchGraph(selectedCaseId);
-        setGraphData(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    if (!selectedCaseId) {
+      setGraphData(null);
+      return;
+    }
 
-  // ACTIONS ON RIGHT CLICK (EMPTY LOGIC FOR NOW)
-    const handleAdd = async (nodeId) => {
-      try {
-        setIsProcessing(true);
-        setContextMenuRightClick(null);
+    try {
+      setLoading(true);
 
-        console.log('Adding node', nodeId);
-        let new_branch = await addNode(selectedCaseId, nodeId);
-        setIsProcessing(false);
+      const data =
+        await fetchGraph(selectedCaseId);
 
-        setIsCreatingArtifacts(true);
-        await createArtifacts(selectedCaseId, new_branch.edge.id);
-        setIsCreatingArtifacts(false);
+      setGraphData(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setIsLegalCheck(true);
-        await legalCheck(selectedCaseId, new_branch.node.id);
-        setIsLegalCheck(false);
+  const handleAdd = async (nodeId) => {
+    try {
+      setIsProcessing(true);
+      setContextMenuRightClick(null);
 
-        await loadGraph();
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsProcessing(false);
-        setIsLegalCheck(false);
-      }
-    };
+      console.log(
+        "Adding node",
+        nodeId
+      );
 
-    const handleAddByAction = async (nodeId, action) => {
-      try {
-        setIsProcessing(true);
-        setContextMenuRightClick(null);
-        console.log("Adding node by action", nodeId, action);
-        const new_branch = await addNodeByAction(
+      const newBranch = await addNode(
+        selectedCaseId,
+        nodeId
+      );
+
+      setIsProcessing(false);
+
+      setIsCreatingArtifacts(true);
+
+      await createArtifacts(
+        selectedCaseId,
+        newBranch.edge.id
+      );
+
+      setIsCreatingArtifacts(false);
+
+      setIsLegalCheck(true);
+
+      await legalCheck(
+        selectedCaseId,
+        newBranch.node.id
+      );
+
+      setIsLegalCheck(false);
+
+      await loadGraph();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsProcessing(false);
+      setIsLegalCheck(false);
+      setIsCreatingArtifacts(false);
+    }
+  };
+
+  const handleAddByAction = async (
+    nodeId,
+    action
+  ) => {
+    try {
+      setIsProcessing(true);
+      setContextMenuRightClick(null);
+
+      console.log(
+        "Adding node by action",
+        nodeId,
+        action
+      );
+
+      const newBranch =
+        await addNodeByAction(
           selectedCaseId,
           nodeId,
           action
         );
-        setIsProcessing(false);
 
-        setIsLegalCheck(true);
-        await legalCheck(selectedCaseId, new_branch.node.id);
-        setIsLegalCheck(false);
+      setIsProcessing(false);
 
-        setIsCreatingArtifacts(true);
-        await createArtifacts(selectedCaseId, new_branch.edge.id);
-        setIsCreatingArtifacts(false);
+      setIsLegalCheck(true);
 
-        await loadGraph();
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsProcessing(false);
-        setIsLegalCheck(false);
-      }
-    };
+      await legalCheck(
+        selectedCaseId,
+        newBranch.node.id
+      );
+
+      setIsLegalCheck(false);
+
+      setIsCreatingArtifacts(true);
+
+      await createArtifacts(
+        selectedCaseId,
+        newBranch.edge.id
+      );
+
+      setIsCreatingArtifacts(false);
+
+      await loadGraph();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsProcessing(false);
+      setIsLegalCheck(false);
+      setIsCreatingArtifacts(false);
+    }
+  };
 
   const handleDeactivate = (nodeId) => {
-    console.log("Deactivate node:", nodeId);
+    console.log(
+      "Deactivate node:",
+      nodeId
+    );
+
     setContextMenuRightClick(null);
   };
 
-  const handleDelete = async (nodeId) => {
-      try {
-        setContextMenuRightClick(null);
+  const handleDelete = async (
+    nodeId
+  ) => {
+    try {
+      setContextMenuRightClick(null);
 
-        console.log('Deleting node', nodeId);
-        await deleteNode(selectedCaseId, nodeId);
-        console.log('Node deleted', nodeId);
-        await loadGraph();
-      } catch (err) {
-        console.error(err);
-      }
-    };
+      console.log(
+        "Deleting node",
+        nodeId
+      );
 
-  // RIGHT CLICK HANDLER
-  const onNodeContextMenuRightClick = (event, node) => {
-      event.preventDefault();
-      console.log("🟢 STEP 1: React Flow detected right click", node?.id);
+      await deleteNode(
+        selectedCaseId,
+        nodeId
+      );
 
-      setContextMenuRightClick({
-          x: event.clientX,
-          y: event.clientY,
-          nodeId: node.id,
-          potentialNextStates: node.data?.state?.potential_next_states || [],
-        });
-    };
+      console.log(
+        "Node deleted",
+        nodeId
+      );
 
-  // CLOSE ON OUTSIDE CLICK
+      setDetailsNode(null);
+      setSelectedNodeId(null);
+      setSelectedNodeData(null);
+      setSelectedSidebarStats(null);
+
+      await loadGraph();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onNodeContextMenuRightClick = (
+    event,
+    node
+  ) => {
+    event.preventDefault();
+
+    setContextMenuRightClick({
+      x: event.clientX,
+      y: event.clientY,
+      nodeId: node.id,
+      potentialNextStates:
+        node.data?.state
+          ?.potential_next_states ?? [],
+    });
+  };
+
+  const handleTabChange = (
+    nextTab
+  ) => {
+    setActiveTab(nextTab);
+
+    setContextMenuRightClick(null);
+
+    if (nextTab !== "graph") {
+      setDetailsNode(null);
+    }
+  };
+
   useEffect(() => {
-    //if (!contextMenuRightClick) return;
+    loadCases();
+  }, []);
 
-    //const handleClick = () => setContextMenuRightClick(null);
-
-    //window.addEventListener("mousedown", handleClick);
-    //return () => window.removeEventListener("mousedown", handleClick);
-  }, [contextMenuRightClick]);
-
-
-
-  // SET CASES
   useEffect(() => {
-      loadCases();
-    }, []);
+    if (selectedCaseId) {
+      loadGraph();
+    }
+  }, [selectedCaseId]);
 
-  // SET GRAPH
-  useEffect(() => {
-      if (selectedCaseId) {
-        loadGraph(selectedCaseId);
-      }
-    }, [selectedCaseId]);
-
-// SET NODES & EDGES
   const { nodes, edges } = useMemo(() => {
-    if (!graphData) return { nodes: [], edges: [] };
+    if (!graphData) {
+      return {
+        nodes: [],
+        edges: [],
+      };
+    }
 
-    const rawNodes = Object.values(graphData.nodes);
-    const rawEdges = Object.values(graphData.edges);
+    const rawNodes =
+      Object.values(graphData.nodes);
 
-    const flowNodes = rawNodes.map((n) => ({
-      id: n.id,
-      type: "custom",
-      data: n,
-      position: { x: 0, y: 0 },
-    }));
+    const rawEdges =
+      Object.values(graphData.edges);
 
-    const flowEdges = rawEdges.map((e) => ({
-      id: e.id,
-      source: e.source_id,
-      target: e.target_id,
-      type: "custom",
-      data: e,
-      style: {
-        stroke: "#c08497",
-        strokeWidth: 2,
-      },
-    }));
+    const flowNodes = rawNodes.map(
+      (node) => ({
+        id: node.id,
+        type: "custom",
+        data: node,
+        position: {
+          x: 0,
+          y: 0,
+        },
+      })
+    );
 
-    return layoutGraph(flowNodes, flowEdges);
+    const flowEdges = rawEdges.map(
+      (edge) => ({
+        id: edge.id,
+        source: edge.source_id,
+        target: edge.target_id,
+        type: "custom",
+        data: edge,
+        style: {
+          stroke: "#c08497",
+          strokeWidth: 2,
+        },
+      })
+    );
+
+    return layoutGraph(
+      flowNodes,
+      flowEdges
+    );
   }, [graphData]);
 
   return (
@@ -244,130 +407,271 @@ function SimulatorApp() {
         width: "100vw",
         display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
         background:
           "linear-gradient(180deg, #faf7f8 0%, #f3edef 100%)",
       }}
     >
-      {/* TOP BAR */}
       <TopBar
-          cases={cases}
-          selectedCaseId={selectedCaseId}
-          onSelectCase={setSelectedCaseId}
-          onCreateCase={() => setCreateCaseModalOpen(true)}
-        />
+        cases={cases}
+        selectedCaseId={
+          selectedCaseId
+        }
+        onSelectCase={
+          setSelectedCaseId
+        }
+        onCreateCase={() =>
+          setCreateCaseModalOpen(true)
+        }
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
-      {/* MAIN AREA */}
-      <div style={{ display: "flex", flex: 1 }}>
-        {/* SIDEBAR */}
-        <div
-          style={{
-            width: "20vw",
-            borderRight: "1px solid #c08497",
-            background: "#140d10",
-            overflowY: "auto",
-          }}
-        >
-          <Sidebar selectedNode={selectedSidebarStats} />
-        </div>
-
-        {/* GRAPH */}
-        <div style={{ width: "80vw", height: "100%" }}>
-          <ReactFlowProvider>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-              fitView
-              onNodeContextMenu={onNodeContextMenuRightClick}
-                onPaneClick={() => {
-                    setContextMenuRightClick(null);
-                  }}
-
-              onMoveStart={() => {
-                    setContextMenuRightClick(null);
-                  }}
-              onNodeClick={async (e, node) => {
-                  try {
-                    const data = await fetchNode(selectedCaseId, node.id);
-
-                    setSelectedNodeId(node.id);
-                    setSelectedNodeData(data);
-
-                    setDetailsNode(data);
-
-                    const stats = await fetchSidebarStats(selectedCaseId, node.id);
-                    setSelectedSidebarStats(stats);
-
-                    console.log(stats);
-
-                  } catch (err) {
-                    console.error(err);
-                  }
-                }}
-              proOptions={{ hideAttribution: true }}
+      <div
+        style={{
+          display: "flex",
+          flex: 1,
+          minWidth: 0,
+          minHeight: 0,
+          overflow: "hidden",
+        }}
+      >
+        {activeTab === "graph" && (
+          <>
+            <aside
+              style={{
+                flexShrink: 0,
+                width: "20vw",
+                minWidth: 250,
+                borderRight:
+                  "1px solid #c08497",
+                background: "#140d10",
+                overflowY: "auto",
+              }}
             >
-              <MiniMap nodeColor={() => "#c08497"} />
-              <Controls />
-              <Background color="#e7d6da" gap={24} />
-            </ReactFlow>
+              <Sidebar
+                selectedNode={
+                  selectedSidebarStats
+                }
+              />
+            </aside>
 
-            <NodeDetailsPanel
-              node={detailsNode}
-              onClose={() => setDetailsNode(null)}
-            />
+            <div
+              style={{
+                flex: 1,
+                minWidth: 0,
+                height: "100%",
+                position: "relative",
+              }}
+            >
+              <ReactFlowProvider>
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  nodeTypes={nodeTypes}
+                  edgeTypes={edgeTypes}
+                  fitView
+                  onNodeContextMenu={
+                    onNodeContextMenuRightClick
+                  }
+                  onPaneClick={() => {
+                    setContextMenuRightClick(
+                      null
+                    );
+                  }}
+                  onMoveStart={() => {
+                    setContextMenuRightClick(
+                      null
+                    );
+                  }}
+                  onNodeClick={async (
+                    event,
+                    node
+                  ) => {
+                    try {
+                      const data =
+                        await fetchNode(
+                          selectedCaseId,
+                          node.id
+                        );
 
-          {contextMenuRightClick &&
-            createPortal(
-              <ContextMenuRightClick
-                  x={contextMenuRightClick.x}
-                  y={contextMenuRightClick.y}
-                  nodeId={contextMenuRightClick.nodeId}
-                  potentialNextStates={contextMenuRightClick.potentialNextStates}
-                  onAdd={handleAdd}
-                  onAddByAction={handleAddByAction}
-                  onDeactivate={handleDeactivate}
-                  onDelete={handleDelete}
-                  onClose={() => setContextMenuRightClick(null)}
-                />,
-              document.body
-            )}
+                      setSelectedNodeId(
+                        node.id
+                      );
 
-          {isProcessing && (
-              <div className="loading-indicator">
-                <div className="spinner" />
-                <span>creating next step...</span>
-              </div>
-            )}
+                      setSelectedNodeData(
+                        data
+                      );
 
-           {isLegalCheck && (
-              <div className="loading-indicator">
-                <div className="spinner" />
-                <span>legal check...</span>
-              </div>
-            )}
+                      setDetailsNode(data);
 
-           {isCreatingArtifacts && (
-              <div className="loading-indicator">
-                <div className="spinner" />
-                <span>creating documents...</span>
-              </div>
-            )}
+                      const stats =
+                        await fetchSidebarStats(
+                          selectedCaseId,
+                          node.id
+                        );
 
-          </ReactFlowProvider>
-        </div>
+                      setSelectedSidebarStats(
+                        stats
+                      );
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }}
+                  proOptions={{
+                    hideAttribution: true,
+                  }}
+                >
+                  <MiniMap
+                    nodeColor={() =>
+                      "#c08497"
+                    }
+                  />
 
-        {/* Create Case Modal */}
-        <CreateCaseModal
-          open={createCaseModalOpen}
-          onClose={() => setCreateCaseModalOpen(false)}
-          onCreate={async (payload) => {
-            console.log("CREATE CASE PAYLOAD", payload);
-            createCase_(payload);
-          }}
-        />
+                  <Controls />
 
+                  <Background
+                    color="#e7d6da"
+                    gap={24}
+                  />
+                </ReactFlow>
+
+                <NodeDetailsPanel
+                  node={detailsNode}
+                  onClose={() =>
+                    setDetailsNode(null)
+                  }
+                />
+
+                {contextMenuRightClick &&
+                  createPortal(
+                    <ContextMenuRightClick
+                      x={
+                        contextMenuRightClick.x
+                      }
+                      y={
+                        contextMenuRightClick.y
+                      }
+                      nodeId={
+                        contextMenuRightClick.nodeId
+                      }
+                      potentialNextStates={
+                        contextMenuRightClick.potentialNextStates
+                      }
+                      onAdd={handleAdd}
+                      onAddByAction={
+                        handleAddByAction
+                      }
+                      onDeactivate={
+                        handleDeactivate
+                      }
+                      onDelete={
+                        handleDelete
+                      }
+                      onClose={() =>
+                        setContextMenuRightClick(
+                          null
+                        )
+                      }
+                    />,
+                    document.body
+                  )}
+
+                {isProcessing && (
+                  <div className="loading-indicator">
+                    <div className="spinner" />
+
+                    <span>
+                      creating next step...
+                    </span>
+                  </div>
+                )}
+
+                {isLegalCheck && (
+                  <div className="loading-indicator">
+                    <div className="spinner" />
+
+                    <span>
+                      legal check...
+                    </span>
+                  </div>
+                )}
+
+                {isCreatingArtifacts && (
+                  <div className="loading-indicator">
+                    <div className="spinner" />
+
+                    <span>
+                      creating documents...
+                    </span>
+                  </div>
+                )}
+              </ReactFlowProvider>
+            </div>
+          </>
+        )}
+
+        {activeTab === "documents" && (
+          <DocumentsView
+            caseId={selectedCaseId}
+          />
+        )}
+
+        {activeTab === "actors" && (
+          <main
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background:
+                "linear-gradient(180deg, #faf7f8 0%, #f3edef 100%)",
+              color: "#756b6f",
+            }}
+          >
+            <div
+              style={{
+                textAlign: "center",
+              }}
+            >
+              <h2
+                style={{
+                  margin: "0 0 8px",
+                  color: "#443b3e",
+                }}
+              >
+                Actors
+              </h2>
+
+              <p
+                style={{
+                  margin: 0,
+                }}
+              >
+                The Actors view will be
+                implemented next.
+              </p>
+            </div>
+          </main>
+        )}
       </div>
+
+      <CreateCaseModal
+        open={createCaseModalOpen}
+        onClose={() =>
+          setCreateCaseModalOpen(false)
+        }
+        onCreate={async (payload) => {
+          console.log(
+            "CREATE CASE PAYLOAD",
+            payload
+          );
+
+          await createCase_(payload);
+
+          setCreateCaseModalOpen(false);
+        }}
+      />
     </div>
   );
 }
