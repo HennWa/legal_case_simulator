@@ -40,6 +40,30 @@ class Case(BaseModel):
 # -------------------------
 # Artifact Model
 # -------------------------
+class ArtifactOutputFile(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(
+        description="Unique identifier of the generated file"
+    )
+
+    filename: str = Field(
+        description="Filename shown to the user"
+    )
+
+    file_url: str = Field(
+        description="URL or backend path for opening or downloading the file"
+    )
+
+    file_type: str = Field(
+        description="File type such as pdf, docx, txt, or html"
+    )
+
+    created_at: str = Field(
+        default_factory=utc_now,
+        description="Creation timestamp in ISO 8601 format"
+    )
+
 class Artifact(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -56,16 +80,20 @@ class Artifact(BaseModel):
                                                                        'or path to the ')
 
     extracted_content: Optional[str] = Field(default=None, description='Content parsed from original document, if applicable')
+
+    output_files: Optional[List[ArtifactOutputFile]] = Field(default_factory=list, description='Generated output files')
+
     content: str = Field(description='Full content of the artifact')
     created_by: Optional[str] = Field(default=None, description='ID of the actor who created the artifact '
                                                                 '(Person, court, lawyer etc.)')
 
     timestamp_created: str = Field(default_factory=utc_now, description='Timestamp of when the artifact was created in ISO 8601 format')
-    timestamp_uploaded: Optional[str] = Field(default_factory=utc_now,
+    timestamp_uploaded: Optional[str] = Field(default=None,
                            description='Timestamp of when the original document was uploaded in ISO 8601 format')
 
 class ArtifactCollection(BaseModel):
     artifacts: List[Artifact]
+
 
 # -------------------------
 # Graph Components
