@@ -42,8 +42,10 @@ export default function ArtifactModal({
                 </div>
 
                 <div className="artifact-content">
-                  <p>Content</p>
+                 <p>{art.title}</p>
+                 <div className="artifact-text">
                   {art.content ?? "No content"}
+                 </div>
                 </div>
 
               </div>
