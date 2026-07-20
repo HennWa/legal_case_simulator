@@ -2,26 +2,48 @@ import { useState } from "react";
 
 import "./DocumentsTable.css";
 
+import {
+  updateArtifactContent,
+} from "../../api/artifact";
+
+
 const EXTRACTED_PREVIEW_LENGTH = 360;
 const CONTENT_PREVIEW_LENGTH = 600;
+
 
 export default function DocumentsTable({
   artifacts,
   onArtifactsChange,
 }) {
-  const [expandedExtractedIds, setExpandedExtractedIds] =
-    useState(new Set());
+  const [
+    expandedExtractedIds,
+    setExpandedExtractedIds,
+  ] = useState(new Set());
 
-  const [editingArtifactId, setEditingArtifactId] =
-    useState(null);
+  const [
+    editingArtifactId,
+    setEditingArtifactId,
+  ] = useState(null);
 
-  const [draftContent, setDraftContent] =
-    useState("");
+  const [
+    draftContent,
+    setDraftContent,
+  ] = useState("");
 
-  const [savingArtifactId, setSavingArtifactId] =
-    useState(null);
+  const [
+    savingArtifactId,
+    setSavingArtifactId,
+  ] = useState(null);
 
-  const toggleExtractedContent = (artifactId) => {
+  const [
+    saveError,
+    setSaveError,
+  ] = useState(null);
+
+
+  const toggleExtractedContent = (
+    artifactId,
+  ) => {
     setExpandedExtractedIds((current) => {
       const next = new Set(current);
 
@@ -35,72 +57,99 @@ export default function DocumentsTable({
     });
   };
 
+
   const startEditing = (artifact) => {
     setEditingArtifactId(artifact.id);
     setDraftContent(artifact.content ?? "");
+    setSaveError(null);
   };
+
 
   const cancelEditing = () => {
     setEditingArtifactId(null);
     setDraftContent("");
+    setSaveError(null);
   };
 
-  const saveArtifactContent = async (artifactId) => {
+
+  const saveArtifactContent = async (
+    artifactId,
+  ) => {
+    if (!artifactId) {
+      setSaveError(
+        "The artifact cannot be saved because it has no ID.",
+      );
+
+      return;
+    }
+
     try {
       setSavingArtifactId(artifactId);
+      setSaveError(null);
 
       /*
-       * Replace this local update with your API call later:
+       * Persist the edited content in MongoDB.
        *
-       * const updatedArtifact = await updateArtifactContent(
-       *   artifactId,
-       *   draftContent
-       * );
+       * The backend should return the complete updated
+       * artifact object.
        */
+      const updatedArtifact =
+        await updateArtifactContent(
+          artifactId,
+          draftContent,
+        );
 
-      const updatedArtifacts = artifacts.map((artifact) =>
-        artifact.id === artifactId
-          ? {
-              ...artifact,
-              content: draftContent,
-            }
-          : artifact
+      /*
+       * Replace the artifact in the current frontend
+       * state with the version returned by the backend.
+       *
+       * Returning the complete object is useful because
+       * the backend may later update additional fields,
+       * such as timestamp_modified or edited_by.
+       */
+      const updatedArtifacts = artifacts.map(
+        (artifact) =>
+          artifact.id === artifactId
+            ? {
+                ...artifact,
+                ...updatedArtifact,
+              }
+            : artifact,
       );
 
       onArtifactsChange(updatedArtifacts);
 
       setEditingArtifactId(null);
       setDraftContent("");
-    } catch (err) {
+    } catch (error) {
       console.error(
         "Failed to save artifact content:",
-        err
+        error,
+      );
+
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : "The artifact content could not be saved.",
       );
     } finally {
       setSavingArtifactId(null);
     }
   };
 
+
   return (
     <div className="documents-table-wrapper">
       <table className="documents-table">
         <thead>
           <tr>
-            <th className="documents-column-source">
-              Original file
-            </th>
+            <th>Original file</th>
 
-            <th className="documents-column-extracted">
-              Extracted content
-            </th>
+            <th>Extracted content</th>
 
-            <th className="documents-column-content">
-              Artifact content
-            </th>
+            <th>Artifact content</th>
 
-            <th className="documents-column-output">
-              Output files
-            </th>
+            <th>Output files</th>
           </tr>
         </thead>
 
@@ -109,14 +158,20 @@ export default function DocumentsTable({
             const isEditing =
               editingArtifactId === artifact.id;
 
+            const isSaving =
+              savingArtifactId === artifact.id;
+
             const extractedContent =
-              artifact.extracted_content?.trim() ?? "";
+              artifact.extracted_content?.trim() ??
+              "";
 
             const artifactContent =
               artifact.content?.trim() ?? "";
 
             const isExtractedExpanded =
-              expandedExtractedIds.has(artifact.id);
+              expandedExtractedIds.has(
+                artifact.id,
+              );
 
             const outputFiles =
               artifact.output_files ?? [];
@@ -124,7 +179,9 @@ export default function DocumentsTable({
             return (
               <tr key={artifact.id}>
                 <td className="documents-source-cell">
-                  <SourceFileCell artifact={artifact} />
+                  <SourceFileCell
+                    artifact={artifact}
+                  />
                 </td>
 
                 <td className="documents-extracted-cell">
@@ -133,13 +190,13 @@ export default function DocumentsTable({
                       No extracted source content
                     </EmptyCellText>
                   ) : (
-                    <div className="documents-text-preview">
+                    <div className="documents-extracted-content">
                       <p>
                         {isExtractedExpanded
                           ? extractedContent
                           : truncateText(
                               extractedContent,
-                              EXTRACTED_PREVIEW_LENGTH
+                              EXTRACTED_PREVIEW_LENGTH,
                             )}
                       </p>
 
@@ -147,10 +204,10 @@ export default function DocumentsTable({
                         EXTRACTED_PREVIEW_LENGTH && (
                         <button
                           type="button"
-                          className="documents-text-toggle"
+                          className="documents-show-more-button"
                           onClick={() =>
                             toggleExtractedContent(
-                              artifact.id
+                              artifact.id,
                             )
                           }
                         >
@@ -165,20 +222,37 @@ export default function DocumentsTable({
 
                 <td className="documents-content-cell">
                   {isEditing ? (
-                    <div className="documents-content-editor">
+                    <div className="documents-editor">
                       <textarea
+                        className="documents-editor-textarea"
                         value={draftContent}
                         onChange={(event) =>
                           setDraftContent(
-                            event.target.value
+                            event.target.value,
                           )
                         }
+                        disabled={isSaving}
                         autoFocus
                       />
 
+                      {saveError && (
+                        <div
+                          role="alert"
+                          style={{
+                            marginTop: "8px",
+                            color: "#9b4d4d",
+                            fontSize: "12px",
+                            lineHeight: "1.4",
+                          }}
+                        >
+                          {saveError}
+                        </div>
+                      )}
+
                       <div className="documents-editor-footer">
                         <span>
-                          {draftContent.length} characters
+                          {draftContent.length}{" "}
+                          characters
                         </span>
 
                         <div className="documents-editor-actions">
@@ -186,10 +260,7 @@ export default function DocumentsTable({
                             type="button"
                             className="documents-cancel-button"
                             onClick={cancelEditing}
-                            disabled={
-                              savingArtifactId ===
-                              artifact.id
-                            }
+                            disabled={isSaving}
                           >
                             Cancel
                           </button>
@@ -199,16 +270,12 @@ export default function DocumentsTable({
                             className="documents-save-button"
                             onClick={() =>
                               saveArtifactContent(
-                                artifact.id
+                                artifact.id,
                               )
                             }
-                            disabled={
-                              savingArtifactId ===
-                              artifact.id
-                            }
+                            disabled={isSaving}
                           >
-                            {savingArtifactId ===
-                            artifact.id
+                            {isSaving
                               ? "Saving..."
                               : "Save"}
                           </button>
@@ -227,13 +294,13 @@ export default function DocumentsTable({
                           <div className="documents-artifact-meta">
                             <span>
                               {formatArtifactType(
-                                artifact.type
+                                artifact.type,
                               )}
                             </span>
 
                             <span>
                               {formatSourceType(
-                                artifact.source_type
+                                artifact.source_type,
                               )}
                             </span>
                           </div>
@@ -254,7 +321,7 @@ export default function DocumentsTable({
                         <p className="documents-content-preview">
                           {truncateText(
                             artifactContent,
-                            CONTENT_PREVIEW_LENGTH
+                            CONTENT_PREVIEW_LENGTH,
                           )}
                         </p>
                       ) : (
@@ -294,7 +361,7 @@ function SourceFileCell({
       <div className="documents-no-source">
         <span className="documents-source-type-badge">
           {formatSourceType(
-            artifact.source_type
+            artifact.source_type,
           )}
         </span>
 
@@ -332,7 +399,7 @@ function SourceFileCell({
 
         <span className="documents-source-type-badge">
           {formatSourceType(
-            artifact.source_type
+            artifact.source_type,
           )}
         </span>
       </div>
@@ -340,11 +407,14 @@ function SourceFileCell({
   );
 }
 
+
 function OutputFilesCell({
   outputFiles,
 }) {
-  if (!Array.isArray(outputFiles) ||
-      outputFiles.length === 0) {
+  if (
+    !Array.isArray(outputFiles) ||
+    outputFiles.length === 0
+  ) {
     return (
       <EmptyCellText>
         No generated files
@@ -367,11 +437,18 @@ function OutputFilesCell({
           file.file_type ??
           getFileExtension(filename);
 
+        const key =
+          file.id ??
+          `${filename}-${index}`;
+
         if (!fileUrl) {
           return (
             <div
-              key={file.id ?? `${filename}-${index}`}
-              className="documents-output-item documents-output-item-disabled"
+              key={key}
+              className={
+                "documents-output-item " +
+                "documents-output-item-disabled"
+              }
             >
               <OutputIcon />
 
@@ -382,7 +459,7 @@ function OutputFilesCell({
 
         return (
           <a
-            key={file.id ?? `${filename}-${index}`}
+            key={key}
             className="documents-output-item"
             href={fileUrl}
             target="_blank"
@@ -396,7 +473,9 @@ function OutputFilesCell({
 
             {fileType && (
               <span className="documents-output-type">
-                {String(fileType).toUpperCase()}
+                {String(
+                  fileType,
+                ).toUpperCase()}
               </span>
             )}
           </a>
@@ -405,6 +484,7 @@ function OutputFilesCell({
     </div>
   );
 }
+
 
 function EmptyCellText({
   children,
@@ -416,9 +496,10 @@ function EmptyCellText({
   );
 }
 
+
 function truncateText(
   text,
-  maximumLength
+  maximumLength,
 ) {
   if (!text) {
     return "";
@@ -428,8 +509,11 @@ function truncateText(
     return text;
   }
 
-  return `${text.slice(0, maximumLength).trimEnd()}…`;
+  return `${text
+    .slice(0, maximumLength)
+    .trimEnd()}…`;
 }
+
 
 function formatArtifactType(type) {
   if (!type) {
@@ -439,6 +523,7 @@ function formatArtifactType(type) {
   return capitalizeWords(type);
 }
 
+
 function formatSourceType(sourceType) {
   if (!sourceType) {
     return "Unknown source";
@@ -447,14 +532,18 @@ function formatSourceType(sourceType) {
   return capitalizeWords(sourceType);
 }
 
+
 function capitalizeWords(value) {
   return String(value)
     .replaceAll("_", " ")
     .replaceAll("-", " ")
-    .replace(/\b\w/g, (character) =>
-      character.toUpperCase()
+    .replace(
+      /\b\w/g,
+      (character) =>
+        character.toUpperCase(),
     );
 }
+
 
 function getFileExtension(filename) {
   const parts = filename.split(".");
@@ -465,6 +554,7 @@ function getFileExtension(filename) {
 
   return parts.at(-1);
 }
+
 
 function FileIcon() {
   return (
@@ -478,6 +568,7 @@ function FileIcon() {
     </svg>
   );
 }
+
 
 function OutputIcon() {
   return (

@@ -11,6 +11,9 @@ router = APIRouter()
 class ArtifactIdsRequest(BaseModel):
     artifact_ids: list[str]
 
+class UpdateArtifactRequest(BaseModel):
+    content: str
+
 
 @router.get("/artifacts/{artifact_id}")
 def get_artifact(artifact_id: str):
@@ -49,3 +52,25 @@ def get_artifacts_by_case(case_id: str):
         artifact.model_dump()
         for artifact in artifacts
     ]
+
+
+@router.patch("/update_artifact/{artifact_id}")
+def update_artifact(
+    artifact_id: str,
+    payload: UpdateArtifactRequest,
+):
+    repository = ArtifactRepository()
+
+    artifact = repository.get(artifact_id)
+
+    if artifact is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Artifact '{artifact_id}' not found",
+        )
+
+    artifact.content = payload.content
+
+    repository.upsert(artifact)
+
+    return artifact.model_dump()
