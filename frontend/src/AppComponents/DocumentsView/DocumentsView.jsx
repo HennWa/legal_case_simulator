@@ -5,14 +5,24 @@ import {
 } from "react";
 
 import DocumentsTable from "./DocumentsTable";
-import UploadDocumentModal from "../UploadDocumentModal/UploadDocumentModal";
+
+import UploadDocumentModal from
+  "../UploadDocumentModal/UploadDocumentModal";
 
 import {
   fetchArtifactsByCase,
 } from "../../api/artifact";
-import { fetchGraph } from "../../api/graph";
+
+import {
+  createArtifact,
+} from "../../api/create_artifacts";
+
+import {
+  fetchGraph,
+} from "../../api/graph";
 
 import "./DocumentsView.css";
+
 
 export default function DocumentsView({
   caseId,
@@ -21,12 +31,19 @@ export default function DocumentsView({
   const [graphNodes, setGraphNodes] = useState([]);
 
   const [loading, setLoading] = useState(false);
-  const [graphLoading, setGraphLoading] =
-    useState(false);
+
+  const [
+    graphLoading,
+    setGraphLoading,
+  ] = useState(false);
+
+  const [
+    uploadModalOpen,
+    setUploadModalOpen,
+  ] = useState(false);
 
   const [error, setError] = useState(null);
-  const [uploadModalOpen, setUploadModalOpen] =
-    useState(false);
+
 
   const loadArtifacts = useCallback(async () => {
     if (!caseId) {
@@ -65,6 +82,7 @@ export default function DocumentsView({
     }
   }, [caseId]);
 
+
   const loadGraphNodes = useCallback(async () => {
     if (!caseId) {
       setGraphNodes([]);
@@ -95,6 +113,7 @@ export default function DocumentsView({
     }
   }, [caseId]);
 
+
   useEffect(() => {
     loadArtifacts();
     loadGraphNodes();
@@ -103,93 +122,138 @@ export default function DocumentsView({
     loadGraphNodes,
   ]);
 
+
   useEffect(() => {
     setUploadModalOpen(false);
   }, [caseId]);
+
 
   const openUploadModal = () => {
     setUploadModalOpen(true);
   };
 
+
   const closeUploadModal = () => {
     setUploadModalOpen(false);
   };
+
+
+  const refreshDocumentsView = async () => {
+    await Promise.all([
+      loadArtifacts(),
+      loadGraphNodes(),
+    ]);
+  };
+
 
   const handleUploadDocument = async ({
     title,
     type,
     nodeId,
-    node,
     file,
   }) => {
+    if (!caseId) {
+      throw new Error(
+        "No case is currently selected.",
+      );
+    }
+
+    if (!nodeId) {
+      throw new Error(
+        "Please select a related state.",
+      );
+    }
+
+    if (!file) {
+      throw new Error(
+        "Please select a document.",
+      );
+    }
+
+    const normalizedTitle = title?.trim();
+    const normalizedType = type?.trim();
+
+    if (!normalizedTitle) {
+      throw new Error(
+        "Please enter a document title.",
+      );
+    }
+
+    if (!normalizedType) {
+      throw new Error(
+        "Please enter a document type.",
+      );
+    }
+
     /*
-     * Frontend lifecycle placeholder.
+     * For now, content extraction takes place in
+     * the browser.
      *
-     * Replace this section with the upload API call
-     * once the backend endpoint is available.
-     *
-     * A multipart request will normally look like:
-     *
-     * const formData = new FormData();
-     * formData.append("case_id", caseId);
-     * formData.append("node_id", nodeId);
-     * formData.append("title", title);
-     * formData.append("type", type);
-     * formData.append("file", file);
-     *
-     * const createdArtifact =
-     *   await uploadArtifact(formData);
-     *
-     * setArtifacts((current) => [
-     *   createdArtifact,
-     *   ...current,
-     * ]);
+     * Later this function can be extended for PDF,
+     * DOCX, email and image files, or replaced by
+     * backend-side extraction after the original
+     * file is uploaded.
      */
+    const extractedContent =
+      await extractContentFromFile(file);
 
-    const temporaryFileUrl =
-      URL.createObjectURL(file);
-
-    const temporaryArtifact = {
-      id: `local-upload-${Date.now()}`,
-      case_id: caseId,
-      node_id: nodeId,
-
-      title,
-      type,
-
-      source_type: "uploaded_file",
-      original_filename: file.name,
-      original_file_url: temporaryFileUrl,
-
-      extracted_content: "",
-      content: "",
-      output_files: [],
-
-      timestamp_created:
-        new Date().toISOString(),
-
-      related_node_title:
-        node?.legal_title ??
-        node?.title ??
-        "",
-    };
-
-    console.log(
-      "Document upload payload:",
-      {
+    /*
+     * The backend endpoint handles:
+     *
+     * - artifact ID generation
+     * - source_type
+     * - timestamps
+     * - storing the artifact in MongoDB
+     * - registering the artifact at the node
+     * - persisting the updated node
+     */
+    const createdArtifact =
+      await createArtifact({
         caseId,
         nodeId,
-        title,
-        type,
-        file,
-      },
-    );
+        title: normalizedTitle,
+        type: normalizedType,
+        originalFilename: file.name,
+        extractedContent,
+        content: "",
+      });
 
-    setArtifacts((currentArtifacts) => [
-      temporaryArtifact,
-      ...currentArtifacts,
-    ]);
+    /*
+     * Add the returned artifact immediately so the
+     * table updates without waiting for another
+     * request.
+     *
+     * The complete reload afterwards remains the
+     * source of truth and ensures that the frontend
+     * matches MongoDB.
+     */
+    if (createdArtifact?.id) {
+      setArtifacts((currentArtifacts) => {
+        const artifactAlreadyExists =
+          currentArtifacts.some(
+            (artifact) =>
+              artifact.id === createdArtifact.id,
+          );
+
+        if (artifactAlreadyExists) {
+          return currentArtifacts;
+        }
+
+        return [
+          createdArtifact,
+          ...currentArtifacts,
+        ];
+      });
+    }
+
+    /*
+     * Reload the artifacts and graph because the
+     * backend also changed the selected node's
+     * artifact_ids.
+     */
+    await refreshDocumentsView();
   };
+
 
   if (!caseId) {
     return (
@@ -211,6 +275,7 @@ export default function DocumentsView({
       </main>
     );
   }
+
 
   return (
     <>
@@ -241,11 +306,11 @@ export default function DocumentsView({
             <button
               type="button"
               className="documents-refresh-button"
-              onClick={() => {
-                loadArtifacts();
-                loadGraphNodes();
-              }}
-              disabled={loading || graphLoading}
+              onClick={refreshDocumentsView}
+              disabled={
+                loading ||
+                graphLoading
+              }
             >
               {loading || graphLoading
                 ? "Loading..."
@@ -256,6 +321,7 @@ export default function DocumentsView({
               type="button"
               className="documents-upload-button"
               onClick={openUploadModal}
+              disabled={graphLoading}
             >
               + Upload document
             </button>
@@ -263,11 +329,14 @@ export default function DocumentsView({
         </header>
 
         <div className="documents-view-content">
-          {loading && artifacts.length === 0 ? (
+          {loading &&
+          artifacts.length === 0 ? (
             <div className="documents-view-status">
               <div className="documents-view-spinner" />
 
-              <span>Loading documents...</span>
+              <span>
+                Loading documents...
+              </span>
             </div>
           ) : error ? (
             <div className="documents-view-error">
@@ -290,7 +359,9 @@ export default function DocumentsView({
                 <DocumentIcon />
               </div>
 
-              <h2>No documents available</h2>
+              <h2>
+                No documents available
+              </h2>
 
               <p>
                 Uploaded files and documents
@@ -302,6 +373,7 @@ export default function DocumentsView({
                 type="button"
                 className="documents-empty-upload-button"
                 onClick={openUploadModal}
+                disabled={graphLoading}
               >
                 Upload first document
               </button>
@@ -309,7 +381,9 @@ export default function DocumentsView({
           ) : (
             <DocumentsTable
               artifacts={artifacts}
-              onArtifactsChange={setArtifacts}
+              onArtifactsChange={
+                setArtifacts
+              }
             />
           )}
         </div>
@@ -325,6 +399,90 @@ export default function DocumentsView({
   );
 }
 
+
+/**
+ * Central entry point for extracting document content.
+ *
+ * Additional formats can later be added here without
+ * changing the artifact creation workflow.
+ */
+async function extractContentFromFile(file) {
+  if (!(file instanceof File)) {
+    throw new Error(
+      "The selected document is not a valid file.",
+    );
+  }
+
+  const extension =
+    getFileExtension(file.name);
+
+  switch (extension) {
+    case "txt":
+      return extractTextFileContent(file);
+
+    default:
+      throw new Error(
+        `Unsupported file type '.${extension || "unknown"}'. ` +
+          "Currently only .txt files can be uploaded.",
+      );
+  }
+}
+
+
+/**
+ * Extract plain-text content while preserving line
+ * breaks and other formatting.
+ */
+async function extractTextFileContent(file) {
+  try {
+    const text = await file.text();
+
+    /*
+     * Remove a possible UTF-8 byte-order mark at the
+     * beginning of the file.
+     */
+    return text.replace(/^\uFEFF/, "");
+  } catch (error) {
+    console.error(
+      "Failed to read the text file:",
+      error,
+    );
+
+    throw new Error(
+      `The content of '${file.name}' could not be read.`,
+    );
+  }
+}
+
+
+/**
+ * Return the normalized extension without the dot.
+ */
+function getFileExtension(filename) {
+  if (
+    typeof filename !== "string" ||
+    !filename
+  ) {
+    return "";
+  }
+
+  const lastDotIndex =
+    filename.lastIndexOf(".");
+
+  if (
+    lastDotIndex < 0 ||
+    lastDotIndex === filename.length - 1
+  ) {
+    return "";
+  }
+
+  return filename
+    .slice(lastDotIndex + 1)
+    .trim()
+    .toLowerCase();
+}
+
+
 function DocumentIcon() {
   return (
     <svg
@@ -332,8 +490,11 @@ function DocumentIcon() {
       aria-hidden="true"
     >
       <path d="M6 2H14L19 7V22H6Z" />
+
       <path d="M14 2V7H19" />
+
       <path d="M9 12H16" />
+
       <path d="M9 16H16" />
     </svg>
   );
