@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from backend.object_graph_runtime.graph_classes import Artifact, generate_id, utc_now
 from backend.expansion_engine.exapnsion_engine import ExpansionEngine
 from backend.llm_interface.llm_interface import MockLLMProvider
 from backend.database.repositories.graph_repository import GraphRepository
@@ -14,9 +15,55 @@ router = APIRouter()
 load_dotenv(override=True)
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
+class CreateArtifactPayload(BaseModel):
+    case_id: str
+    node_id: str
+
+    title: str = Field(min_length=1)
+    type: str = Field(min_length=1)
+
+    original_filename: str
+    extracted_content: str
+    content: str
+
+
 class CreateArtifactsRequest(BaseModel):
     case_id: str
     edge_id: str
+
+
+@router.post("/create_artifact")
+def create_artifact(payload: CreateArtifactPayload):
+
+    repo = GraphRepository()
+    art_repo = ArtifactRepository()
+    node_repo = NodeRepository()
+
+    artifact = Artifact(
+        id=generate_id("art"),
+        case_id=payload.case_id,
+        type=payload.type,
+        title=payload.title,
+        source_type="uploaded",
+        original_filename=payload.original_filename,
+        original_file_url="",
+        extracted_content=payload.extracted_content,
+        output_files=[],
+        content=payload.extracted_content,
+        created_by=payload.content,
+        timestamp_created=utc_now(),
+        timestamp_uploaded=utc_now(),
+    )
+
+    graph = repo.load_graph(payload.case_id)
+    node = graph.nodes[payload.node_id]
+    node.state.artifact_ids.append(artifact.id)
+    node_repo.update(node)
+
+    art_repo.create(artifact)
+
+    return artifact
+
 
 @router.post("/create_artifacts")
 def create_artifacts(payload: CreateArtifactsRequest):
