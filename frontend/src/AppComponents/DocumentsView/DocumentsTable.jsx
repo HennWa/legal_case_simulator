@@ -1,10 +1,9 @@
 import { useState } from "react";
 
-import "./DocumentsTable.css";
+import ArtifactEditModal from
+  "../ArtifactEditModal/ArtifactEditModal";
 
-import {
-  updateArtifactContent,
-} from "../../api/artifact";
+import "./DocumentsTable.css";
 
 
 const EXTRACTED_PREVIEW_LENGTH = 360;
@@ -21,331 +20,232 @@ export default function DocumentsTable({
   ] = useState(new Set());
 
   const [
-    editingArtifactId,
-    setEditingArtifactId,
-  ] = useState(null);
-
-  const [
-    draftContent,
-    setDraftContent,
-  ] = useState("");
-
-  const [
-    savingArtifactId,
-    setSavingArtifactId,
-  ] = useState(null);
-
-  const [
-    saveError,
-    setSaveError,
+    editingArtifact,
+    setEditingArtifact,
   ] = useState(null);
 
 
   const toggleExtractedContent = (
     artifactId,
   ) => {
-    setExpandedExtractedIds((current) => {
-      const next = new Set(current);
+    setExpandedExtractedIds(
+      (current) => {
+        const next = new Set(current);
 
-      if (next.has(artifactId)) {
-        next.delete(artifactId);
-      } else {
-        next.add(artifactId);
-      }
+        if (next.has(artifactId)) {
+          next.delete(artifactId);
+        } else {
+          next.add(artifactId);
+        }
 
-      return next;
-    });
+        return next;
+      },
+    );
   };
 
 
   const startEditing = (artifact) => {
-    setEditingArtifactId(artifact.id);
-    setDraftContent(artifact.content ?? "");
-    setSaveError(null);
+    setEditingArtifact(artifact);
   };
 
 
-  const cancelEditing = () => {
-    setEditingArtifactId(null);
-    setDraftContent("");
-    setSaveError(null);
+  const closeEditor = () => {
+    setEditingArtifact(null);
   };
 
 
-  const saveArtifactContent = async (
-    artifactId,
+  const handleArtifactSaved = (
+    updatedArtifact,
   ) => {
-    if (!artifactId) {
-      setSaveError(
-        "The artifact cannot be saved because it has no ID.",
+    const updatedArtifacts =
+      artifacts.map((artifact) =>
+        artifact.id ===
+        updatedArtifact.id
+          ? {
+              ...artifact,
+              ...updatedArtifact,
+            }
+          : artifact,
       );
 
-      return;
-    }
+    onArtifactsChange(
+      updatedArtifacts,
+    );
 
-    try {
-      setSavingArtifactId(artifactId);
-      setSaveError(null);
-
-      /*
-       * Persist the edited content in MongoDB.
-       *
-       * The backend should return the complete updated
-       * artifact object.
-       */
-      const updatedArtifact =
-        await updateArtifactContent(
-          artifactId,
-          draftContent,
-        );
-
-      /*
-       * Replace the artifact in the current frontend
-       * state with the version returned by the backend.
-       *
-       * Returning the complete object is useful because
-       * the backend may later update additional fields,
-       * such as timestamp_modified or edited_by.
-       */
-      const updatedArtifacts = artifacts.map(
-        (artifact) =>
-          artifact.id === artifactId
-            ? {
-                ...artifact,
-                ...updatedArtifact,
-              }
-            : artifact,
-      );
-
-      onArtifactsChange(updatedArtifacts);
-
-      setEditingArtifactId(null);
-      setDraftContent("");
-    } catch (error) {
-      console.error(
-        "Failed to save artifact content:",
-        error,
-      );
-
-      setSaveError(
-        error instanceof Error
-          ? error.message
-          : "The artifact content could not be saved.",
-      );
-    } finally {
-      setSavingArtifactId(null);
-    }
+    setEditingArtifact(null);
   };
 
 
   return (
-    <div className="documents-table-wrapper">
-      <table className="documents-table">
-        <thead>
-          <tr>
-            <th>Original file</th>
+    <>
+      <div className="documents-table-wrapper">
+        <table className="documents-table">
+          <colgroup>
+            <col className="documents-column-source" />
 
-            <th>Extracted content</th>
+            <col className="documents-column-extracted" />
 
-            <th>Artifact content</th>
+            <col className="documents-column-content" />
 
-            <th>Output files</th>
-          </tr>
-        </thead>
+            <col className="documents-column-output" />
+          </colgroup>
 
-        <tbody>
-          {artifacts.map((artifact) => {
-            const isEditing =
-              editingArtifactId === artifact.id;
+          <thead>
+            <tr>
+              <th>Original file</th>
 
-            const isSaving =
-              savingArtifactId === artifact.id;
+              <th>Extracted content</th>
 
-            const extractedContent =
-              artifact.extracted_content?.trim() ??
-              "";
+              <th>Artifact content</th>
 
-            const artifactContent =
-              artifact.content?.trim() ?? "";
+              <th>Output files</th>
+            </tr>
+          </thead>
 
-            const isExtractedExpanded =
-              expandedExtractedIds.has(
-                artifact.id,
-              );
+          <tbody>
+            {artifacts.map(
+              (artifact) => {
+                const extractedContent =
+                  artifact
+                    .extracted_content
+                    ?.trim() ?? "";
 
-            const outputFiles =
-              artifact.output_files ?? [];
+                const artifactContent =
+                  artifact.content?.trim() ??
+                  "";
 
-            return (
-              <tr key={artifact.id}>
-                <td className="documents-source-cell">
-                  <SourceFileCell
-                    artifact={artifact}
-                  />
-                </td>
+                const isExtractedExpanded =
+                  expandedExtractedIds.has(
+                    artifact.id,
+                  );
 
-                <td className="documents-extracted-cell">
-                  {!extractedContent ? (
-                    <EmptyCellText>
-                      No extracted source content
-                    </EmptyCellText>
-                  ) : (
-                    <div className="documents-extracted-content">
-                      <p>
-                        {isExtractedExpanded
-                          ? extractedContent
-                          : truncateText(
-                              extractedContent,
-                              EXTRACTED_PREVIEW_LENGTH,
-                            )}
-                      </p>
+                const outputFiles =
+                  artifact.output_files ??
+                  [];
 
-                      {extractedContent.length >
-                        EXTRACTED_PREVIEW_LENGTH && (
-                        <button
-                          type="button"
-                          className="documents-show-more-button"
-                          onClick={() =>
-                            toggleExtractedContent(
-                              artifact.id,
-                            )
-                          }
-                        >
-                          {isExtractedExpanded
-                            ? "Show less"
-                            : "Show more"}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </td>
-
-                <td className="documents-content-cell">
-                  {isEditing ? (
-                    <div className="documents-editor">
-                      <textarea
-                        className="documents-editor-textarea"
-                        value={draftContent}
-                        onChange={(event) =>
-                          setDraftContent(
-                            event.target.value,
-                          )
-                        }
-                        disabled={isSaving}
-                        autoFocus
+                return (
+                  <tr key={artifact.id}>
+                    <td className="documents-source-cell">
+                      <SourceFileCell
+                        artifact={artifact}
                       />
+                    </td>
 
-                      {saveError && (
-                        <div
-                          role="alert"
-                          style={{
-                            marginTop: "8px",
-                            color: "#9b4d4d",
-                            fontSize: "12px",
-                            lineHeight: "1.4",
-                          }}
-                        >
-                          {saveError}
+                    <td className="documents-extracted-cell">
+                      {!extractedContent ? (
+                        <EmptyCellText>
+                          No extracted source
+                          content
+                        </EmptyCellText>
+                      ) : (
+                        <div className="documents-text-preview">
+                          <p>
+                            {isExtractedExpanded
+                              ? extractedContent
+                              : truncateText(
+                                  extractedContent,
+                                  EXTRACTED_PREVIEW_LENGTH,
+                                )}
+                          </p>
+
+                          {extractedContent.length >
+                            EXTRACTED_PREVIEW_LENGTH && (
+                            <button
+                              type="button"
+                              className="documents-text-toggle"
+                              onClick={() =>
+                                toggleExtractedContent(
+                                  artifact.id,
+                                )
+                              }
+                            >
+                              {isExtractedExpanded
+                                ? "Show less"
+                                : "Show more"}
+                            </button>
+                          )}
                         </div>
                       )}
+                    </td>
 
-                      <div className="documents-editor-footer">
-                        <span>
-                          {draftContent.length}{" "}
-                          characters
-                        </span>
+                    <td className="documents-content-cell">
+                      <div className="documents-artifact-content">
+                        <div className="documents-artifact-heading">
+                          <div>
+                            <strong>
+                              {artifact.title ??
+                                "Untitled document"}
+                            </strong>
 
-                        <div className="documents-editor-actions">
+                            <div className="documents-artifact-meta">
+                              <span>
+                                {formatArtifactType(
+                                  artifact.type,
+                                )}
+                              </span>
+
+                              <span>
+                                {formatSourceType(
+                                  artifact.source_type,
+                                )}
+                              </span>
+                            </div>
+                          </div>
+
                           <button
                             type="button"
-                            className="documents-cancel-button"
-                            onClick={cancelEditing}
-                            disabled={isSaving}
-                          >
-                            Cancel
-                          </button>
-
-                          <button
-                            type="button"
-                            className="documents-save-button"
+                            className="documents-edit-button"
                             onClick={() =>
-                              saveArtifactContent(
-                                artifact.id,
+                              startEditing(
+                                artifact,
                               )
                             }
-                            disabled={isSaving}
                           >
-                            {isSaving
-                              ? "Saving..."
-                              : "Save"}
+                            <EditIcon />
+
+                            Edit
                           </button>
                         </div>
+
+                        {artifactContent ? (
+                          <p className="documents-content-preview">
+                            {truncateText(
+                              artifactContent,
+                              CONTENT_PREVIEW_LENGTH,
+                            )}
+                          </p>
+                        ) : (
+                          <EmptyCellText>
+                            No artifact content
+                          </EmptyCellText>
+                        )}
                       </div>
-                    </div>
-                  ) : (
-                    <div className="documents-artifact-content">
-                      <div className="documents-artifact-heading">
-                        <div>
-                          <strong>
-                            {artifact.title ??
-                              "Untitled document"}
-                          </strong>
+                    </td>
 
-                          <div className="documents-artifact-meta">
-                            <span>
-                              {formatArtifactType(
-                                artifact.type,
-                              )}
-                            </span>
+                    <td className="documents-output-cell">
+                      <OutputFilesCell
+                        outputFiles={
+                          outputFiles
+                        }
+                      />
+                    </td>
+                  </tr>
+                );
+              },
+            )}
+          </tbody>
+        </table>
+      </div>
 
-                            <span>
-                              {formatSourceType(
-                                artifact.source_type,
-                              )}
-                            </span>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          className="documents-edit-button"
-                          onClick={() =>
-                            startEditing(artifact)
-                          }
-                        >
-                          Edit
-                        </button>
-                      </div>
-
-                      {artifactContent ? (
-                        <p className="documents-content-preview">
-                          {truncateText(
-                            artifactContent,
-                            CONTENT_PREVIEW_LENGTH,
-                          )}
-                        </p>
-                      ) : (
-                        <EmptyCellText>
-                          No artifact content
-                        </EmptyCellText>
-                      )}
-                    </div>
-                  )}
-                </td>
-
-                <td className="documents-output-cell">
-                  <OutputFilesCell
-                    outputFiles={outputFiles}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+      <ArtifactEditModal
+        artifact={editingArtifact}
+        onClose={closeEditor}
+        onSaved={handleArtifactSaved}
+      />
+    </>
   );
 }
+
 
 function SourceFileCell({
   artifact,
@@ -424,63 +324,65 @@ function OutputFilesCell({
 
   return (
     <div className="documents-output-list">
-      {outputFiles.map((file, index) => {
-        const filename =
-          file.filename ??
-          `Output ${index + 1}`;
+      {outputFiles.map(
+        (file, index) => {
+          const filename =
+            file.filename ??
+            `Output ${index + 1}`;
 
-        const fileUrl =
-          file.file_url ??
-          file.url;
+          const fileUrl =
+            file.file_url ??
+            file.url;
 
-        const fileType =
-          file.file_type ??
-          getFileExtension(filename);
+          const fileType =
+            file.file_type ??
+            getFileExtension(filename);
 
-        const key =
-          file.id ??
-          `${filename}-${index}`;
+          const key =
+            file.id ??
+            `${filename}-${index}`;
 
-        if (!fileUrl) {
+          if (!fileUrl) {
+            return (
+              <div
+                key={key}
+                className={
+                  "documents-output-item " +
+                  "documents-output-item-disabled"
+                }
+              >
+                <OutputIcon />
+
+                <span>{filename}</span>
+              </div>
+            );
+          }
+
           return (
-            <div
+            <a
               key={key}
-              className={
-                "documents-output-item " +
-                "documents-output-item-disabled"
-              }
+              className="documents-output-item"
+              href={fileUrl}
+              target="_blank"
+              rel="noreferrer"
             >
               <OutputIcon />
 
-              <span>{filename}</span>
-            </div>
-          );
-        }
-
-        return (
-          <a
-            key={key}
-            className="documents-output-item"
-            href={fileUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <OutputIcon />
-
-            <span className="documents-output-name">
-              {filename}
-            </span>
-
-            {fileType && (
-              <span className="documents-output-type">
-                {String(
-                  fileType,
-                ).toUpperCase()}
+              <span className="documents-output-name">
+                {filename}
               </span>
-            )}
-          </a>
-        );
-      })}
+
+              {fileType && (
+                <span className="documents-output-type">
+                  {String(
+                    fileType,
+                  ).toUpperCase()}
+                </span>
+              )}
+            </a>
+          );
+        },
+      )}
     </div>
   );
 }
@@ -524,12 +426,16 @@ function formatArtifactType(type) {
 }
 
 
-function formatSourceType(sourceType) {
+function formatSourceType(
+  sourceType,
+) {
   if (!sourceType) {
     return "Unknown source";
   }
 
-  return capitalizeWords(sourceType);
+  return capitalizeWords(
+    sourceType,
+  );
 }
 
 
@@ -545,7 +451,9 @@ function capitalizeWords(value) {
 }
 
 
-function getFileExtension(filename) {
+function getFileExtension(
+  filename,
+) {
   const parts = filename.split(".");
 
   if (parts.length < 2) {
@@ -581,6 +489,20 @@ function OutputIcon() {
       <path d="M7 10L12 15L17 10" />
 
       <path d="M5 20H19" />
+    </svg>
+  );
+}
+
+
+function EditIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M4 20H8L19 9L15 5L4 16Z" />
+
+      <path d="M13.5 6.5L17.5 10.5" />
     </svg>
   );
 }
