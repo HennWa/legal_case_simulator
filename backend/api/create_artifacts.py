@@ -58,9 +58,13 @@ def create_artifact(payload: CreateArtifactPayload):
     graph = repo.load_graph(payload.case_id)
     node = graph.nodes[payload.node_id]
     node.state.artifact_ids.append(artifact.id)
-    node_repo.update(node)
 
-    art_repo.create(artifact)
+    try:
+        art_repo.create(artifact)
+        node_repo.upsert(node)
+    except Exception:
+        art_repo.delete(artifact.id)
+        raise
 
     return artifact
 
