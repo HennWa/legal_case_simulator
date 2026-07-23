@@ -71,7 +71,7 @@ def create_case(payload: CreateCasePayload):
         final_state=False,
         actors_status=actor_stati,
         legal_references=[],
-        artifacts=[],
+        artifact_ids=[],
         deadlines=deadlines
     )
 
