@@ -322,6 +322,14 @@ if __name__ == "__main__":
         ("EStG", os.path.join(resources_path, "estg", "BJNR010050934.xml")),
         ("KStG", os.path.join(resources_path, "kstg", "BJNR009790936.xml")),
         ("UStG", os.path.join(resources_path, "ustg", "BJNR119530979.xml")),
+
+        # Arbeitsrecht
+        ("BGBL", os.path.join(resources_path, "bgbl", "BJNR005330950.xml")),
+        ("BGBL_1", os.path.join(resources_path, "bgbl_1", "BJNR012670953.xml")),
+        ("BGBL_1_", os.path.join(resources_path, "bgbl_1_", "BJNR196610000.xml")),
+        ("BUrlG", os.path.join(resources_path, "burlg", "BJNR000020963.xml")),
+        ("EntgFG", os.path.join(resources_path, "entgfg", "BJNR106500994.xml")),
+        ("KSchG", os.path.join(resources_path, "kschg", "BJNR004990951.xml")),
     ]
 
 
