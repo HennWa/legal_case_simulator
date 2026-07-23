@@ -1,478 +1,335 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { uploadDocument } from "../../api/upload_document";
 
 import "./UploadDocumentModal.css";
 
-const EMPTY_FORM = {
-  title: "",
-  type: "",
-  nodeId: "",
-};
+
+const ACCEPTED_FILE_TYPES = [
+  ".pdf",
+  ".docx",
+  ".txt",
+  ".md",
+  ".markdown",
+  ".json",
+  ".xml",
+  ".html",
+  ".htm",
+].join(",");
+
+
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024;
+
 
 export default function UploadDocumentModal({
   open,
+  caseId,
+  nodeId,
   nodes = [],
+  lockNodeSelection = false,
   onClose,
-  onUpload,
+  onUploaded,
 }) {
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [validationError, setValidationError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const fileInputRef = useRef(null);
 
-  const selectableNodes = useMemo(() => {
-    if (!Array.isArray(nodes)) {
-      return [];
-    }
+  const [selectedNodeId, setSelectedNodeId] = useState(
+    nodeId || ""
+  );
 
-    return [...nodes].sort((firstNode, secondNode) => {
-      const firstNumber = firstNode?.number ?? "";
-      const secondNumber = secondNode?.number ?? "";
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [title, setTitle] = useState("");
 
-      return String(firstNumber).localeCompare(
-        String(secondNumber),
-        undefined,
-        {
-          numeric: true,
-          sensitivity: "base",
-        },
-      );
-    });
-  }, [nodes]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState("");
+
 
   useEffect(() => {
     if (!open) {
       return;
     }
 
-    setForm(EMPTY_FORM);
+    setSelectedNodeId(nodeId || "");
     setSelectedFile(null);
-    setValidationError("");
-    setIsSubmitting(false);
+    setTitle("");
+    setError("");
+    setIsUploading(false);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-  }, [open]);
+  }, [open, nodeId]);
 
-  useEffect(() => {
-    if (!open) {
-      return undefined;
-    }
 
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape" && !isSubmitting) {
-        onClose();
-      }
-    };
+  const selectedNode = useMemo(
+    () => nodes.find(
+      (node) => node.id === selectedNodeId
+    ),
+    [nodes, selectedNodeId],
+  );
 
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener(
-        "keydown",
-        handleKeyDown,
-      );
-    };
-  }, [open, isSubmitting, onClose]);
 
   if (!open) {
     return null;
   }
 
-  const updateForm = (field, value) => {
-    setForm((currentForm) => ({
-      ...currentForm,
-      [field]: value,
-    }));
-
-    if (validationError) {
-      setValidationError("");
-    }
-  };
-
-  const openFileBrowser = () => {
-    fileInputRef.current?.click();
-  };
 
   const handleFileChange = (event) => {
-    const file = event.target.files?.[0] ?? null;
+    const file = event.target.files?.[0] || null;
+
+    setError("");
+
+    if (!file) {
+      setSelectedFile(null);
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setSelectedFile(null);
+
+      setError(
+        "The selected document exceeds the 20 MB size limit."
+      );
+
+      event.target.value = "";
+      return;
+    }
 
     setSelectedFile(file);
 
-    if (file && !form.title.trim()) {
-      setForm((currentForm) => ({
-        ...currentForm,
-        title: removeFileExtension(file.name),
-      }));
-    }
-
-    if (validationError) {
-      setValidationError("");
+    if (!title.trim()) {
+      setTitle(removeFileExtension(file.name));
     }
   };
 
-  const removeSelectedFile = () => {
-    setSelectedFile(null);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const validateForm = () => {
-    if (!form.title.trim()) {
-      return "Please enter a document title.";
-    }
-
-    if (!form.type.trim()) {
-      return "Please enter a document type.";
-    }
-
-    if (!form.nodeId) {
-      return "Please select the graph state to which the document belongs.";
-    }
-
-    if (!selectedFile) {
-      return "Please select a document to upload.";
-    }
-
-    return "";
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const error = validateForm();
-
-    if (error) {
-      setValidationError(error);
+    if (!caseId) {
+      setError("No case is currently selected.");
       return;
     }
 
-    const selectedNode =
-      selectableNodes.find(
-        (node) => node.id === form.nodeId,
-      ) ?? null;
+    if (!selectedNodeId) {
+      setError("Please select a node.");
+      return;
+    }
 
-    const uploadData = {
-      title: form.title.trim(),
-      type: form.type.trim(),
-      nodeId: form.nodeId,
-      node: selectedNode,
-      file: selectedFile,
-    };
+    if (!selectedFile) {
+      setError("Please select a document.");
+      return;
+    }
 
     try {
-      setIsSubmitting(true);
-      setValidationError("");
+      setIsUploading(true);
+      setError("");
 
-      await onUpload(uploadData);
+      const artifact = await uploadDocument({
+        caseId,
+        nodeId: selectedNodeId,
+        file: selectedFile,
+        title,
+      });
+
+      await onUploaded?.(artifact);
 
       onClose();
-    } catch (error) {
-      console.error(
-        "Failed to upload document:",
-        error,
+
+    } catch (uploadError) {
+      console.error(uploadError);
+
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Document upload failed."
       );
 
-      setValidationError(
-        error instanceof Error
-          ? error.message
-          : "The document could not be uploaded.",
-      );
     } finally {
-      setIsSubmitting(false);
+      setIsUploading(false);
     }
   };
 
+
+  const handleOverlayClick = () => {
+    if (!isUploading) {
+      onClose();
+    }
+  };
+
+
   return (
     <div
-      className="upload-document-modal-overlay"
-      role="presentation"
-      onMouseDown={(event) => {
-        if (
-          event.target === event.currentTarget &&
-          !isSubmitting
-        ) {
-          onClose();
-        }
-      }}
+      className="modal-overlay"
+      onClick={handleOverlayClick}
     >
-      <form
+      <div
         className="upload-document-modal"
-        onSubmit={handleSubmit}
-        onMouseDown={(event) => {
-          event.stopPropagation();
-        }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="upload-document-title"
+        onClick={(event) => event.stopPropagation()}
       >
-        <button
-          type="button"
-          className="upload-document-modal-close"
-          aria-label="Close upload dialog"
-          onClick={onClose}
-          disabled={isSubmitting}
-        >
-          ×
-        </button>
-
-        <header className="upload-document-modal-header">
-          <div className="upload-document-modal-icon">
-            <UploadIcon />
-          </div>
-
+        <div className="modal-header">
           <div>
-            <p className="upload-document-modal-eyebrow">
-              Artifact lifecycle
-            </p>
-
-            <h2>Upload document</h2>
+            <h2 id="upload-document-title">
+              Upload document
+            </h2>
 
             <p>
-              Add a source document and assign it to the
-              legal state in which it becomes relevant.
+              The document format and content are processed securely
+              by the backend.
             </p>
           </div>
-        </header>
 
-        <div className="upload-document-modal-content">
-          <div className="upload-document-form-group">
-            <label
-              className="upload-document-form-label"
-              htmlFor="upload-document-title"
-            >
-              Title
+          <button
+            className="modal-close-button"
+            type="button"
+            onClick={onClose}
+            disabled={isUploading}
+            aria-label="Close upload dialog"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form
+          className="upload-document-form"
+          onSubmit={handleSubmit}
+        >
+          <div className="upload-document-field">
+            <label htmlFor="upload-document-node">
+              Case step
             </label>
 
-            <input
-              id="upload-document-title"
-              className="upload-document-form-input"
-              type="text"
-              placeholder="e.g. Employment contract"
-              value={form.title}
-              onChange={(event) =>
-                updateForm(
-                  "title",
-                  event.target.value,
-                )
+            <select
+              id="upload-document-node"
+              value={selectedNodeId}
+              disabled={
+                lockNodeSelection
+                || isUploading
               }
-              autoFocus
-              disabled={isSubmitting}
-            />
-
-            <span className="upload-document-form-help">
-              Use a short title by which the document can
-              be identified throughout the case.
-            </span>
-          </div>
-
-          <div className="upload-document-form-group">
-            <label
-              className="upload-document-form-label"
-              htmlFor="upload-document-type"
+              onChange={(event) => {
+                setSelectedNodeId(event.target.value);
+                setError("");
+              }}
+              required
             >
-              Type
-            </label>
+              <option value="">
+                Select a case step
+              </option>
 
-            <input
-              id="upload-document-type"
-              className="upload-document-form-input"
-              type="text"
-              placeholder="Email, contract, letter, court filing..."
-              value={form.type}
-              onChange={(event) =>
-                updateForm(
-                  "type",
-                  event.target.value,
-                )
-              }
-              disabled={isSubmitting}
-            />
-
-            <span className="upload-document-form-help">
-              Describe the functional document type. This
-              can later be used for filtering and artifact
-              processing.
-            </span>
-          </div>
-
-          <div className="upload-document-form-group">
-            <label
-              className="upload-document-form-label"
-              htmlFor="upload-document-node"
-            >
-              Related state
-            </label>
-
-            <div className="upload-document-select-wrapper">
-              <select
-                id="upload-document-node"
-                className="upload-document-form-select"
-                value={form.nodeId}
-                onChange={(event) =>
-                  updateForm(
-                    "nodeId",
-                    event.target.value,
-                  )
-                }
-                disabled={
-                  isSubmitting ||
-                  selectableNodes.length === 0
-                }
-              >
-                <option value="">
-                  {selectableNodes.length === 0
-                    ? "No graph states available"
-                    : "Select a state"}
+              {nodes.map((node) => (
+                <option
+                  key={node.id}
+                  value={node.id}
+                >
+                  {getNodeLabel(node)}
                 </option>
+              ))}
+            </select>
 
-                {selectableNodes.map((node) => (
-                  <option
-                    key={node.id}
-                    value={node.id}
-                  >
-                    {formatNodeLabel(node)}
-                  </option>
-                ))}
-              </select>
-
-              <ChevronDownIcon />
-            </div>
-
-            <span className="upload-document-form-help">
-              Select the state at which this document was
-              received, created or became legally relevant.
-            </span>
+            {lockNodeSelection && selectedNode && (
+              <small>
+                This document will be attached to the currently
+                selected case step.
+              </small>
+            )}
           </div>
 
-          <div className="upload-document-form-group">
-            <span className="upload-document-form-label">
-              Source file
-            </span>
+          <div className="upload-document-field">
+            <label htmlFor="upload-document-title-input">
+              Document title
+            </label>
+
+            <input
+              id="upload-document-title-input"
+              type="text"
+              value={title}
+              disabled={isUploading}
+              placeholder="For example: Employment contract"
+              onChange={(event) => {
+                setTitle(event.target.value);
+                setError("");
+              }}
+            />
+          </div>
+
+          <div className="upload-document-field">
+            <label htmlFor="upload-document-file">
+              Document file
+            </label>
 
             <input
               ref={fileInputRef}
-              className="upload-document-hidden-file-input"
+              id="upload-document-file"
               type="file"
+              accept={ACCEPTED_FILE_TYPES}
+              disabled={isUploading}
               onChange={handleFileChange}
-              disabled={isSubmitting}
+              required
             />
 
-            {selectedFile ? (
-              <div className="upload-document-selected-file">
-                <div className="upload-document-selected-file-icon">
-                  <FileIcon />
-                </div>
-
-                <div className="upload-document-selected-file-info">
-                  <strong title={selectedFile.name}>
-                    {selectedFile.name}
-                  </strong>
-
-                  <span>
-                    {formatFileSize(selectedFile.size)}
-                    {selectedFile.type
-                      ? ` · ${selectedFile.type}`
-                      : ""}
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  className="upload-document-remove-file-button"
-                  onClick={removeSelectedFile}
-                  disabled={isSubmitting}
-                >
-                  Remove
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                className="upload-document-file-picker"
-                onClick={openFileBrowser}
-                disabled={isSubmitting}
-              >
-                <span className="upload-document-file-picker-icon">
-                  <UploadIcon />
-                </span>
-
-                <span className="upload-document-file-picker-text">
-                  <strong>Choose a document</strong>
-                  <span>
-                    Open the browser file selector
-                  </span>
-                </span>
-
-                <span className="upload-document-file-picker-action">
-                  Browse
-                </span>
-              </button>
-            )}
+            <small>
+              PDF, DOCX, TXT, Markdown, JSON, XML or HTML.
+              Maximum size: 20 MB.
+            </small>
           </div>
 
-          {validationError && (
-            <div
-              className="upload-document-validation-error"
-              role="alert"
-            >
-              <WarningIcon />
-              <span>{validationError}</span>
+          {selectedFile && (
+            <div className="selected-document-summary">
+              <div>
+                <strong>{selectedFile.name}</strong>
+
+                <span>
+                  {formatFileSize(selectedFile.size)}
+                </span>
+              </div>
+
+              <span>
+                Parsing occurs after secure upload.
+              </span>
             </div>
           )}
-        </div>
 
-        <footer className="upload-document-modal-footer">
-          <button
-            type="button"
-            className="upload-document-cancel-button"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </button>
+          {error && (
+            <div
+              className="upload-document-error"
+              role="alert"
+            >
+              {error}
+            </div>
+          )}
 
-          <button
-            type="submit"
-            className="upload-document-submit-button"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <span className="upload-document-button-spinner" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <UploadIcon />
-                Upload document
-              </>
-            )}
-          </button>
-        </footer>
-      </form>
+          <div className="modal-actions">
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={onClose}
+              disabled={isUploading}
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={
+                isUploading
+                || !selectedFile
+                || !selectedNodeId
+              }
+            >
+              {isUploading
+                ? "Uploading and parsing…"
+                : "Upload document"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
 
-function formatNodeLabel(node) {
-  const number = node?.number
-    ? `State ${node.number}`
-    : "State";
-
-  const title =
-    node?.legal_title?.trim() ||
-    node?.title?.trim() ||
-    "Untitled state";
-
-  return `${number} — ${title}`;
-}
 
 function removeFileExtension(filename) {
   const lastDotIndex = filename.lastIndexOf(".");
@@ -484,75 +341,28 @@ function removeFileExtension(filename) {
   return filename.slice(0, lastDotIndex);
 }
 
-function formatFileSize(sizeInBytes) {
-  if (!Number.isFinite(sizeInBytes)) {
-    return "";
+
+function formatFileSize(sizeBytes) {
+  if (sizeBytes < 1024) {
+    return `${sizeBytes} bytes`;
   }
 
-  if (sizeInBytes < 1024) {
-    return `${sizeInBytes} B`;
+  if (sizeBytes < 1024 * 1024) {
+    return `${(sizeBytes / 1024).toFixed(1)} KB`;
   }
 
-  const sizeInKilobytes = sizeInBytes / 1024;
-
-  if (sizeInKilobytes < 1024) {
-    return `${sizeInKilobytes.toFixed(1)} KB`;
-  }
-
-  const sizeInMegabytes =
-    sizeInKilobytes / 1024;
-
-  return `${sizeInMegabytes.toFixed(1)} MB`;
+  return `${(
+    sizeBytes
+    / (1024 * 1024)
+  ).toFixed(1)} MB`;
 }
 
-function UploadIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M12 16V4" />
-      <path d="M7 9L12 4L17 9" />
-      <path d="M5 20H19" />
-    </svg>
-  );
-}
 
-function FileIcon() {
+function getNodeLabel(node) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M6 2H14L19 7V22H6Z" />
-      <path d="M14 2V7H19" />
-      <path d="M9 12H16" />
-      <path d="M9 16H16" />
-    </svg>
-  );
-}
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      className="upload-document-select-icon"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M7 9L12 14L17 9" />
-    </svg>
-  );
-}
-
-function WarningIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M12 3L21 20H3Z" />
-      <path d="M12 9V14" />
-      <path d="M12 17.5V17.6" />
-    </svg>
+    node.data?.label
+    || node.label
+    || node.title
+    || node.id
   );
 }

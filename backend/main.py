@@ -13,7 +13,7 @@ from backend.api.sidebar_stats import router as sidebar_stats_router
 from backend.api.create_artifacts import router as create_artifacts_router
 from backend.api.artifact import router as artifact_router
 from backend.database.init_db import create_indexes
-
+from backend.api.upload_document import router as upload_document_router
 
 
 create_indexes()  # any time called, recognized by Mongo DB
@@ -42,4 +42,5 @@ app.include_router(create_case_router, prefix="/api")
 app.include_router(sidebar_stats_router, prefix="/api")
 app.include_router(create_artifacts_router, prefix="/api")
 app.include_router(artifact_router, prefix="/api")
+app.include_router(upload_document_router, prefix="/api", tags=["documents"],)
 

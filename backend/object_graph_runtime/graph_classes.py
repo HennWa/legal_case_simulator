@@ -69,6 +69,7 @@ class Artifact(BaseModel):
 
     id: str = Field(description='Unique identifier for the artifact')
     case_id: str = Field(description='Case ID of the artifact')
+    node_id: str = Field(description="Node ID to which the artifact is attached")
 
     type: str = Field(description='Type of the artifact (e.g., document, evidence, testimony)')
     title: str = Field(description='Title or brief description of the artifact, e.g., "Contract between A and B"')
@@ -90,6 +91,13 @@ class Artifact(BaseModel):
     timestamp_created: str = Field(default_factory=utc_now, description='Timestamp of when the artifact was created in ISO 8601 format')
     timestamp_uploaded: Optional[str] = Field(default=None,
                            description='Timestamp of when the original document was uploaded in ISO 8601 format')
+
+    original_content_type: Optional[str] = Field(default=None,description="Detected MIME type of the original document")
+
+    original_file_size: Optional[int] = Field(default=None,description="Original file size in bytes")
+
+    document_format: Optional[str] = Field(default=None,description="Detected document format, for example pdf or docx")
+
 
 class ArtifactCollection(BaseModel):
     artifacts: List[Artifact]

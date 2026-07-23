@@ -14,10 +14,6 @@ import {
 } from "../../api/artifact";
 
 import {
-  createArtifact,
-} from "../../api/create_artifacts";
-
-import {
   fetchGraph,
 } from "../../api/graph";
 
@@ -146,87 +142,9 @@ export default function DocumentsView({
   };
 
 
-  const handleUploadDocument = async ({
-    title,
-    type,
-    nodeId,
-    file,
-  }) => {
-    if (!caseId) {
-      throw new Error(
-        "No case is currently selected.",
-      );
-    }
-
-    if (!nodeId) {
-      throw new Error(
-        "Please select a related state.",
-      );
-    }
-
-    if (!file) {
-      throw new Error(
-        "Please select a document.",
-      );
-    }
-
-    const normalizedTitle = title?.trim();
-    const normalizedType = type?.trim();
-
-    if (!normalizedTitle) {
-      throw new Error(
-        "Please enter a document title.",
-      );
-    }
-
-    if (!normalizedType) {
-      throw new Error(
-        "Please enter a document type.",
-      );
-    }
-
-    /*
-     * For now, content extraction takes place in
-     * the browser.
-     *
-     * Later this function can be extended for PDF,
-     * DOCX, email and image files, or replaced by
-     * backend-side extraction after the original
-     * file is uploaded.
-     */
-    const extractedContent =
-      await extractContentFromFile(file);
-
-    /*
-     * The backend endpoint handles:
-     *
-     * - artifact ID generation
-     * - source_type
-     * - timestamps
-     * - storing the artifact in MongoDB
-     * - registering the artifact at the node
-     * - persisting the updated node
-     */
-    const createdArtifact =
-      await createArtifact({
-        caseId,
-        nodeId,
-        title: normalizedTitle,
-        type: normalizedType,
-        originalFilename: file.name,
-        extractedContent,
-        content: "",
-      });
-
-    /*
-     * Add the returned artifact immediately so the
-     * table updates without waiting for another
-     * request.
-     *
-     * The complete reload afterwards remains the
-     * source of truth and ensures that the frontend
-     * matches MongoDB.
-     */
+  const handleDocumentUploaded = async (
+    createdArtifact,
+  ) => {
     if (createdArtifact?.id) {
       setArtifacts((currentArtifacts) => {
         const artifactAlreadyExists =
@@ -246,11 +164,6 @@ export default function DocumentsView({
       });
     }
 
-    /*
-     * Reload the artifacts and graph because the
-     * backend also changed the selected node's
-     * artifact_ids.
-     */
     await refreshDocumentsView();
   };
 
@@ -391,95 +304,13 @@ export default function DocumentsView({
 
       <UploadDocumentModal
         open={uploadModalOpen}
+        caseId={caseId}
         nodes={graphNodes}
         onClose={closeUploadModal}
-        onUpload={handleUploadDocument}
+        onUploaded={handleDocumentUploaded}
       />
     </>
   );
-}
-
-
-/**
- * Central entry point for extracting document content.
- *
- * Additional formats can later be added here without
- * changing the artifact creation workflow.
- */
-async function extractContentFromFile(file) {
-  if (!(file instanceof File)) {
-    throw new Error(
-      "The selected document is not a valid file.",
-    );
-  }
-
-  const extension =
-    getFileExtension(file.name);
-
-  switch (extension) {
-    case "txt":
-      return extractTextFileContent(file);
-
-    default:
-      throw new Error(
-        `Unsupported file type '.${extension || "unknown"}'. ` +
-          "Currently only .txt files can be uploaded.",
-      );
-  }
-}
-
-
-/**
- * Extract plain-text content while preserving line
- * breaks and other formatting.
- */
-async function extractTextFileContent(file) {
-  try {
-    const text = await file.text();
-
-    /*
-     * Remove a possible UTF-8 byte-order mark at the
-     * beginning of the file.
-     */
-    return text.replace(/^\uFEFF/, "");
-  } catch (error) {
-    console.error(
-      "Failed to read the text file:",
-      error,
-    );
-
-    throw new Error(
-      `The content of '${file.name}' could not be read.`,
-    );
-  }
-}
-
-
-/**
- * Return the normalized extension without the dot.
- */
-function getFileExtension(filename) {
-  if (
-    typeof filename !== "string" ||
-    !filename
-  ) {
-    return "";
-  }
-
-  const lastDotIndex =
-    filename.lastIndexOf(".");
-
-  if (
-    lastDotIndex < 0 ||
-    lastDotIndex === filename.length - 1
-  ) {
-    return "";
-  }
-
-  return filename
-    .slice(lastDotIndex + 1)
-    .trim()
-    .toLowerCase();
 }
 
 
