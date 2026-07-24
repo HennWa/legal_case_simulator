@@ -124,9 +124,11 @@ function SimulatorApp() {
   ] = useState(null);
 
   const createCase_ = async (payload) => {
-    try {
-      const newCase =
+      const creationResult =
         await createCase(payload);
+
+      const newCase =
+        creationResult.case;
 
       setCases((previousCases) => [
         ...previousCases,
@@ -134,9 +136,8 @@ function SimulatorApp() {
       ]);
 
       setSelectedCaseId(newCase.id);
-    } catch (err) {
-      console.error(err);
-    }
+
+      return creationResult;
   };
 
   const loadCases = async () => {
@@ -749,22 +750,22 @@ function SimulatorApp() {
         )}
       </div>
 
+
       <CreateCaseModal
-        open={createCaseModalOpen}
-        onClose={() =>
-          setCreateCaseModalOpen(false)
-        }
-        onCreate={async (payload) => {
-          console.log(
-            "CREATE CASE PAYLOAD",
-            payload
-          );
+          open={createCaseModalOpen}
+          onClose={() =>
+            setCreateCaseModalOpen(false)
+          }
+          onCreate={async (payload) => {
+            console.log(
+              "CREATE CASE PAYLOAD",
+              payload,
+            );
 
-          await createCase_(payload);
-
-          setCreateCaseModalOpen(false);
-        }}
+            return createCase_(payload);
+          }}
       />
+
     </div>
   );
 }

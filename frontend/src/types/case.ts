@@ -8,6 +8,7 @@ export interface ActorPayload {
   background: string;
 }
 
+
 export interface CreateCasePayload {
   owner_id: string;
   title: string;
@@ -19,4 +20,18 @@ export interface CreateCasePayload {
   legal_initiation_date: string;
   language: string;
   actors: ActorPayload[];
+}
+
+
+export interface CreatedCase {
+  id: string;
+  owner_id: string;
+  title: string;
+  created_at: string;
+}
+
+
+export interface CreateCaseResponse {
+  case: CreatedCase;
+  initial_node_id: string;
 }

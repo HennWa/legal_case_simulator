@@ -1,17 +1,28 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
+import os
 from typing import List
 
-from backend.database.repositories.graph_repository import GraphRepository
-from backend.object_graph_runtime.graph_classes import (CaseGraph, LegalState, Actor,
-                                                        ActorStatus, LegalNode, Case, utc_now, generate_id)
-import os
 from dotenv import load_dotenv
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+from backend.database.repositories.graph_repository import GraphRepository
+from backend.object_graph_runtime.graph_classes import (
+    Actor,
+    ActorStatus,
+    Case,
+    CaseGraph,
+    LegalNode,
+    LegalState,
+    generate_id,
+    utc_now,
+)
+
 
 router = APIRouter()
 
 load_dotenv(override=True)
-openai_api_key = os.getenv('OPENAI_API_KEY')
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 
 class ActorPayload(BaseModel):
@@ -37,31 +48,46 @@ class CreateCasePayload(BaseModel):
     actors: List[ActorPayload]
 
 
-@router.post("/create_case")
-def create_case(payload: CreateCasePayload):
+class CreateCaseResponse(BaseModel):
+    case: dict
+    initial_node_id: str
 
-    case_id = generate_id('case')
+
+@router.post(
+    "/create_case",
+    response_model=CreateCaseResponse,
+)
+def create_case(
+    payload: CreateCasePayload,
+) -> CreateCaseResponse:
+    case_id = generate_id("case")
 
     actors = []
+
     for actor_payload in payload.actors:
         actor = Actor(
-            id=generate_id('actor'),
+            id=generate_id("actor"),
             case_id=case_id,
             name=actor_payload.name,
-            role=actor_payload.role
+            role=actor_payload.role,
         )
+
         actors.append(actor)
 
-    actor_stati =[]
+    actor_statuses = []
+
     for actor in actors:
-        status = ActorStatus(
+        actor_status = ActorStatus(
             actor=actor,
             paid=0,
-            received=0
+            received=0,
         )
-        actor_stati.append(status)
 
-    deadlines = [] # temporary
+        actor_statuses.append(actor_status)
+
+    # Temporary implementation until structured deadline objects
+    # are created from payload.deadlines.
+    deadlines = []
 
     state = LegalState(
         start_time=payload.status_date,
@@ -69,37 +95,47 @@ def create_case(payload: CreateCasePayload):
         legal_issue=payload.legal_issue,
         description=payload.description,
         final_state=False,
-        actors_status=actor_stati,
+        actors_status=actor_statuses,
         legal_references=[],
         artifact_ids=[],
-        deadlines=deadlines
+        deadlines=deadlines,
     )
 
     graph = CaseGraph()
 
-    graph.actors = {actor.name : actor for actor in actors}
+    graph.actors = {
+        actor.name: actor
+        for actor in actors
+    }
+
     graph.case = Case(
         id=case_id,
         owner_id=payload.owner_id,
         title=payload.title,
-        created_at=utc_now()
+        created_at=utc_now(),
     )
 
-    init_node = LegalNode(
-        id=generate_id('node'),
+    initial_node = LegalNode(
+        id=generate_id("node"),
         case_id=graph.case.id,
         incoming=[],
         outgoing=[],
         title=payload.title,
         state=state,
-        summary='' + payload.description,
+        summary=payload.description,
     )
 
-    _ = graph.add_node_obj(init_node)
+    graph.add_node_obj(initial_node)
 
-    repo = GraphRepository()
-    print('save graph to mongo db')
-    repo.save_graph(graph)
-    print('graph saved to mongo db')
+    repository = GraphRepository()
 
-    return graph.case.model_dump(mode="json")
+    print("Saving graph to MongoDB")
+
+    repository.save_graph(graph)
+
+    print("Graph saved to MongoDB")
+
+    return CreateCaseResponse(
+        case=graph.case.model_dump(mode="json"),
+        initial_node_id=initial_node.id,
+    )
