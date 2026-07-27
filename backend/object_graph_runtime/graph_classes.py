@@ -117,7 +117,7 @@ class Actor(BaseModel):
     goal: str = Field(description='Goal of the actor in the legal case e.g. claims for damages of 1.000 euros or'
                                   'acquittal' )
     gender: Optional[str] = Field(default=None, description='Gender of the actor, if applicable')
-    date_of_birth: Optional[int] = Field(default=None, description='Date of birth')
+    date_of_birth: Optional[str | None] = Field(default=None, description='Date of birth')
     nationality: Optional[str] = Field(default=None, description='Nationality of the actor, if applicable')
     profession: Optional[str] = Field(default=None, description='Profession of the actor, if applicable')
     background: Optional[str] = Field(default=None, description='Background information of the actor, if applicable')
