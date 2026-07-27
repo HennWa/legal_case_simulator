@@ -165,6 +165,9 @@ def create_case(
             background=clean_optional_string(
                 actor_payload.background,
             ),
+            date_of_birth=clean_optional_string(
+                actor_payload.date_of_birth,
+            ),
         )
 
         actors.append(actor)
