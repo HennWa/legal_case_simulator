@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -37,8 +38,7 @@ const ACCEPTED_FILE_EXTENSIONS = new Set([
 ]);
 
 
-const MAX_FILE_SIZE_BYTES =
-  20 * 1024 * 1024;
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024;
 
 
 const EMPTY_CASE = {
@@ -82,6 +82,52 @@ const LANGUAGES = [
 ];
 
 
+const WIZARD_STEPS = [
+  {
+    number: 1,
+    title: "Case setup",
+    shortTitle: "Setup",
+    description:
+      "Name the matter and choose its legal framework.",
+  },
+  {
+    number: 2,
+    title: "Actors",
+    shortTitle: "Actors",
+    description:
+      "Add the people and institutions involved.",
+  },
+  {
+    number: 3,
+    title: "Case details",
+    shortTitle: "Details",
+    description:
+      "Describe the facts, legal issue and relevant dates.",
+  },
+  {
+    number: 4,
+    title: "Initial documents",
+    shortTitle: "Documents",
+    description:
+      "Attach source material to the initial case node.",
+  },
+];
+
+
+const wizardImageModules = import.meta.glob(
+  "../../assets/wizard/*.{png,jpg,jpeg,webp,svg}",
+  {
+    eager: true,
+    query: "?url",
+    import: "default",
+  },
+);
+
+
+const WIZARD_WELCOME_IMAGE =
+  Object.values(wizardImageModules)[0] ?? null;
+
+
 function getFileExtension(filename) {
   const parts = filename
     .toLowerCase()
@@ -105,9 +151,7 @@ function formatFileSize(sizeBytes) {
   }
 
   if (sizeBytes < 1024 * 1024) {
-    return `${(
-      sizeBytes / 1024
-    ).toFixed(1)} KB`;
+    return `${(sizeBytes / 1024).toFixed(1)} KB`;
   }
 
   return `${(
@@ -123,6 +167,9 @@ export default function CreateCaseModal({
   onCreate,
 }) {
   const fileInputRef = useRef(null);
+
+  const [currentStep, setCurrentStep] =
+    useState(0);
 
   const [form, setForm] =
     useState(EMPTY_CASE);
@@ -182,6 +229,7 @@ export default function CreateCaseModal({
       return;
     }
 
+    setCurrentStep(0);
     setForm(EMPTY_CASE);
     setActors([]);
     setActorModalOpen(false);
@@ -243,15 +291,49 @@ export default function CreateCaseModal({
   ]);
 
 
+  const activeStep =
+    WIZARD_STEPS[currentStep];
+
+  const progress =
+    ((currentStep + 1) /
+      WIZARD_STEPS.length) *
+    100;
+
+  const caseAlreadyCreated =
+    Boolean(createdCaseContext);
+
+  const editingActor =
+    editingActorIndex !== null
+      ? actors[editingActorIndex]
+      : null;
+
+  const submitButtonText = useMemo(() => {
+    if (isSubmitting) {
+      return selectedFile
+        ? "Creating..."
+        : "Creating case...";
+    }
+
+    if (caseAlreadyCreated) {
+      return "Retry document upload";
+    }
+
+    return selectedFile
+      ? "Create Case & Upload"
+      : "Create Case";
+  }, [
+    caseAlreadyCreated,
+    isSubmitting,
+    selectedFile,
+  ]);
+
+
   if (!open) {
     return null;
   }
 
 
-  const update = (
-    field,
-    value,
-  ) => {
+  const update = (field, value) => {
     setForm((previousForm) => ({
       ...previousForm,
       [field]: value,
@@ -262,7 +344,7 @@ export default function CreateCaseModal({
 
 
   const handleAddActor = () => {
-    if (createdCaseContext) {
+    if (caseAlreadyCreated) {
       return;
     }
 
@@ -272,7 +354,7 @@ export default function CreateCaseModal({
 
 
   const handleEditActor = (index) => {
-    if (createdCaseContext) {
+    if (caseAlreadyCreated) {
       return;
     }
 
@@ -282,7 +364,7 @@ export default function CreateCaseModal({
 
 
   const handleDeleteActor = (index) => {
-    if (createdCaseContext) {
+    if (caseAlreadyCreated) {
       return;
     }
 
@@ -318,6 +400,7 @@ export default function CreateCaseModal({
 
     setActorModalOpen(false);
     setEditingActorIndex(null);
+    setError("");
   };
 
 
@@ -343,7 +426,6 @@ export default function CreateCaseModal({
       )
     ) {
       setSelectedFile(null);
-
       event.target.value = "";
 
       setError(
@@ -358,7 +440,6 @@ export default function CreateCaseModal({
       MAX_FILE_SIZE_BYTES
     ) {
       setSelectedFile(null);
-
       event.target.value = "";
 
       setError(
@@ -371,14 +452,11 @@ export default function CreateCaseModal({
     setSelectedFile(file);
 
     if (!documentTitle.trim()) {
-      const titleWithoutExtension =
+      setDocumentTitle(
         file.name.replace(
           /\.[^/.]+$/,
           "",
-        );
-
-      setDocumentTitle(
-        titleWithoutExtension,
+        ),
       );
     }
   };
@@ -396,48 +474,114 @@ export default function CreateCaseModal({
   };
 
 
-  const validateCase = () => {
-    if (!form.title.trim()) {
+  const validateStep = (stepIndex) => {
+    if (
+      stepIndex === 0 &&
+      !form.title.trim()
+    ) {
       return "Please enter a title for the case.";
     }
 
-    if (!form.description.trim()) {
+    if (
+      stepIndex === 2 &&
+      !form.description.trim()
+    ) {
       return "Please enter a case description.";
+    }
+
+    if (
+      stepIndex === 3 &&
+      selectedFile
+    ) {
+      if (
+        selectedFile.size >
+        MAX_FILE_SIZE_BYTES
+      ) {
+        return "The selected document is larger than 20 MB.";
+      }
+
+      const extension =
+        getFileExtension(
+          selectedFile.name,
+        );
+
+      if (
+        !ACCEPTED_FILE_EXTENSIONS.has(
+          extension,
+        )
+      ) {
+        return "The selected document type is not supported.";
+      }
     }
 
     return "";
   };
 
 
-  const validateDocument = () => {
-    if (!selectedFile) {
-      return "";
-    }
-
+  const goToStep = (stepIndex) => {
     if (
-      selectedFile.size >
-      MAX_FILE_SIZE_BYTES
+      isSubmitting ||
+      caseAlreadyCreated
     ) {
-      return (
-        "The selected document is larger " +
-        "than 20 MB."
-      );
+      return;
     }
 
-    const extension =
-      getFileExtension(
-        selectedFile.name,
-      );
+    if (stepIndex > currentStep) {
+      for (
+        let index = currentStep;
+        index < stepIndex;
+        index += 1
+      ) {
+        const validationError =
+          validateStep(index);
 
+        if (validationError) {
+          setCurrentStep(index);
+          setError(validationError);
+          return;
+        }
+      }
+    }
+
+    setError("");
+    setSuccessMessage("");
+    setCurrentStep(stepIndex);
+  };
+
+
+  const handleNext = () => {
+    const validationError =
+      validateStep(currentStep);
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError("");
+    setCurrentStep((step) =>
+      Math.min(
+        step + 1,
+        WIZARD_STEPS.length - 1,
+      ),
+    );
+  };
+
+
+  const handleBack = () => {
     if (
-      !ACCEPTED_FILE_EXTENSIONS.has(
-        extension,
-      )
+      isSubmitting ||
+      caseAlreadyCreated
     ) {
-      return "The selected document type is not supported.";
+      return;
     }
 
-    return "";
+    setError("");
+    setSuccessMessage("");
+
+    setCurrentStep((step) =>
+      Math.max(step - 1, 0),
+    );
   };
 
 
@@ -477,28 +621,32 @@ export default function CreateCaseModal({
     setError("");
     setSuccessMessage("");
 
-    const caseValidationError =
-      createdCaseContext
-        ? ""
-        : validateCase();
+    const stepValidationError =
+      validateStep(3);
 
-    if (caseValidationError) {
-      setError(
-        caseValidationError,
-      );
-
+    if (stepValidationError) {
+      setError(stepValidationError);
       return;
     }
 
-    const documentValidationError =
-      validateDocument();
+    if (!caseAlreadyCreated) {
+      const setupError =
+        validateStep(0);
 
-    if (documentValidationError) {
-      setError(
-        documentValidationError,
-      );
+      if (setupError) {
+        setCurrentStep(0);
+        setError(setupError);
+        return;
+      }
 
-      return;
+      const detailsError =
+        validateStep(2);
+
+      if (detailsError) {
+        setCurrentStep(2);
+        setError(detailsError);
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -569,7 +717,10 @@ export default function CreateCaseModal({
           ? submissionError.message
           : "The case could not be created.";
 
-      if (createdCaseContext) {
+      if (
+        createdCaseContext ||
+        caseAlreadyCreated
+      ) {
         setError(
           `The case already exists, but the document upload failed: ${message} You can retry the document upload without creating another case.`,
         );
@@ -594,41 +745,729 @@ export default function CreateCaseModal({
   };
 
 
-  const editingActor =
-    editingActorIndex !== null
-      ? actors[editingActorIndex]
-      : null;
+  const renderSetupStep = () => (
+    <div className="wizard-welcome-layout">
+      <div className="wizard-welcome-content">
+        <span className="wizard-eyebrow">
+          Start a new legal matter
+        </span>
 
-  const caseAlreadyCreated =
-    Boolean(createdCaseContext);
+        <h3 className="wizard-step-heading">
+          Set up your case
+        </h3>
 
-  const submitButtonText = (() => {
-    if (isSubmitting) {
-      return selectedFile
-        ? "Creating..."
-        : "Creating case...";
+        <p className="wizard-step-copy">
+          Begin with the basic information
+          that identifies the case and
+          determines how the simulation
+          should interpret it.
+        </p>
+
+        <div className="wizard-form-stack">
+          <div className="form-group">
+            <label
+              className="form-label"
+              htmlFor="case-title"
+            >
+              Title of Case
+            </label>
+
+            <input
+              id="case-title"
+              className="form-input"
+              type="text"
+              autoFocus
+              placeholder="Lawsuit against dismissal"
+              value={form.title}
+              disabled={
+                isSubmitting ||
+                caseAlreadyCreated
+              }
+              onChange={(event) =>
+                update(
+                  "title",
+                  event.target.value,
+                )
+              }
+            />
+
+            <span className="form-help">
+              Use a short, expressive title
+              for the legal matter.
+            </span>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label
+                className="form-label"
+                htmlFor="case-law"
+              >
+                Applied Law
+              </label>
+
+              <select
+                id="case-law"
+                className="form-select"
+                value={form.applied_law}
+                disabled={
+                  isSubmitting ||
+                  caseAlreadyCreated
+                }
+                onChange={(event) =>
+                  update(
+                    "applied_law",
+                    event.target.value,
+                  )
+                }
+              >
+                {APPLIED_LAWS.map(
+                  (law) => (
+                    <option
+                      key={law.value}
+                      value={law.value}
+                    >
+                      {law.label}
+                    </option>
+                  ),
+                )}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label
+                className="form-label"
+                htmlFor="case-language"
+              >
+                Language
+              </label>
+
+              <select
+                id="case-language"
+                className="form-select"
+                value={form.language}
+                disabled={
+                  isSubmitting ||
+                  caseAlreadyCreated
+                }
+                onChange={(event) =>
+                  update(
+                    "language",
+                    event.target.value,
+                  )
+                }
+              >
+                {LANGUAGES.map(
+                  (language) => (
+                    <option
+                      key={language.value}
+                      value={language.value}
+                    >
+                      {language.label}
+                    </option>
+                  ),
+                )}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside className="wizard-welcome-visual">
+        <div className="wizard-visual-glow" />
+
+        {WIZARD_WELCOME_IMAGE ? (
+          <img
+            className="wizard-welcome-image"
+            src={WIZARD_WELCOME_IMAGE}
+            alt="Create a new legal case"
+          />
+        ) : (
+          <div className="wizard-image-placeholder">
+            <span>CASE</span>
+          </div>
+        )}
+
+        <div className="wizard-visual-caption">
+          <strong>
+            Build the case step by step
+          </strong>
+
+          <span>
+            You can review and change each
+            section before creating it.
+          </span>
+        </div>
+      </aside>
+    </div>
+  );
+
+
+  const renderActorsStep = () => (
+    <div className="wizard-step-panel">
+      <div className="wizard-section-header">
+        <div>
+          <span className="wizard-eyebrow">
+            Parties and participants
+          </span>
+
+          <h3 className="wizard-step-heading">
+            Who is involved?
+          </h3>
+
+          <p className="wizard-step-copy">
+            Add persons, companies, courts,
+            lawyers, witnesses or any other
+            relevant entities.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="button button-primary wizard-add-button"
+          disabled={
+            isSubmitting ||
+            caseAlreadyCreated
+          }
+          onClick={handleAddActor}
+        >
+          <span aria-hidden="true">＋</span>
+          Add Actor
+        </button>
+      </div>
+
+      {actors.length === 0 ? (
+        <button
+          type="button"
+          className="wizard-empty-state"
+          disabled={
+            isSubmitting ||
+            caseAlreadyCreated
+          }
+          onClick={handleAddActor}
+        >
+          <span className="wizard-empty-icon">
+            +
+          </span>
+
+          <strong>
+            Add your first actor
+          </strong>
+
+          <span>
+            Actors can be natural persons,
+            companies, authorities, courts
+            or other institutions.
+          </span>
+        </button>
+      ) : (
+        <div className="wizard-actor-grid">
+          {actors.map(
+            (actor, index) => (
+              <article
+                className="wizard-actor-card"
+                key={`${
+                  actor.name || "actor"
+                }-${index}`}
+              >
+                <div className="wizard-actor-avatar">
+                  {(actor.name || "?")
+                    .trim()
+                    .charAt(0)
+                    .toUpperCase()}
+                </div>
+
+                <div className="wizard-actor-content">
+                  <strong className="wizard-actor-name">
+                    {actor.name ||
+                      "Unnamed actor"}
+                  </strong>
+
+                  <span className="wizard-actor-role">
+                    {actor.role ||
+                      "No role specified"}
+                  </span>
+
+                  {actor.goal && (
+                    <p className="wizard-actor-goal">
+                      {actor.goal}
+                    </p>
+                  )}
+                </div>
+
+                <div className="wizard-actor-actions">
+                  <button
+                    type="button"
+                    className="wizard-icon-button"
+                    aria-label={`Edit ${
+                      actor.name || "actor"
+                    }`}
+                    disabled={
+                      isSubmitting ||
+                      caseAlreadyCreated
+                    }
+                    onClick={() =>
+                      handleEditActor(index)
+                    }
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    className="wizard-icon-button wizard-icon-button-danger"
+                    aria-label={`Delete ${
+                      actor.name || "actor"
+                    }`}
+                    disabled={
+                      isSubmitting ||
+                      caseAlreadyCreated
+                    }
+                    onClick={() =>
+                      handleDeleteActor(index)
+                    }
+                  >
+                    Delete
+                  </button>
+                </div>
+              </article>
+            ),
+          )}
+        </div>
+      )}
+
+      <div className="wizard-step-note">
+        <span className="wizard-note-icon">
+          i
+        </span>
+
+        <span>
+          Actors are optional. You can also
+          add or update them later in the
+          Actors view.
+        </span>
+      </div>
+    </div>
+  );
+
+
+  const renderDetailsStep = () => (
+    <div className="wizard-step-panel">
+      <div className="wizard-section-header">
+        <div>
+          <span className="wizard-eyebrow">
+            Facts and legal context
+          </span>
+
+          <h3 className="wizard-step-heading">
+            Describe the case
+          </h3>
+
+          <p className="wizard-step-copy">
+            Give the simulation enough
+            context to create a meaningful
+            initial legal state.
+          </p>
+        </div>
+      </div>
+
+      <div className="wizard-form-stack">
+        <div className="form-group">
+          <label
+            className="form-label"
+            htmlFor="case-description"
+          >
+            Description
+          </label>
+
+          <textarea
+            id="case-description"
+            className="form-textarea wizard-description"
+            placeholder="Describe the facts, the current situation and what the involved parties want to achieve."
+            value={form.description}
+            disabled={
+              isSubmitting ||
+              caseAlreadyCreated
+            }
+            onChange={(event) =>
+              update(
+                "description",
+                event.target.value,
+              )
+            }
+          />
+
+          <span className="form-help">
+            Include the important events,
+            current status and desired
+            outcomes.
+          </span>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label
+              className="form-label"
+              htmlFor="legal-issue"
+            >
+              Legal Issue
+              <span className="optional-label">
+                optional
+              </span>
+            </label>
+
+            <input
+              id="legal-issue"
+              className="form-input"
+              type="text"
+              placeholder="Violation of labour law, payment dispute..."
+              value={form.legal_issue}
+              disabled={
+                isSubmitting ||
+                caseAlreadyCreated
+              }
+              onChange={(event) =>
+                update(
+                  "legal_issue",
+                  event.target.value,
+                )
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label
+              className="form-label"
+              htmlFor="case-deadlines"
+            >
+              Deadlines
+              <span className="optional-label">
+                optional
+              </span>
+            </label>
+
+            <input
+              id="case-deadlines"
+              className="form-input"
+              type="text"
+              placeholder="Response deadline until 2026-08-01"
+              value={form.deadlines}
+              disabled={
+                isSubmitting ||
+                caseAlreadyCreated
+              }
+              onChange={(event) =>
+                update(
+                  "deadlines",
+                  event.target.value,
+                )
+              }
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label
+              className="form-label"
+              htmlFor="status-date"
+            >
+              Date of Status
+              <span className="optional-label">
+                optional
+              </span>
+            </label>
+
+            <input
+              id="status-date"
+              className="form-input"
+              type="date"
+              value={form.status_date}
+              disabled={
+                isSubmitting ||
+                caseAlreadyCreated
+              }
+              onChange={(event) =>
+                update(
+                  "status_date",
+                  event.target.value,
+                )
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label
+              className="form-label"
+              htmlFor="initiation-date"
+            >
+              Legal Initiation
+              <span className="optional-label">
+                optional
+              </span>
+            </label>
+
+            <input
+              id="initiation-date"
+              className="form-input"
+              type="date"
+              value={
+                form.legal_initiation_date
+              }
+              disabled={
+                isSubmitting ||
+                caseAlreadyCreated
+              }
+              onChange={(event) =>
+                update(
+                  "legal_initiation_date",
+                  event.target.value,
+                )
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+
+  const renderDocumentsStep = () => (
+    <div className="wizard-step-panel">
+      <div className="wizard-section-header">
+        <div>
+          <span className="wizard-eyebrow">
+            Supporting material
+          </span>
+
+          <h3 className="wizard-step-heading">
+            Add an initial document
+            <span className="optional-label">
+              optional
+            </span>
+          </h3>
+
+          <p className="wizard-step-copy">
+            The document is uploaded only
+            after the case and its initial
+            node have been created.
+          </p>
+        </div>
+
+        <span className="document-limit">
+          Maximum 20 MB
+        </span>
+      </div>
+
+      {!selectedFile ? (
+        <button
+          type="button"
+          className="document-dropzone"
+          disabled={isSubmitting}
+          onClick={() =>
+            fileInputRef.current?.click()
+          }
+        >
+          <span className="document-upload-icon">
+            ↑
+          </span>
+
+          <span className="document-upload-copy">
+            <strong>
+              Select a document
+            </strong>
+
+            <small>
+              PDF, DOCX, TXT, Markdown,
+              JSON, XML or HTML
+            </small>
+          </span>
+
+          <span className="document-upload-action">
+            Browse files
+          </span>
+        </button>
+      ) : (
+        <div className="selected-document">
+          <div className="selected-document-icon">
+            DOC
+          </div>
+
+          <div className="selected-document-info">
+            <strong>
+              {selectedFile.name}
+            </strong>
+
+            <span>
+              {formatFileSize(
+                selectedFile.size,
+              )}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            className="selected-document-remove"
+            disabled={isSubmitting}
+            onClick={handleRemoveFile}
+          >
+            Remove
+          </button>
+        </div>
+      )}
+
+      <input
+        ref={fileInputRef}
+        className="hidden-file-input"
+        type="file"
+        accept={ACCEPTED_FILE_TYPES}
+        disabled={isSubmitting}
+        onChange={handleFileChange}
+      />
+
+      {selectedFile && (
+        <div className="document-fields">
+          <div className="form-group">
+            <label
+              className="form-label"
+              htmlFor="document-title"
+            >
+              Document Title
+            </label>
+
+            <input
+              id="document-title"
+              className="form-input"
+              type="text"
+              placeholder="Document title"
+              value={documentTitle}
+              disabled={isSubmitting}
+              onChange={(event) =>
+                setDocumentTitle(
+                  event.target.value,
+                )
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label
+              className="form-label"
+              htmlFor="document-type"
+            >
+              Document Type
+            </label>
+
+            <input
+              id="document-type"
+              className="form-input"
+              type="text"
+              placeholder="document"
+              value={documentType}
+              disabled={isSubmitting}
+              onChange={(event) =>
+                setDocumentType(
+                  event.target.value,
+                )
+              }
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="wizard-review-card">
+        <div className="wizard-review-heading">
+          <span>Ready to create</span>
+          <strong>{form.title || "Untitled case"}</strong>
+        </div>
+
+        <div className="wizard-review-grid">
+          <div>
+            <span>Applied law</span>
+            <strong>
+              {APPLIED_LAWS.find(
+                (law) =>
+                  law.value ===
+                  form.applied_law,
+              )?.label ??
+                form.applied_law}
+            </strong>
+          </div>
+
+          <div>
+            <span>Language</span>
+            <strong>
+              {LANGUAGES.find(
+                (language) =>
+                  language.value ===
+                  form.language,
+              )?.label ??
+                form.language}
+            </strong>
+          </div>
+
+          <div>
+            <span>Actors</span>
+            <strong>
+              {actors.length}
+            </strong>
+          </div>
+
+          <div>
+            <span>Document</span>
+            <strong>
+              {selectedFile
+                ? selectedFile.name
+                : "None"}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      {caseAlreadyCreated && (
+        <div className="case-created-notice">
+          <strong>
+            The case has already been
+            created.
+          </strong>
+
+          <span>
+            Only the document upload will
+            be retried. No duplicate case
+            will be created.
+          </span>
+        </div>
+      )}
+    </div>
+  );
+
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 0:
+        return renderSetupStep();
+      case 1:
+        return renderActorsStep();
+      case 2:
+        return renderDetailsStep();
+      case 3:
+        return renderDocumentsStep();
+      default:
+        return null;
     }
-
-    if (caseAlreadyCreated) {
-      return "Retry document upload";
-    }
-
-    return selectedFile
-      ? "Create Case & Upload"
-      : "Create Case";
-  })();
+  };
 
 
   return (
     <>
       <div
-        className="modal-overlay"
+        className="modal-overlay create-case-wizard-overlay"
         onMouseDown={
           handleOverlayClick
         }
       >
         <div
-          className="create-case-modal"
+          className="create-case-modal create-case-wizard"
           role="dialog"
           aria-modal="true"
           aria-labelledby="create-case-title"
@@ -646,552 +1485,221 @@ export default function CreateCaseModal({
             ×
           </button>
 
-          <h2
-            id="create-case-title"
-            className="modal-title"
-          >
-            Create new Case
-          </h2>
-
-          <p className="modal-subtitle">
-            Provide the initial case
-            information. The legal graph
-            will be initialized from this
-            description.
-          </p>
-
-          {caseAlreadyCreated && (
-            <div className="case-created-notice">
-              <strong>
-                The case has already been
-                created.
-              </strong>
-
-              <span>
-                Only the document upload
-                will be retried. No
-                duplicate case will be
-                created.
+          <header className="wizard-header">
+            <div className="wizard-brand">
+              <span className="wizard-brand-mark">
+                C
               </span>
-            </div>
-          )}
 
-          {error && (
-            <div
-              className="create-case-alert create-case-alert-error"
-              role="alert"
-            >
-              {error}
-            </div>
-          )}
-
-          {successMessage && (
-            <div
-              className="create-case-alert create-case-alert-success"
-              role="status"
-            >
-              {successMessage}
-            </div>
-          )}
-
-          <fieldset
-            className="create-case-fieldset"
-            disabled={
-              isSubmitting ||
-              caseAlreadyCreated
-            }
-          >
-            <section className="case-section">
-              <div className="form-group">
-                <label
-                  className="form-label"
-                  htmlFor="case-title"
-                >
-                  Title of Case
-                </label>
-
-                <input
-                  id="case-title"
-                  className="form-input"
-                  type="text"
-                  placeholder="Lawsuit against dismissal"
-                  value={form.title}
-                  onChange={(event) =>
-                    update(
-                      "title",
-                      event.target.value,
-                    )
-                  }
-                />
-
-                <span className="form-help">
-                  Enter an expressive title
-                  for the legal matter.
-                </span>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label
-                    className="form-label"
-                    htmlFor="case-law"
-                  >
-                    Applied Law
-                  </label>
-
-                  <select
-                    id="case-law"
-                    className="form-select"
-                    value={
-                      form.applied_law
-                    }
-                    onChange={(event) =>
-                      update(
-                        "applied_law",
-                        event.target.value,
-                      )
-                    }
-                  >
-                    {APPLIED_LAWS.map(
-                      (law) => (
-                        <option
-                          key={law.value}
-                          value={law.value}
-                        >
-                          {law.label}
-                        </option>
-                      ),
-                    )}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label
-                    className="form-label"
-                    htmlFor="case-language"
-                  >
-                    Language
-                  </label>
-
-                  <select
-                    id="case-language"
-                    className="form-select"
-                    value={form.language}
-                    onChange={(event) =>
-                      update(
-                        "language",
-                        event.target.value,
-                      )
-                    }
-                  >
-                    {LANGUAGES.map(
-                      (language) => (
-                        <option
-                          key={
-                            language.value
-                          }
-                          value={
-                            language.value
-                          }
-                        >
-                          {language.label}
-                        </option>
-                      ),
-                    )}
-                  </select>
-                </div>
-              </div>
-            </section>
-
-            <section className="case-section">
-              <h3 className="section-title">
-                Actors
-              </h3>
-
-              <p className="section-description">
-                Add persons, companies,
-                courts, lawyers, witnesses
-                or other relevant entities.
-              </p>
-
-              <div className="actor-list">
-                {actors.length === 0 ? (
-                  <div className="empty-actors">
-                    No actors added yet.
-                  </div>
-                ) : (
-                  actors.map(
-                    (actor, index) => (
-                      <div
-                        className="actor-card"
-                        key={`${
-                          actor.name ||
-                          "actor"
-                        }-${index}`}
-                      >
-                        <div className="actor-info">
-                          <span className="actor-name">
-                            {actor.name ||
-                              "Unnamed actor"}
-                          </span>
-
-                          <span className="actor-role">
-                            {actor.role ||
-                              "No role specified"}
-                          </span>
-                        </div>
-
-                        <div className="actor-actions">
-                          <button
-                            type="button"
-                            className="button button-secondary"
-                            onClick={() =>
-                              handleEditActor(
-                                index,
-                              )
-                            }
-                          >
-                            Edit
-                          </button>
-
-                          <button
-                            type="button"
-                            className="button button-danger"
-                            onClick={() =>
-                              handleDeleteActor(
-                                index,
-                              )
-                            }
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    ),
-                  )
-                )}
-              </div>
-
-              <button
-                type="button"
-                className="button button-add-actor"
-                onClick={handleAddActor}
-              >
-                + Add Actor
-              </button>
-            </section>
-
-            <section className="case-section">
-              <div className="form-group">
-                <label
-                  className="form-label"
-                  htmlFor="case-description"
-                >
-                  Description
-                </label>
-
-                <textarea
-                  id="case-description"
-                  className="form-textarea"
-                  placeholder="Describe the facts, the current situation and what the involved parties want to achieve."
-                  value={form.description}
-                  onChange={(event) =>
-                    update(
-                      "description",
-                      event.target.value,
-                    )
-                  }
-                />
-
-                <span className="form-help">
-                  The more context you
-                  provide, the better the
-                  initial legal state can
-                  be created.
-                </span>
-              </div>
-
-              <div className="form-group">
-                <label
-                  className="form-label"
-                  htmlFor="legal-issue"
-                >
-                  Legal Issue
-                  <span className="optional-label">
-                    optional
-                  </span>
-                </label>
-
-                <input
-                  id="legal-issue"
-                  className="form-input"
-                  type="text"
-                  placeholder="Violation of labour law, payment dispute..."
-                  value={
-                    form.legal_issue
-                  }
-                  onChange={(event) =>
-                    update(
-                      "legal_issue",
-                      event.target.value,
-                    )
-                  }
-                />
-              </div>
-
-              <div className="form-group">
-                <label
-                  className="form-label"
-                  htmlFor="case-deadlines"
-                >
-                  Deadlines
-                  <span className="optional-label">
-                    optional
-                  </span>
-                </label>
-
-                <input
-                  id="case-deadlines"
-                  className="form-input"
-                  type="text"
-                  placeholder="Response deadline until 2026-08-01"
-                  value={form.deadlines}
-                  onChange={(event) =>
-                    update(
-                      "deadlines",
-                      event.target.value,
-                    )
-                  }
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label
-                    className="form-label"
-                    htmlFor="status-date"
-                  >
-                    Date of Status
-                    <span className="optional-label">
-                      optional
-                    </span>
-                  </label>
-
-                  <input
-                    id="status-date"
-                    className="form-input"
-                    type="date"
-                    value={
-                      form.status_date
-                    }
-                    onChange={(event) =>
-                      update(
-                        "status_date",
-                        event.target.value,
-                      )
-                    }
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label
-                    className="form-label"
-                    htmlFor="initiation-date"
-                  >
-                    Legal Initiation
-                    <span className="optional-label">
-                      optional
-                    </span>
-                  </label>
-
-                  <input
-                    id="initiation-date"
-                    className="form-input"
-                    type="date"
-                    value={
-                      form.legal_initiation_date
-                    }
-                    onChange={(event) =>
-                      update(
-                        "legal_initiation_date",
-                        event.target.value,
-                      )
-                    }
-                  />
-                </div>
-              </div>
-            </section>
-          </fieldset>
-
-          <section className="case-section document-section">
-            <div className="document-section-heading">
               <div>
-                <h3 className="section-title">
-                  Initial Document
-                  <span className="optional-label">
-                    optional
-                  </span>
-                </h3>
+                <h2
+                  id="create-case-title"
+                  className="modal-title"
+                >
+                  Create new Case
+                </h2>
 
-                <p className="section-description">
-                  The document will be
-                  uploaded after the case
-                  and its initial node have
-                  been created.
+                <p className="modal-subtitle">
+                  Four clear steps to
+                  initialize your legal
+                  simulation.
                 </p>
               </div>
-
-              <span className="document-limit">
-                Maximum 20 MB
-              </span>
             </div>
 
-            {!selectedFile ? (
-              <button
-                type="button"
-                className="document-dropzone"
-                disabled={isSubmitting}
-                onClick={() =>
-                  fileInputRef.current?.click()
-                }
-              >
-                <span className="document-upload-icon">
-                  ↑
+            <div className="wizard-step-counter">
+              Step {currentStep + 1} of{" "}
+              {WIZARD_STEPS.length}
+            </div>
+          </header>
+
+          <div className="wizard-progress-track">
+            <div
+              className="wizard-progress-value"
+              style={{
+                width: `${progress}%`,
+              }}
+            />
+          </div>
+
+          <div className="wizard-shell">
+            <nav
+              className="wizard-navigation"
+              aria-label="Case creation steps"
+            >
+              {WIZARD_STEPS.map(
+                (step, index) => {
+                  const isActive =
+                    index === currentStep;
+
+                  const isComplete =
+                    index < currentStep;
+
+                  return (
+                    <button
+                      key={step.number}
+                      type="button"
+                      className={[
+                        "wizard-nav-item",
+                        isActive
+                          ? "wizard-nav-item-active"
+                          : "",
+                        isComplete
+                          ? "wizard-nav-item-complete"
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      disabled={
+                        isSubmitting ||
+                        caseAlreadyCreated
+                      }
+                      aria-current={
+                        isActive
+                          ? "step"
+                          : undefined
+                      }
+                      onClick={() =>
+                        goToStep(index)
+                      }
+                    >
+                      <span className="wizard-nav-number">
+                        {isComplete
+                          ? "✓"
+                          : step.number}
+                      </span>
+
+                      <span className="wizard-nav-copy">
+                        <strong>
+                          {step.shortTitle}
+                        </strong>
+
+                        <small>
+                          {step.description}
+                        </small>
+                      </span>
+                    </button>
+                  );
+                },
+              )}
+            </nav>
+
+            <main className="wizard-content">
+              <div className="wizard-mobile-step-label">
+                <span>
+                  {activeStep.number}.
                 </span>
 
-                <span className="document-upload-copy">
-                  <strong>
-                    Select a document
-                  </strong>
+                <strong>
+                  {activeStep.title}
+                </strong>
+              </div>
 
-                  <small>
-                    PDF, DOCX, TXT,
-                    Markdown, JSON, XML or
-                    HTML
-                  </small>
-                </span>
-              </button>
-            ) : (
-              <div className="selected-document">
-                <div className="selected-document-icon">
-                  DOC
+              {error && (
+                <div
+                  className="create-case-alert create-case-alert-error"
+                  role="alert"
+                >
+                  {error}
                 </div>
+              )}
 
-                <div className="selected-document-info">
-                  <strong>
-                    {selectedFile.name}
-                  </strong>
+              {successMessage && (
+                <div
+                  className="create-case-alert create-case-alert-success"
+                  role="status"
+                >
+                  {successMessage}
+                </div>
+              )}
+
+              <div
+                className="wizard-step-content"
+                key={currentStep}
+              >
+                {renderCurrentStep()}
+              </div>
+
+              {submissionStage && (
+                <div
+                  className="create-case-progress"
+                  role="status"
+                >
+                  <span className="create-case-spinner" />
 
                   <span>
-                    {formatFileSize(
-                      selectedFile.size,
-                    )}
+                    {submissionStage}
                   </span>
                 </div>
+              )}
+            </main>
+          </div>
 
-                <button
-                  type="button"
-                  className="selected-document-remove"
-                  disabled={isSubmitting}
-                  onClick={handleRemoveFile}
-                >
-                  Remove
-                </button>
-              </div>
-            )}
-
-            <input
-              ref={fileInputRef}
-              className="hidden-file-input"
-              type="file"
-              accept={ACCEPTED_FILE_TYPES}
-              disabled={isSubmitting}
-              onChange={handleFileChange}
-            />
-
-            {selectedFile && (
-              <div className="document-fields">
-                <div className="form-group">
-                  <label
-                    className="form-label"
-                    htmlFor="document-title"
-                  >
-                    Document Title
-                  </label>
-
-                  <input
-                    id="document-title"
-                    className="form-input"
-                    type="text"
-                    placeholder="Document title"
-                    value={documentTitle}
-                    disabled={isSubmitting}
-                    onChange={(event) =>
-                      setDocumentTitle(
-                        event.target.value,
-                      )
-                    }
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label
-                    className="form-label"
-                    htmlFor="document-type"
-                  >
-                    Document Type
-                  </label>
-
-                  <input
-                    id="document-type"
-                    className="form-input"
-                    type="text"
-                    placeholder="document"
-                    value={documentType}
-                    disabled={isSubmitting}
-                    onChange={(event) =>
-                      setDocumentType(
-                        event.target.value,
-                      )
-                    }
-                  />
-                </div>
-              </div>
-            )}
-          </section>
-
-          {submissionStage && (
-            <div
-              className="create-case-progress"
-              role="status"
-            >
-              <span className="create-case-spinner" />
-
-              <span>
-                {submissionStage}
-              </span>
-            </div>
-          )}
-
-          <div className="modal-footer">
+          <footer className="modal-footer wizard-footer">
             <button
               type="button"
               className="button button-secondary"
               disabled={isSubmitting}
-              onClick={onClose}
+              onClick={
+                currentStep === 0
+                  ? onClose
+                  : handleBack
+              }
             >
-              Cancel
+              {currentStep === 0
+                ? "Cancel"
+                : "Back"}
             </button>
 
-            <button
-              type="button"
-              className="button button-primary"
-              disabled={isSubmitting}
-              onClick={handleCreate}
-            >
-              {submitButtonText}
-            </button>
-          </div>
+            <div className="wizard-footer-status">
+              <span>
+                {activeStep.title}
+              </span>
+
+              <span className="wizard-footer-dots">
+                {WIZARD_STEPS.map(
+                  (_, index) => (
+                    <span
+                      key={index}
+                      className={
+                        index ===
+                        currentStep
+                          ? "active"
+                          : ""
+                      }
+                    />
+                  ),
+                )}
+              </span>
+            </div>
+
+            {currentStep <
+            WIZARD_STEPS.length - 1 ? (
+              <button
+                type="button"
+                className="button button-primary"
+                disabled={
+                  isSubmitting ||
+                  caseAlreadyCreated
+                }
+                onClick={handleNext}
+              >
+                Continue
+                <span aria-hidden="true">
+                  →
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="button button-primary wizard-create-button"
+                disabled={isSubmitting}
+                onClick={handleCreate}
+              >
+                {submitButtonText}
+              </button>
+            )}
+          </footer>
         </div>
       </div>
 
