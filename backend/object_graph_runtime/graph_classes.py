@@ -349,7 +349,16 @@ class CaseGraph:
     # -------------------------
     # Actor
     # -------------------------
-    def add_actor(self, name: str, role: str, goal: str,
+    def add_actor(
+            self,
+            name: str,
+            role: str,
+            goal: str,
+            gender: str | None = None,
+            date_of_birth: str | None = None,
+            nationality: str | None = None,
+            profession: str | None = None,
+            background: str | None = None,
     ) -> Actor:
         actor = Actor(
             id=generate_id("actor"),
@@ -357,9 +366,15 @@ class CaseGraph:
             name=name,
             role=role,
             goal=goal,
+            gender=gender,
+            date_of_birth=date_of_birth,
+            nationality=nationality,
+            profession=profession,
+            background=background,
         )
 
         self.actors[actor.id] = actor
+
         return actor
 
     def add_actor_obj(self, actor: Actor) -> Actor:
