@@ -197,21 +197,25 @@
   align-items: center;
   justify-content: center;
 
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
 
-  color: #765561;
-  font-size: 16px;
-  font-weight: 750;
+  flex: 0 0 36px;
+
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
 
   background:
-    rgba(189, 129, 149, 0.12);
+    linear-gradient(
+      135deg,
+      #9c5866,
+      #b97784
+    );
 
-  border:
-    1px solid
-    rgba(117, 85, 97, 0.14);
-
-  border-radius: 8px;
+  border: 0;
+  border-radius: 10px;
 
   box-shadow: none;
 }

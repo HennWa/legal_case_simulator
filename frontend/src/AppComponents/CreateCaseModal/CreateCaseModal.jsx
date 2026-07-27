@@ -1487,8 +1487,11 @@ export default function CreateCaseModal({
 
           <header className="wizard-header">
             <div className="wizard-brand">
-              <span className="wizard-brand-mark">
-                C
+              <span
+                className="wizard-brand-mark"
+                aria-hidden="true"
+              >
+                ⚖
               </span>
 
               <div>
