@@ -117,7 +117,7 @@ class Actor(BaseModel):
     goal: str = Field(description='Goal of the actor in the legal case e.g. claims for damages of 1.000 euros or'
                                   'acquittal' )
     gender: Optional[str] = Field(default=None, description='Gender of the actor, if applicable')
-    age: Optional[int] = Field(default=None, description='Age of the actor, if applicable')
+    date_of_birth: Optional[int] = Field(default=None, description='Date of birth')
     nationality: Optional[str] = Field(default=None, description='Nationality of the actor, if applicable')
     profession: Optional[str] = Field(default=None, description='Profession of the actor, if applicable')
     background: Optional[str] = Field(default=None, description='Background information of the actor, if applicable')
@@ -200,11 +200,20 @@ class ActorStatus(BaseModel):
     actor: Actor = Field(description='Actor of the status')
     paid: int = Field(description='Paid money for services to lawyers, courts etc. at the last action')
     received: int = Field(description='Received money from other actors, refunds etc. from last action')
-    negotiations_profile: NegotiationProfile | None = Field(default=None,
-                                                            description='Negotiation profile of the actor representing'
-                                                                        'the behaviour of the actor')
-    intermediate_goal: str = Field(description='Intermediate goal of the actor to achieve his goal, e.g. '
-                                               'convene court proceedings')
+    negotiation_profile: NegotiationProfile | None = Field(default=None,description=(
+            "Current negotiation behaviour and "
+            "subjective goal satisfaction of the "
+            "actor. None means that a negotiation "
+            "profile is not applicable to this actor, "
+            "for example for a court or authority."
+        ))
+
+    intermediate_goal: str = Field(default="",description=(
+            "The actor's immediate objective at the "
+            "current stage of the case, used as an "
+            "intermediate step toward the actor's "
+            "overall goa, e.g. convene court proceedings."
+        ))
 
 
 class LegalReference(BaseModel):
