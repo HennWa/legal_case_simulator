@@ -367,16 +367,16 @@ class PromptBuilder:
                    Check that the action is not already represented in the graph as an outgoing edge from the current node. 
                 2. Identifying the actor responsible for this action, if applicable.
                 3. Describe a conditions that need to be fulfilled for this action to be carried out, 
-                   if applicable (e.g., person above 18 years, actor has no criminal recors, employment 
+                   if applicable (e.g., person above 18 years, actor has no criminal records, employment 
                    relationship lasting longer than 6 months etc.)
                 4. Define a start and end time for this action, ensuring that it logically follows the previous events in the case.
                 5. Listing any artifacts associated with this legal action, if applicable (e.g., legal documents, evidence).
                    Create the artifact or document if it does not exist yet in the graph, and link it to the action.
                 6. Provide all relevant legal references (e.g., laws, regulations, case precedents) that 
                    support the plausibility of this action, if applicable.
-                7. Estimating the probability of this legal action occurring based on the context of the case and the past events. 
-                   Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
-                   probabilities should be a value < 1.0
+                7. Estimating the probability of this legal action being conducted successfully
+                   based on the context of the case and the past events and all states of the actors. 
+                   The value must be in the range 0-1.
                 8. Describe if a lawyer needs to involved for this action to be carried out.
                 9. Describe the five most likely potential next actions that could follow this action in a list. 
                    Use your legal knowledge to find the most realistic following options for actions.
