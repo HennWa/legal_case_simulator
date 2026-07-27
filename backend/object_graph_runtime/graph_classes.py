@@ -114,6 +114,8 @@ class Actor(BaseModel):
     name: str = Field(description='Name of the actor')
     role: str = Field(description='Role of the actor in the legal case '
                                   '(e.g., plaintiff, defendant, judge, lawyer, court)')
+    goal: str = Field(description='Goal of the actor in the legal case e.g. claims for damages of 1.000 euros or'
+                                  'acquittal' )
     gender: Optional[str] = Field(default=None, description='Gender of the actor, if applicable')
     age: Optional[int] = Field(default=None, description='Age of the actor, if applicable')
     nationality: Optional[str] = Field(default=None, description='Nationality of the actor, if applicable')
@@ -121,12 +123,88 @@ class Actor(BaseModel):
     background: Optional[str] = Field(default=None, description='Background information of the actor, if applicable')
 
 
+class NegotiationProfile(BaseModel):
+    cooperativeness: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description=(
+            "Willingness to collaborate and seek mutually beneficial solutions. "
+            "0 = completely uncooperative and self-interested, "
+            "100 = highly cooperative and actively seeking win-win outcomes."
+        ),
+    )
+
+    assertiveness: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description=(
+            "Strength with which the actor pursues and defends their own interests. "
+            "0 = passive and yielding, "
+            "100 = highly assertive and determined to achieve their objectives."
+        ),
+    )
+
+    trust_in_opponent: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description=(
+            "Level of trust in the opposing party and their intentions. "
+            "0 = completely distrustful and suspicious, "
+            "100 = fully trusting and assuming good faith."
+        ),
+    )
+
+    flexibility: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description=(
+            "Willingness to adapt positions, make concessions, or consider alternatives. "
+            "0 = completely inflexible and uncompromising, "
+            "100 = highly flexible and open to changing positions."
+        ),
+    )
+
+    emotionality: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description=(
+            "Degree to which emotions influence the actor's decisions and behavior. "
+            "0 = completely rational and emotionally detached, "
+            "100 = highly emotional and strongly influenced by feelings."
+        ),
+    )
+
+    current_goal_satisfaction: int | None = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description=(
+            "Degree to which the actor considers their goals satisfied at the "
+            "current stage of the legal case. 0 means that none of the actor's "
+            "relevant goals have been achieved; 50 means that the goals are "
+            "partially achieved; 100 means that the actor considers their relevant "
+            "goals fully achieved. This value reflects the actor's subjective "
+            "assessment, not the objective legal outcome."
+        ),
+    )
+
+
 class ActorStatus(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     actor: Actor = Field(description='Actor of the status')
-    paid: int = Field(description='Sum of paid money for services to lawyers, courts etc.')
-    received: int = Field(description='Sum of received money from other actors, refunds etc.')
+    paid: int = Field(description='Paid money for services to lawyers, courts etc. at the last action')
+    received: int = Field(description='Received money from other actors, refunds etc. from last action')
+    negotiations_profile: NegotiationProfile | None = Field(default=None,
+                                                            description='Negotiation profile of the actor representing'
+                                                                        'the behaviour of the actor')
+    intermediate_goal: str = Field(description='Intermediate goal of the actor to achieve his goal, e.g. '
+                                               'convene court proceedings')
 
 
 class LegalReference(BaseModel):
