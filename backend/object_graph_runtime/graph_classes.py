@@ -349,9 +349,16 @@ class CaseGraph:
     # -------------------------
     # Actor
     # -------------------------
-    def add_actor(self, name: str, role: str) -> Actor:
-        actor = Actor(id=generate_id("actor"), name=name, role=role)
-        actor.case_id = self.case.id
+    def add_actor(self, name: str, role: str, goal: str,
+    ) -> Actor:
+        actor = Actor(
+            id=generate_id("actor"),
+            case_id=self.case.id,
+            name=name,
+            role=role,
+            goal=goal,
+        )
+
         self.actors[actor.id] = actor
         return actor
 
