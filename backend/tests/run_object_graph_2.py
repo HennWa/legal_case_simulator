@@ -1,11 +1,15 @@
 import os
 from dotenv import load_dotenv
 
-from backend.object_graph_runtime.graph_classes import CaseGraph, LegalState, Actor, ActorStatus, LegalNode, Case, utc_now
+from backend.object_graph_runtime.graph_classes import (CaseGraph, LegalState, Actor, ActorStatus, LegalNode,
+                                                        Case, utc_now, NegotiationProfile)
 from backend.expansion_engine.exapnsion_engine import ExpansionEngine
 from backend.llm_interface.llm_interface import MockLLMProvider
-from backend.database.repositories.node_repository import NodeRepository
 from backend.database.repositories.graph_repository import GraphRepository
+from backend.database.repositories.artifact_repository import ArtifactRepository
+from backend.database.repositories.edge_repository import EdgeRepository
+from backend.database.repositories.case_repository import CaseRepository
+from backend.database.repositories.node_repository import NodeRepository
 from backend.utils.utils import get_frontend_dir
 import json
 
@@ -16,12 +20,37 @@ if __name__ == "__main__":
     load_dotenv(override=True)
     openai_api_key = os.getenv('OPENAI_API_KEY')
 
+
+    #--------------------------------- 0. Clear DB ----------------------------
+    edge_repo = EdgeRepository()
+    node_repo = NodeRepository()
+    artifact_repo = ArtifactRepository()
+    case_repo = CaseRepository()
+
+    cases = case_repo.get_by_owner_id('111')
+
+    for case in cases:
+        print(f'db for case {case.id} cleaned')
+        edge_repo.delete_by_case(case.id)
+        artifact_repo.delete_by_case(case.id)
+        node_repo.delete_by_case(case.id)
+        case_repo.delete(case.id)
+
+
     # -------------------------------- 1. case --------------------------------
 
     graph = CaseGraph()
 
-    tim = Actor(id = '123', case_id = '7777', name='tim', role='plaintiff')
-    andi = Actor(id='1234', case_id = '7777', name='andi', role='debtor')
+    default_negotiation_profile = NegotiationProfile(cooperativeness=50,
+                                                     assertiveness=50,
+                                                     trust_in_opponent=50,
+                                                     flexibility=50,
+                                                     emotionality=50,
+                                                     current_goal_satisfaction=50,
+                                                     )
+
+    tim = Actor(id = '123', case_id = '7777', name='tim', role='plaintiff', goal='To collect debts')
+    andi = Actor(id='1234', case_id = '7777', name='andi', role='debtor', goal='Not to pay')
 
     graph.actors =  {'tim' : tim, 'andi' : andi}
     graph.case = Case(
@@ -34,10 +63,14 @@ if __name__ == "__main__":
     status_tim = ActorStatus(actor=tim,
                              paid=0,
                              received=0,
+                             intermediate_goal="",
+                             negotiation_profile=default_negotiation_profile,
     )
     status_andi = ActorStatus(actor=andi,
                              paid=0,
                              received=0,
+                             intermediate_goal="",
+                             negotiation_profile=default_negotiation_profile,
                              )
 
     state = LegalState(
@@ -99,8 +132,8 @@ if __name__ == "__main__":
 
     graph2 = CaseGraph()
 
-    sebo = Actor(id = '2543353', case_id = '555', name='sebo', role='thief')
-    georg = Actor(id='3767', case_id = '555', name='georg', role='car owner')
+    sebo = Actor(id = '2543353', case_id = '555', name='sebo', role='thief', goal='No punishment')
+    georg = Actor(id='3767', case_id = '555', name='georg', role='car owner', goal='Wants his car back')
 
     graph2.actors =  {'sebo' : sebo, 'georg' : georg}
     graph2.case = Case(
@@ -113,10 +146,14 @@ if __name__ == "__main__":
     status_sebo = ActorStatus(actor=sebo,
                              paid=0,
                              received=0,
+                             intermediate_goal="",
+                            negotiation_profile=default_negotiation_profile,
     )
     status_georg = ActorStatus(actor=georg,
                              paid=0,
                              received=0,
+                             intermediate_goal="",
+                             negotiation_profile=default_negotiation_profile,
                              )
 
     state2 = LegalState(

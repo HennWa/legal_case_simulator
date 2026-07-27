@@ -1,18 +1,21 @@
-import os
 from typing import List
 
-from dotenv import load_dotenv
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
-from backend.database.repositories.graph_repository import GraphRepository
+from backend.database.repositories.graph_repository import (
+    GraphRepository,
+)
 from backend.object_graph_runtime.graph_classes import (
     Actor,
     ActorStatus,
+    AppliedLaw,
     Case,
     CaseGraph,
+    Language,
     LegalNode,
     LegalState,
+    NegotiationProfile,
     generate_id,
     utc_now,
 )
@@ -20,22 +23,63 @@ from backend.object_graph_runtime.graph_classes import (
 
 router = APIRouter()
 
-load_dotenv(override=True)
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
+class NegotiationProfilePayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+
+    cooperativeness: int = Field(
+        ge=0,
+        le=100,
+    )
+
+    assertiveness: int = Field(
+        ge=0,
+        le=100,
+    )
+
+    trust_in_opponent: int = Field(
+        ge=0,
+        le=100,
+    )
+
+    flexibility: int = Field(
+        ge=0,
+        le=100,
+    )
+
+    emotionality: int = Field(
+        ge=0,
+        le=100,
+    )
 
 
 class ActorPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+
     name: str
     role: str
-    gender: str
-    date_of_birth: str
-    nationality: str
-    profession: str
-    background: str
+    goal: str
+
+    gender: str | None = None
+    date_of_birth: str | None = None
+    nationality: str | None = None
+    profession: str | None = None
+    background: str | None = None
+
+    negotiation_profile: (
+        NegotiationProfilePayload | None
+    ) = None
 
 
 class CreateCasePayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+
     owner_id: str
     title: str
     applied_law: str
@@ -53,6 +97,43 @@ class CreateCaseResponse(BaseModel):
     initial_node_id: str
 
 
+def clean_optional_string(
+    value: str | None,
+) -> str | None:
+    if value is None:
+        return None
+
+    stripped_value = value.strip()
+
+    if not stripped_value:
+        return None
+
+    return stripped_value
+
+
+def build_negotiation_profile(
+    payload: NegotiationProfilePayload | None,
+) -> NegotiationProfile | None:
+    if payload is None:
+        return None
+
+    return NegotiationProfile(
+        cooperativeness=payload.cooperativeness,
+        assertiveness=payload.assertiveness,
+        trust_in_opponent=(
+            payload.trust_in_opponent
+        ),
+        flexibility=payload.flexibility,
+        emotionality=payload.emotionality,
+
+        # Satisfaction represents the current state,
+        # not a permanent actor characteristic.
+        # The initial value is zero because no goal
+        # has yet been achieved at case creation.
+        current_goal_satisfaction=0,
+    )
+
+
 @router.post(
     "/create_case",
     response_model=CreateCaseResponse,
@@ -62,80 +143,109 @@ def create_case(
 ) -> CreateCaseResponse:
     case_id = generate_id("case")
 
-    actors = []
+    actors: list[Actor] = []
+    actor_statuses: list[ActorStatus] = []
 
     for actor_payload in payload.actors:
         actor = Actor(
             id=generate_id("actor"),
             case_id=case_id,
-            name=actor_payload.name,
-            role=actor_payload.role,
+            name=actor_payload.name.strip(),
+            role=actor_payload.role.strip(),
+            goal=actor_payload.goal.strip(),
+            gender=clean_optional_string(
+                actor_payload.gender,
+            ),
+            nationality=clean_optional_string(
+                actor_payload.nationality,
+            ),
+            profession=clean_optional_string(
+                actor_payload.profession,
+            ),
+            background=clean_optional_string(
+                actor_payload.background,
+            ),
         )
 
         actors.append(actor)
 
-    actor_statuses = []
+        negotiation_profile = (
+            build_negotiation_profile(
+                actor_payload.negotiation_profile,
+            )
+        )
 
-    for actor in actors:
         actor_status = ActorStatus(
             actor=actor,
             paid=0,
             received=0,
+            negotiation_profile=(
+                negotiation_profile
+            ),
+            intermediate_goal=actor.goal,
         )
 
         actor_statuses.append(actor_status)
 
-    # Temporary implementation until structured deadline objects
-    # are created from payload.deadlines.
     deadlines = []
 
     state = LegalState(
-        start_time=payload.status_date,
-        end_time=payload.legal_initiation_date,
-        legal_issue=payload.legal_issue,
-        description=payload.description,
+        start_time=(
+            payload.status_date
+            or utc_now()
+        ),
+        end_time=(
+            payload.legal_initiation_date
+            or payload.status_date
+            or utc_now()
+        ),
+        legal_issue=payload.legal_issue.strip(),
+        description=payload.description.strip(),
         final_state=False,
         actors_status=actor_statuses,
         legal_references=[],
         artifact_ids=[],
         deadlines=deadlines,
+        potential_next_states=[],
     )
 
     graph = CaseGraph()
 
-    graph.actors = {
-        actor.name: actor
-        for actor in actors
-    }
-
     graph.case = Case(
         id=case_id,
         owner_id=payload.owner_id,
-        title=payload.title,
+        title=payload.title.strip(),
         created_at=utc_now(),
+        language=Language(payload.language),
+        applied_law=AppliedLaw(
+            payload.applied_law,
+        ),
     )
+
+    graph.actors = {
+        actor.id: actor
+        for actor in actors
+    }
 
     initial_node = LegalNode(
         id=generate_id("node"),
-        case_id=graph.case.id,
+        case_id=case_id,
         incoming=[],
         outgoing=[],
-        title=payload.title,
+        number="1",
+        title=payload.title.strip(),
         state=state,
-        summary=payload.description,
+        summary=payload.description.strip(),
     )
 
     graph.add_node_obj(initial_node)
 
     repository = GraphRepository()
-
-    print("Saving graph to MongoDB")
-
     repository.save_graph(graph)
 
-    print("Graph saved to MongoDB")
-
     return CreateCaseResponse(
-        case=graph.case.model_dump(mode="json"),
+        case=graph.case.model_dump(
+            mode="json",
+        ),
         initial_node_id=initial_node.id,
     )
