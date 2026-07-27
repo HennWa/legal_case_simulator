@@ -74,7 +74,26 @@ class PromptBuilder:
                 7. Describe if a lawyer needs to involved for this action to be carried out.
                 8. Describe the five most likely potential next actions that could follow this action in a list. 
                    Use not more than four word s for each action.
-                9. Leave the list of artifact_ids empty.
+                9. For every actor in the current state, create exactly one ActorStatus in the resulting state.
+                    
+                    Preserve the actor object unchanged, including its ID, case ID, role,
+                    goal, and personal information.
+                    
+                    For the negotiation profile:
+                    
+                    - If negotiation_profile is None in the current state, keep it None
+                      unless the actor has clearly become an active negotiating party.
+                    - Preserve cooperativeness, assertiveness, and flexibility unless the
+                      simulated event provides a specific reason for a lasting change.
+                    - Update trust_in_opponent and emotionality only when justified by the
+                      action and resulting state.
+                    - Reassess current_goal_satisfaction based on how the resulting state
+                      advances or obstructs the actor's overall goal.
+                    - Update intermediate_goal to describe the actor's immediate objective
+                      at the new stage.
+                    - All numeric negotiation-profile values must remain between 0 and 100.
+                   
+                10. Leave the list of artifact_ids empty.
 
             step3: Ensure that the next state resulting from this action is fully structured and 
                   consistent with the legal context of the case. This includes:
@@ -209,7 +228,26 @@ class PromptBuilder:
                    Ensure that probability is correct in relation to other outgoing edges from the node. The sum of all 
                    probabilities should be a value < 1.0
                 8. Describe if a lawyer needs to involved for this action to be carried out.
-                9. Describe the five most likely potential next actions that could follow this action in a list. 
+                9. For every actor in the current state, create exactly one ActorStatus in
+                    the resulting state.
+                    
+                    Preserve the actor object unchanged, including its ID, case ID, role,
+                    goal, and personal information.
+                    
+                    For the negotiation profile:
+                    
+                    - If negotiation_profile is None in the current state, keep it None
+                      unless the actor has clearly become an active negotiating party.
+                    - Preserve cooperativeness, assertiveness, and flexibility unless the
+                      simulated event provides a specific reason for a lasting change.
+                    - Update trust_in_opponent and emotionality only when justified by the
+                      action and resulting state.
+                    - Reassess current_goal_satisfaction based on how the resulting state
+                      advances or obstructs the actor's overall goal.
+                    - Update intermediate_goal to describe the actor's immediate objective
+                      at the new stage.
+                    - All numeric negotiation-profile values must remain between 0 and 100.
+                10. Describe the five most likely potential next actions that could follow this action in a list. 
                    Use not more than four word s for each action.
                 
             step4: Generate the content of all relevant artifacts and documents that are associated with this legal 
