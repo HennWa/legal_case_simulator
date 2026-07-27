@@ -115,7 +115,7 @@ const WIZARD_STEPS = [
 
 
 const wizardImageModules = import.meta.glob(
-  "../../assets/wizard/*.{png,jpg,jpeg,webp,svg}",
+  "../../assets/create case wizard/*.{png,jpg,jpeg,webp,svg}",
   {
     eager: true,
     query: "?url",
