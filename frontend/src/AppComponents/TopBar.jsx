@@ -380,14 +380,14 @@ export default function TopBar({
           type="button"
           style={buttonStyle}
         >
-          Export
+          Share with Your Lawyer
         </button>
 
         <button
           type="button"
           style={buttonStyle}
         >
-          Settings
+          Profile
         </button>
       </div>
     </header>
