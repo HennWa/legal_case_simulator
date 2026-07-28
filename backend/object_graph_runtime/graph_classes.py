@@ -36,6 +36,7 @@ class Case(BaseModel):
     created_at: str
     language: Language = Language.ENGLISH
     applied_law: AppliedLaw = AppliedLaw.GERMAN
+    node_counter: int = 1
 
 # -------------------------
 # Artifact Model
@@ -121,6 +122,9 @@ class Actor(BaseModel):
     nationality: Optional[str] = Field(default=None, description='Nationality of the actor, if applicable')
     profession: Optional[str] = Field(default=None, description='Profession of the actor, if applicable')
     background: Optional[str] = Field(default=None, description='Background information of the actor, if applicable')
+    has_legal_expenses_insurance: Optional[bool | None] = Field(default=False,
+                                                                description='Flag if actor has legal expenses insurance, '
+                                                                            'if not applicable it is None')
 
 
 class NegotiationProfile(BaseModel):
@@ -193,13 +197,25 @@ class NegotiationProfile(BaseModel):
         ),
     )
 
+class Expenditure(BaseModel):
+    title: str = Field(description='Title or name of expenditure, e.g. court fees, lawyer fees')
+    amount: int = Field(description='Amount of expenses in Euro')
+    paid_to: str = Field(description='Actor who received expenditure')
+    covered_by_insurance: bool = Field(description='Flag if expenditure are covered by legal expenses insurance')
+
+class Income(BaseModel):
+    title: str = Field(description='Title or name of income, e.g. payout from opponent')
+    amount: int = Field(description='Amount of income in Euro')
+    received_from: str = Field(description='Actor from who the income is received')
 
 class ActorStatus(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     actor: Actor = Field(description='Actor of the status')
-    paid: int = Field(description='Paid money for services to lawyers, courts etc. at the last action')
-    received: int = Field(description='Received money from other actors, refunds etc. from last action')
+
+    income: List[Income] = Field(description='List of relevant income of the current status')
+    expenses: List[Expenditure] = Field(description='List of relevant expenses of the current status')
+
     negotiation_profile: NegotiationProfile | None = Field(default=None,description=(
             "Current negotiation behaviour and "
             "subjective goal satisfaction of the "
@@ -851,8 +867,8 @@ class CaseGraph:
             actor_name = actor_status.actor.name
 
             payment_info[actor_name] = {
-                "paid": actor_status.paid,
-                "received": actor_status.received,
+                "expenses": actor_status.expenses,
+                "income": actor_status.income,
             }
 
         for step in path:
