@@ -1,56 +1,51 @@
 .node-details-panel {
   position: fixed;
-  right: 0;
   top: 60px;
+  right: 0;
+
+  display: flex;
+  flex-direction: column;
 
   width: 420px;
   height: calc(100vh - 60px);
 
   background: #1a1316;
-  color: white;
+  color: #ffffff;
 
   border-left: 1px solid #c08497;
 
   z-index: 1000;
-
-  display: flex;
-  flex-direction: column;
 }
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .panel-header {
   position: relative;
-  flex-shrink: 0;
-
-  padding: 16px;
-  border-bottom: 1px solid #c08497;
 
   display: flex;
-  justify-content: space-between;
+  flex-shrink: 0;
   align-items: center;
+  justify-content: space-between;
+
+  min-height: 64px;
+  padding: 16px 56px 16px 16px;
+
+  border-bottom: 1px solid #c08497;
 }
 
-.panel-content {
-  flex: 1;
-  min-height: 0;
+.panel-header h2 {
+  margin: 0;
 
-  overflow-y: auto;
-  padding: 16px;
-}
+  color: #ffffff;
 
-.panel-content section {
-  margin-bottom: 24px;
-}
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.3;
 
-.reference-card,
-.artifact-card,
-.actor-card {
-  background: #241a1f;
-
-  border: 1px solid #5f3945;
-  border-radius: 8px;
-
-  padding: 12px;
-  margin-bottom: 10px;
+  overflow-wrap: anywhere;
 }
 
 .close-button {
@@ -58,25 +53,31 @@
   top: 12px;
   right: 12px;
 
-  width: 32px;
-  height: 32px;
-
-  border: none;
-  background: transparent;
-
-  font-size: 18px;
-  font-weight: 600;
-
-  color: #8f7880;
-  cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
 
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: none;
   border-radius: 6px;
 
-  transition: all 0.15s ease;
+  background: transparent;
+  color: #8f7880;
+
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .close-button:hover {
@@ -88,7 +89,150 @@
   transform: scale(0.95);
 }
 
-/* ARTIFACT CARDS */
+.close-button:focus-visible {
+  outline: 2px solid rgba(192, 132, 151, 0.75);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   SCROLLABLE CONTENT
+   ========================================================= */
+
+.panel-content {
+  flex: 1;
+
+  min-height: 0;
+  padding: 16px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #5f3945 transparent;
+}
+
+.panel-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: #5f3945;
+
+  border: 2px solid #1a1316;
+  border-radius: 999px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background: #875466;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.panel-content section {
+  margin-bottom: 24px;
+}
+
+.panel-content section:last-child {
+  margin-bottom: 8px;
+}
+
+.panel-content section h3 {
+  margin: 0 0 10px;
+
+  color: #d8bcc5;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.panel-content section > p {
+  margin: 0;
+
+  color: #b9aab0;
+
+  font-size: 13px;
+  line-height: 1.55;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   SHARED CARDS
+   ========================================================= */
+
+.reference-card,
+.artifact-card,
+.actor-card {
+  margin-bottom: 10px;
+  padding: 12px;
+
+  background: #241a1f;
+
+  border: 1px solid #5f3945;
+  border-radius: 8px;
+}
+
+.reference-card:last-child,
+.artifact-card:last-child,
+.actor-card:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   REFERENCE CARDS
+   ========================================================= */
+
+.reference-card {
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.reference-card:hover {
+  background: #2b1e24;
+  border-color: #c08497;
+
+  transform: translateY(-1px);
+}
+
+.reference-card:active {
+  transform: translateY(0);
+}
+
+.reference-card strong {
+  display: block;
+
+  color: #f4ecee;
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   ARTIFACT CARDS
+   ========================================================= */
 
 .artifact-card {
   cursor: pointer;
@@ -102,15 +246,20 @@
 .artifact-card:hover {
   background: #2b1e24;
   border-color: #c08497;
+
   transform: translateY(-1px);
+}
+
+.artifact-card:active {
+  transform: translateY(0);
 }
 
 .artifact-header {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
-  gap: 12px;
+  justify-content: space-between;
 
+  gap: 12px;
   margin-bottom: 6px;
 }
 
@@ -130,6 +279,7 @@
   color: #8f7880;
 
   font-size: 11px;
+  line-height: 1.35;
 }
 
 .artifact-title {
@@ -140,9 +290,13 @@
   font-size: 16px;
   font-weight: 600;
   line-height: 1.35;
+
+  overflow-wrap: anywhere;
 }
 
 .artifact-preview {
+  display: -webkit-box;
+
   margin: 0;
 
   color: #b9aab0;
@@ -150,14 +304,175 @@
   font-size: 13px;
   line-height: 1.5;
 
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-
   overflow: hidden;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
-/* FIXED QUESTION FIELD */
+
+/* =========================================================
+   ACTOR CARDS
+   ========================================================= */
+
+.actor-card {
+  color: #b9aab0;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.actor-card > strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.35;
+
+  overflow-wrap: anywhere;
+}
+
+.actor-card > div:not(.actor-financial-section) {
+  margin-top: 2px;
+
+  color: #b9aab0;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   ACTOR FINANCIAL SECTIONS
+   ========================================================= */
+
+.actor-financial-section {
+  margin-top: 12px;
+  padding-top: 12px;
+
+  border-top: 1px solid rgba(95, 57, 69, 0.8);
+}
+
+.actor-financial-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.actor-financial-header > span {
+  color: #c08497;
+
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.actor-financial-header > strong {
+  flex-shrink: 0;
+
+  color: #f4ecee;
+
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.actor-financial-empty {
+  padding: 9px 10px;
+
+  background: rgba(20, 13, 16, 0.35);
+  color: #8f7880;
+
+  border: 1px dashed rgba(95, 57, 69, 0.85);
+  border-radius: 6px;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.actor-financial-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.actor-financial-list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 12px;
+  padding: 9px 10px;
+
+  background: rgba(20, 13, 16, 0.42);
+
+  border: 1px solid rgba(95, 57, 69, 0.8);
+  border-radius: 6px;
+}
+
+.actor-financial-list li > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  min-width: 0;
+  gap: 2px;
+}
+
+.actor-financial-list li > div > strong {
+  color: #f4ecee;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+.actor-financial-list li > div > span {
+  color: #8f7880;
+
+  font-size: 11px;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+.actor-financial-list li > strong {
+  flex-shrink: 0;
+
+  color: #d8bcc5;
+
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+
+  text-align: right;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FIXED QUESTION FIELD
+   ========================================================= */
 
 .node-question-box {
   flex-shrink: 0;
@@ -165,20 +480,22 @@
   padding: 12px 16px 16px;
 
   background: #1a1316;
+
   border-top: 1px solid #5f3945;
 }
 
 .node-question-input {
   display: block;
 
+  box-sizing: border-box;
+
   width: 100%;
   min-height: 58px;
   max-height: 120px;
 
-  box-sizing: border-box;
-  resize: vertical;
-
   padding: 11px 12px;
+
+  resize: vertical;
 
   background: #241a1f;
   color: #ffffff;
@@ -209,5 +526,60 @@
   background: #2b1e24;
   border-color: #c08497;
 
-  box-shadow: 0 0 0 2px rgba(192, 132, 151, 0.12);
+  box-shadow:
+    0 0 0 2px rgba(192, 132, 151, 0.12);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 720px) {
+  .node-details-panel {
+    top: 60px;
+
+    width: 100%;
+    height: calc(100vh - 60px);
+
+    border-left: none;
+  }
+}
+
+@media (max-width: 460px) {
+  .panel-header {
+    padding: 14px 52px 14px 14px;
+  }
+
+  .panel-content {
+    padding: 14px;
+  }
+
+  .node-question-box {
+    padding: 10px 14px 14px;
+  }
+
+  .actor-financial-list li {
+    flex-direction: column;
+
+    gap: 6px;
+  }
+
+  .actor-financial-list li > strong {
+    align-self: flex-end;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .close-button,
+  .reference-card,
+  .artifact-card,
+  .node-question-input {
+    transition: none;
+  }
 }

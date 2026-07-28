@@ -92,6 +92,8 @@ class PromptBuilder:
                     - Update intermediate_goal to describe the actor's immediate objective
                       at the new stage.
                     - All numeric negotiation-profile values must remain between 0 and 100.
+                    
+                    Estimate all relevant income and expenses.
                    
                 10. Leave the list of artifact_ids empty.
 
@@ -247,7 +249,8 @@ class PromptBuilder:
                     - Update intermediate_goal to describe the actor's immediate objective
                       at the new stage.
                     - All numeric negotiation-profile values must remain between 0 and 100.
-                10. Describe the five most likely potential next actions that could follow this action in a list. 
+                10. Estimate all relevant expenses and income for each actor.
+                11. Describe the five most likely potential next actions that could follow this action in a list. 
                    Use not more than four word s for each action.
                 
             step4: Generate the content of all relevant artifacts and documents that are associated with this legal 
@@ -263,7 +266,7 @@ class PromptBuilder:
                   
                 1. Defining the legal state that results from the action, including all relevant attributes and their values.
                 2. The start and end times fit together.
-                3. The actor status is updated accordingly, including any payments made or received.
+                3. The actor status is updated accordingly, including any income and expenses.
                 4. The summary of the new node clearly describes the new legal state and how it relates to the 
                    previous state and the overall case progression.
   
@@ -416,7 +419,8 @@ class PromptBuilder:
                    based on the context of the case and the past events and all states of the actors. 
                    The value must be in the range 0-1.
                 8. Describe if a lawyer needs to involved for this action to be carried out.
-                9. Describe the five most likely potential next actions that could follow this action in a list. 
+                9. Estimate all relevant expenses and income for each actor.
+                10. Describe the five most likely potential next actions that could follow this action in a list. 
                    Use your legal knowledge to find the most realistic following options for actions.
                    Use not more than four word s for each action.
             
@@ -425,7 +429,7 @@ class PromptBuilder:
                   
                 1. Defining the legal state that results from the action, including all relevant attributes and their values.
                 2. The start and end times fit together.
-                3. The actor status is updated accordingly, including any payments made or received.
+                3. The actor status is updated accordingly, including any income and expenses.
                 4. The summary of the new state clearly describes the new legal state and how it relates to the 
                    previous state and the overall case progression.
   

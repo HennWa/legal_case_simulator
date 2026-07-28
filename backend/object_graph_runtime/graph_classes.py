@@ -122,9 +122,9 @@ class Actor(BaseModel):
     nationality: Optional[str] = Field(default=None, description='Nationality of the actor, if applicable')
     profession: Optional[str] = Field(default=None, description='Profession of the actor, if applicable')
     background: Optional[str] = Field(default=None, description='Background information of the actor, if applicable')
-    has_legal_expenses_insurance: Optional[bool | None] = Field(default=False,
-                                                                description='Flag if actor has legal expenses insurance, '
-                                                                            'if not applicable it is None')
+    has_legal_expenses_insurance: bool | None = Field(default=None,
+                                                      description='Flag if actor has legal expenses insurance, '
+                                                                  'if not applicable it is None')
 
 
 class NegotiationProfile(BaseModel):
@@ -213,8 +213,10 @@ class ActorStatus(BaseModel):
 
     actor: Actor = Field(description='Actor of the status')
 
-    income: List[Income] = Field(description='List of relevant income of the current status')
-    expenses: List[Expenditure] = Field(description='List of relevant expenses of the current status')
+    income: List[Income] = Field(default_factory=list, description="List of relevant income of the current status")
+
+    expenses: List[Expenditure] = Field(default_factory=list,
+                                        description="List of relevant expenses of the current status")
 
     negotiation_profile: NegotiationProfile | None = Field(default=None,description=(
             "Current negotiation behaviour and "
@@ -854,36 +856,60 @@ class CaseGraph:
     # Get path info (payment info and state periods)
     # -------------------------
     def get_path_info(self, node_id: str) -> dict:
-
         path = self.build_path(node_id)
-        payment_info = {}
+
+        financial_info = {}
         state_periods = {}
         state_counter = {}
 
-        # -------------------------
-        # Payment information
-        # -------------------------
-        for actor_status in self.get_node(node_id).state.actors_status:
+        selected_node = self.get_node(node_id)
+
+        for actor_status in selected_node.state.actors_status:
             actor_name = actor_status.actor.name
 
-            payment_info[actor_name] = {
-                "expenses": actor_status.expenses,
-                "income": actor_status.income,
+            expenses = [
+                expense.model_dump(mode="json")
+                for expense in actor_status.expenses
+            ]
+
+            income = [
+                income_item.model_dump(mode="json")
+                for income_item in actor_status.income
+            ]
+
+            total_expenses = sum(
+                expense.amount
+                for expense in actor_status.expenses
+            )
+
+            total_income = sum(
+                income_item.amount
+                for income_item in actor_status.income
+            )
+
+            financial_info[actor_name] = {
+                "expenses": expenses,
+                "income": income,
+                "total_expenses": total_expenses,
+                "total_income": total_income,
+                "balance": total_income - total_expenses,
             }
 
         for step in path:
             state = step.state_snapshot
             node = self.nodes[step.node_id]
 
-            # -------------------------
-            # State periods
-            # -------------------------
             state_name = node.title
 
-            state_counter[state_name] = state_counter.get(state_name, 0) + 1
+            state_counter[state_name] = (
+                    state_counter.get(state_name, 0) + 1
+            )
 
             if state_counter[state_name] > 1:
-                state_name = f"{state_name} [{state_counter[state_name]}]"
+                state_name = (
+                    f"{state_name} "
+                    f"[{state_counter[state_name]}]"
+                )
 
             state_periods[state_name] = {
                 "start": state.start_time,
@@ -891,7 +917,7 @@ class CaseGraph:
             }
 
         return {
-            "payment_info": payment_info,
+            "financial_info": financial_info,
             "state_periods": state_periods,
         }
     # -------------------------

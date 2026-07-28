@@ -49,7 +49,8 @@ if __name__ == "__main__":
                                                      current_goal_satisfaction=50,
                                                      )
 
-    tim = Actor(id = '123', case_id = '7777', name='tim', role='plaintiff', goal='To collect debts')
+    tim = Actor(id = '123', case_id = '7777', name='tim', role='plaintiff', goal='To collect debts',
+                has_legal_expenses_insurance = True,)
     andi = Actor(id='1234', case_id = '7777', name='andi', role='debtor', goal='Not to pay')
 
     graph.actors =  {'tim' : tim, 'andi' : andi}
@@ -61,14 +62,14 @@ if __name__ == "__main__":
     )
 
     status_tim = ActorStatus(actor=tim,
-                             paid=0,
-                             received=0,
+                             income=[],
+                             expenses=[],
                              intermediate_goal="",
                              negotiation_profile=default_negotiation_profile,
     )
     status_andi = ActorStatus(actor=andi,
-                             paid=0,
-                             received=0,
+                              income=[],
+                              expenses=[],
                              intermediate_goal="",
                              negotiation_profile=default_negotiation_profile,
                              )
@@ -144,14 +145,14 @@ if __name__ == "__main__":
     )
 
     status_sebo = ActorStatus(actor=sebo,
-                             paid=0,
-                             received=0,
+                              income=[],
+                              expenses=[],
                              intermediate_goal="",
                             negotiation_profile=default_negotiation_profile,
     )
     status_georg = ActorStatus(actor=georg,
-                             paid=0,
-                             received=0,
+                             income=[],
+                             expenses=[],
                              intermediate_goal="",
                              negotiation_profile=default_negotiation_profile,
                              )

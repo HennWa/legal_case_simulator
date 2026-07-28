@@ -69,6 +69,7 @@ class ActorPayload(BaseModel):
     nationality: str | None = None
     profession: str | None = None
     background: str | None = None
+    has_legal_expenses_insurance: bool | None = False
 
     negotiation_profile: (
         NegotiationProfilePayload | None
@@ -168,6 +169,9 @@ def create_case(
             date_of_birth=clean_optional_string(
                 actor_payload.date_of_birth,
             ),
+            has_legal_expenses_insurance=(
+                actor_payload.has_legal_expenses_insurance
+            ),
         )
 
         actors.append(actor)
@@ -180,8 +184,8 @@ def create_case(
 
         actor_status = ActorStatus(
             actor=actor,
-            paid=0,
-            received=0,
+            income=[],
+            expenses=[],
             negotiation_profile=(
                 negotiation_profile
             ),
@@ -223,6 +227,7 @@ def create_case(
         applied_law=AppliedLaw(
             payload.applied_law,
         ),
+        node_counter=1,
     )
 
     graph.actors = {

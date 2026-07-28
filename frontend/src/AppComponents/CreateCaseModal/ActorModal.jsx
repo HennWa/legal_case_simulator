@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import "./ActorModal.css";
 
@@ -21,6 +25,7 @@ const EMPTY_ACTOR = {
   nationality: "",
   profession: "",
   background: "",
+  has_legal_expenses_insurance: false,
   negotiation_profile: null,
 };
 
@@ -90,37 +95,80 @@ const NEGOTIATION_FIELDS = [
     lowLabel: "Detached",
     highLabel: "Emotional",
     description:
-      "Degree to which emotions influence the actor's decisions and behavior.",
+      "Degree to which emotions influence the actor's decisions and behaviour.",
   },
 ];
 
 
-function normalizeNegotiationProfile(profile) {
-  if (!profile) {
+function normalizeText(value) {
+  return typeof value === "string"
+    ? value
+    : "";
+}
+
+
+function normalizeSliderValue(value) {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return 50;
+  }
+
+  return Math.min(
+    100,
+    Math.max(
+      0,
+      Math.round(numericValue),
+    ),
+  );
+}
+
+
+function normalizeNegotiationProfile(
+  profile,
+) {
+  if (
+    !profile ||
+    typeof profile !== "object"
+  ) {
     return null;
   }
 
   return {
     cooperativeness:
-      profile.cooperativeness ??
-      DEFAULT_NEGOTIATION_PROFILE.cooperativeness,
+      normalizeSliderValue(
+        profile.cooperativeness,
+      ),
 
     assertiveness:
-      profile.assertiveness ??
-      DEFAULT_NEGOTIATION_PROFILE.assertiveness,
+      normalizeSliderValue(
+        profile.assertiveness,
+      ),
 
     trust_in_opponent:
-      profile.trust_in_opponent ??
-      DEFAULT_NEGOTIATION_PROFILE.trust_in_opponent,
+      normalizeSliderValue(
+        profile.trust_in_opponent,
+      ),
 
     flexibility:
-      profile.flexibility ??
-      DEFAULT_NEGOTIATION_PROFILE.flexibility,
+      normalizeSliderValue(
+        profile.flexibility,
+      ),
 
     emotionality:
-      profile.emotionality ??
-      DEFAULT_NEGOTIATION_PROFILE.emotionality,
+      normalizeSliderValue(
+        profile.emotionality,
+      ),
   };
+}
+
+
+function normalizeInsuranceValue(value) {
+  if (value === null) {
+    return null;
+  }
+
+  return value === true;
 }
 
 
@@ -134,11 +182,73 @@ function normalizeActor(actor) {
   return {
     ...EMPTY_ACTOR,
     ...actor,
+
+    name:
+      normalizeText(actor.name),
+
+    role:
+      normalizeText(actor.role),
+
+    goal:
+      normalizeText(actor.goal),
+
+    gender:
+      normalizeText(actor.gender),
+
+    date_of_birth:
+      normalizeText(
+        actor.date_of_birth,
+      ),
+
+    nationality:
+      normalizeText(
+        actor.nationality,
+      ),
+
+    profession:
+      normalizeText(
+        actor.profession,
+      ),
+
+    background:
+      normalizeText(
+        actor.background,
+      ),
+
+    has_legal_expenses_insurance:
+      normalizeInsuranceValue(
+        actor.has_legal_expenses_insurance,
+      ),
+
     negotiation_profile:
       normalizeNegotiationProfile(
         actor.negotiation_profile,
       ),
   };
+}
+
+
+function getInsuranceOption(value) {
+  if (value === null) {
+    return "not_applicable";
+  }
+
+  return value
+    ? "yes"
+    : "no";
+}
+
+
+function parseInsuranceOption(value) {
+  if (value === "yes") {
+    return true;
+  }
+
+  if (value === "not_applicable") {
+    return null;
+  }
+
+  return false;
 }
 
 
@@ -148,9 +258,10 @@ export default function ActorModal({
   onClose,
   onSave,
 }) {
-  const [form, setForm] = useState({
-    ...EMPTY_ACTOR,
-  });
+  const [form, setForm] =
+    useState({
+      ...EMPTY_ACTOR,
+    });
 
   const [
     validationError,
@@ -163,7 +274,10 @@ export default function ActorModal({
       return;
     }
 
-    setForm(normalizeActor(actor));
+    setForm(
+      normalizeActor(actor),
+    );
+
     setValidationError("");
   }, [actor, open]);
 
@@ -173,7 +287,7 @@ export default function ActorModal({
       return undefined;
     }
 
-    const handleEsc = (event) => {
+    const handleEscape = (event) => {
       if (event.key === "Escape") {
         onClose();
       }
@@ -181,16 +295,33 @@ export default function ActorModal({
 
     document.addEventListener(
       "keydown",
-      handleEsc,
+      handleEscape,
     );
 
     return () => {
       document.removeEventListener(
         "keydown",
-        handleEsc,
+        handleEscape,
       );
     };
   }, [open, onClose]);
+
+
+  const profileApplicable =
+    form.negotiation_profile !== null;
+
+
+  const insuranceOption = useMemo(
+    () =>
+      getInsuranceOption(
+        form
+          .has_legal_expenses_insurance,
+      ),
+    [
+      form
+        .has_legal_expenses_insurance,
+    ],
+  );
 
 
   if (!open) {
@@ -215,18 +346,26 @@ export default function ActorModal({
     field,
     value,
   ) => {
-    const numericValue = Number(value);
+    setForm((previousForm) => {
+      const currentProfile =
+        previousForm
+          .negotiation_profile ??
+        DEFAULT_NEGOTIATION_PROFILE;
 
-    setForm((previousForm) => ({
-      ...previousForm,
+      return {
+        ...previousForm,
 
-      negotiation_profile: {
-        ...DEFAULT_NEGOTIATION_PROFILE,
-        ...(previousForm.negotiation_profile ??
-          {}),
-        [field]: numericValue,
-      },
-    }));
+        negotiation_profile: {
+          ...DEFAULT_NEGOTIATION_PROFILE,
+          ...currentProfile,
+
+          [field]:
+            normalizeSliderValue(
+              value,
+            ),
+        },
+      };
+    });
 
     setValidationError("");
   };
@@ -238,14 +377,20 @@ export default function ActorModal({
     setForm((previousForm) => ({
       ...previousForm,
 
-      negotiation_profile: applicable
-        ? {
-            ...DEFAULT_NEGOTIATION_PROFILE,
-            ...(previousForm.negotiation_profile ??
-              {}),
-          }
-        : null,
+      negotiation_profile:
+        applicable
+          ? {
+              ...DEFAULT_NEGOTIATION_PROFILE,
+              ...(
+                previousForm
+                  .negotiation_profile ??
+                {}
+              ),
+            }
+          : null,
     }));
+
+    setValidationError("");
   };
 
 
@@ -267,81 +412,115 @@ export default function ActorModal({
 
 
   const handleSave = () => {
-    const error = validateActor();
+    const error =
+      validateActor();
 
     if (error) {
       setValidationError(error);
       return;
     }
 
+    const normalizedProfile =
+      form.negotiation_profile
+        ? {
+            cooperativeness:
+              normalizeSliderValue(
+                form
+                  .negotiation_profile
+                  .cooperativeness,
+              ),
+
+            assertiveness:
+              normalizeSliderValue(
+                form
+                  .negotiation_profile
+                  .assertiveness,
+              ),
+
+            trust_in_opponent:
+              normalizeSliderValue(
+                form
+                  .negotiation_profile
+                  .trust_in_opponent,
+              ),
+
+            flexibility:
+              normalizeSliderValue(
+                form
+                  .negotiation_profile
+                  .flexibility,
+              ),
+
+            emotionality:
+              normalizeSliderValue(
+                form
+                  .negotiation_profile
+                  .emotionality,
+              ),
+          }
+        : null;
+
     onSave({
+      ...actor,
       ...form,
 
-      name: form.name.trim(),
-      role: form.role.trim(),
-      goal: form.goal.trim(),
+      name:
+        form.name.trim(),
+
+      role:
+        form.role.trim(),
+
+      goal:
+        form.goal.trim(),
 
       gender:
-        form.gender.trim() || null,
+        form.gender.trim() ||
+        null,
 
       date_of_birth:
-        form.date_of_birth.trim() || null,
+        form.date_of_birth.trim() ||
+        null,
 
       nationality:
-        form.nationality.trim() || null,
+        form.nationality.trim() ||
+        null,
 
       profession:
-        form.profession.trim() || null,
+        form.profession.trim() ||
+        null,
 
       background:
-        form.background.trim() || null,
+        form.background.trim() ||
+        null,
+
+      has_legal_expenses_insurance:
+        form
+          .has_legal_expenses_insurance,
 
       negotiation_profile:
-        form.negotiation_profile
-          ? {
-              cooperativeness:
-                Number(
-                  form.negotiation_profile
-                    .cooperativeness,
-                ),
-
-              assertiveness:
-                Number(
-                  form.negotiation_profile
-                    .assertiveness,
-                ),
-
-              trust_in_opponent:
-                Number(
-                  form.negotiation_profile
-                    .trust_in_opponent,
-                ),
-
-              flexibility:
-                Number(
-                  form.negotiation_profile
-                    .flexibility,
-                ),
-
-              emotionality:
-                Number(
-                  form.negotiation_profile
-                    .emotionality,
-                ),
-            }
-          : null,
+        normalizedProfile,
     });
   };
 
 
-  const profileApplicable =
-    form.negotiation_profile !== null;
+  const handleOverlayMouseDown = (
+    event,
+  ) => {
+    if (
+      event.target ===
+      event.currentTarget
+    ) {
+      onClose();
+    }
+  };
 
 
   return (
     <div
       className="actor-modal-overlay"
-      onMouseDown={onClose}
+      onMouseDown={
+        handleOverlayMouseDown
+      }
     >
       <div
         className="actor-modal"
@@ -352,72 +531,69 @@ export default function ActorModal({
           event.stopPropagation()
         }
       >
-        <div className="actor-modal-header">
-          <div>
+        <button
+          className="actor-modal-close"
+          type="button"
+          aria-label="Close actor dialog"
+          onClick={onClose}
+        >
+          ×
+        </button>
+
+        <header className="actor-modal-header">
+          <div className="actor-modal-heading">
             <span className="actor-modal-eyebrow">
               Case participant
             </span>
 
-            <h2
-              id="actor-modal-title"
-              className="actor-modal-title"
-            >
+            <h2 id="actor-modal-title">
               {actor
                 ? "Edit Actor"
                 : "Add Actor"}
             </h2>
 
-            <p className="actor-modal-subtitle">
-              Add the actor's identity, legal
-              objective, and optional negotiation
-              characteristics.
+            <p>
+              Add the actor's identity,
+              legal objective and optional
+              negotiation characteristics.
             </p>
           </div>
-
-          <button
-            className="actor-modal-close"
-            type="button"
-            aria-label="Close actor dialog"
-            onClick={onClose}
-          >
-            ×
-          </button>
-        </div>
-
+        </header>
 
         <div className="actor-modal-body">
           <section className="actor-form-section">
             <div className="actor-section-heading">
+              <span className="actor-section-number">
+                01
+              </span>
+
               <div>
-                <h3>General information</h3>
+                <h3>
+                  General information
+                </h3>
 
                 <p>
-                  Basic information identifying the
-                  actor and their role in the case.
+                  Basic information
+                  identifying the actor and
+                  their role in the case.
                 </p>
               </div>
             </div>
 
-
-            <div className="actor-form-row">
+            <div className="actor-form-grid">
               <div className="actor-form-group">
-                <label
-                  className="actor-form-label"
-                  htmlFor="actor-name"
-                >
+                <label htmlFor="actor-name">
                   Name
-                  <span
-                    className="actor-required-marker"
-                    aria-hidden="true"
-                  >
+
+                  <span className="actor-required">
                     *
                   </span>
                 </label>
 
                 <input
                   id="actor-name"
-                  className="actor-form-input"
                   type="text"
+                  autoFocus
                   placeholder="John Doe"
                   value={form.name}
                   onChange={(event) =>
@@ -429,24 +605,17 @@ export default function ActorModal({
                 />
               </div>
 
-
               <div className="actor-form-group">
-                <label
-                  className="actor-form-label"
-                  htmlFor="actor-role"
-                >
+                <label htmlFor="actor-role">
                   Role
-                  <span
-                    className="actor-required-marker"
-                    aria-hidden="true"
-                  >
+
+                  <span className="actor-required">
                     *
                   </span>
                 </label>
 
                 <input
                   id="actor-role"
-                  className="actor-form-input"
                   type="text"
                   placeholder="Plaintiff, employer, court..."
                   value={form.role}
@@ -458,56 +627,71 @@ export default function ActorModal({
                   }
                 />
               </div>
-            </div>
 
+              <div className="actor-form-group actor-form-group-full">
+                <label htmlFor="actor-goal">
+                  Goal
 
-            <div className="actor-form-group">
-              <label
-                className="actor-form-label"
-                htmlFor="actor-goal"
-              >
-                Goal
-                <span
-                  className="actor-required-marker"
-                  aria-hidden="true"
-                >
-                  *
+                  <span className="actor-required">
+                    *
+                  </span>
+                </label>
+
+                <textarea
+                  id="actor-goal"
+                  rows={3}
+                  placeholder="For example: Receive the highest possible severance payment and terminate the employment relationship."
+                  value={form.goal}
+                  onChange={(event) =>
+                    update(
+                      "goal",
+                      event.target.value,
+                    )
+                  }
+                />
+
+                <span className="actor-field-help">
+                  Describe the actor's
+                  desired final outcome in
+                  this legal case.
                 </span>
-              </label>
+              </div>
+            </div>
+          </section>
 
-              <textarea
-                id="actor-goal"
-                className="actor-form-textarea actor-goal-textarea"
-                placeholder="For example: Receive the highest possible severance payment and terminate the employment relationship."
-                value={form.goal}
-                onChange={(event) =>
-                  update(
-                    "goal",
-                    event.target.value,
-                  )
-                }
-              />
+          <section className="actor-form-section">
+            <div className="actor-section-heading">
+              <span className="actor-section-number">
+                02
+              </span>
 
-              <div className="actor-form-help">
-                Describe the actor's desired final
-                outcome in this legal case.
+              <div>
+                <h3>
+                  Personal details
+                </h3>
+
+                <p>
+                  Optional personal or
+                  organisational information
+                  that may be relevant to
+                  the case.
+                </p>
               </div>
             </div>
 
-
-            <div className="actor-form-row">
+            <div className="actor-form-grid">
               <div className="actor-form-group">
-                <label
-                  className="actor-form-label"
-                  htmlFor="actor-gender"
-                >
+                <label htmlFor="actor-gender">
                   Gender
+
+                  <span className="actor-optional">
+                    optional
+                  </span>
                 </label>
 
                 <select
                   id="actor-gender"
-                  className="actor-form-select"
-                  value={form.gender ?? ""}
+                  value={form.gender}
                   onChange={(event) =>
                     update(
                       "gender",
@@ -515,32 +699,37 @@ export default function ActorModal({
                     )
                   }
                 >
-                  {GENDERS.map((gender) => (
-                    <option
-                      key={gender}
-                      value={gender}
-                    >
-                      {gender || "Not specified"}
-                    </option>
-                  ))}
+                  {GENDERS.map(
+                    (gender) => (
+                      <option
+                        key={
+                          gender ||
+                          "not-specified"
+                        }
+                        value={gender}
+                      >
+                        {gender ||
+                          "Not specified"}
+                      </option>
+                    ),
+                  )}
                 </select>
               </div>
 
-
               <div className="actor-form-group">
-                <label
-                  className="actor-form-label"
-                  htmlFor="actor-date-of-birth"
-                >
+                <label htmlFor="actor-date-of-birth">
                   Date of birth
+
+                  <span className="actor-optional">
+                    optional
+                  </span>
                 </label>
 
                 <input
                   id="actor-date-of-birth"
-                  className="actor-form-input"
                   type="date"
                   value={
-                    form.date_of_birth ?? ""
+                    form.date_of_birth
                   }
                   onChange={(event) =>
                     update(
@@ -550,23 +739,20 @@ export default function ActorModal({
                   }
                 />
               </div>
-            </div>
 
-
-            <div className="actor-form-row">
               <div className="actor-form-group">
-                <label
-                  className="actor-form-label"
-                  htmlFor="actor-nationality"
-                >
+                <label htmlFor="actor-nationality">
                   Nationality
+
+                  <span className="actor-optional">
+                    optional
+                  </span>
                 </label>
 
                 <select
                   id="actor-nationality"
-                  className="actor-form-select"
                   value={
-                    form.nationality ?? ""
+                    form.nationality
                   }
                   onChange={(event) =>
                     update(
@@ -578,7 +764,10 @@ export default function ActorModal({
                   {NATIONALITIES.map(
                     (country) => (
                       <option
-                        key={country}
+                        key={
+                          country ||
+                          "not-specified"
+                        }
                         value={country}
                       >
                         {country ||
@@ -589,23 +778,20 @@ export default function ActorModal({
                 </select>
               </div>
 
-
               <div className="actor-form-group">
-                <label
-                  className="actor-form-label"
-                  htmlFor="actor-profession"
-                >
+                <label htmlFor="actor-profession">
                   Profession
+
+                  <span className="actor-optional">
+                    optional
+                  </span>
                 </label>
 
                 <input
                   id="actor-profession"
-                  className="actor-form-input"
                   type="text"
                   placeholder="Lawyer, engineer..."
-                  value={
-                    form.profession ?? ""
-                  }
+                  value={form.profession}
                   onChange={(event) =>
                     update(
                       "profession",
@@ -614,95 +800,243 @@ export default function ActorModal({
                   }
                 />
               </div>
-            </div>
 
+              <div className="actor-form-group actor-form-group-full">
+                <label htmlFor="actor-background">
+                  Background
 
-            <div className="actor-form-group">
-              <label
-                className="actor-form-label"
-                htmlFor="actor-background"
-              >
-                Background
-              </label>
+                  <span className="actor-optional">
+                    optional
+                  </span>
+                </label>
 
-              <textarea
-                id="actor-background"
-                className="actor-form-textarea"
-                placeholder="Provide relevant background information..."
-                value={form.background ?? ""}
-                onChange={(event) =>
-                  update(
-                    "background",
-                    event.target.value,
-                  )
-                }
-              />
+                <textarea
+                  id="actor-background"
+                  rows={4}
+                  placeholder="Provide relevant background information..."
+                  value={form.background}
+                  onChange={(event) =>
+                    update(
+                      "background",
+                      event.target.value,
+                    )
+                  }
+                />
 
-              <div className="actor-form-help">
-                Optional facts that may become
-                relevant during legal reasoning.
+                <span className="actor-field-help">
+                  Optional facts that may
+                  become relevant during
+                  legal reasoning.
+                </span>
               </div>
             </div>
           </section>
 
+          <section className="actor-form-section">
+            <div className="actor-section-heading">
+              <span className="actor-section-number">
+                03
+              </span>
 
-          <section className="actor-form-section actor-profile-section">
-            <div className="actor-section-heading actor-profile-heading">
               <div>
-                <h3>Negotiation profile</h3>
+                <h3>
+                  Legal expenses insurance
+                </h3>
 
                 <p>
-                  Optional behavioural characteristics
-                  used when simulating decisions and
-                  negotiations.
+                  Specify whether legal
+                  expenses insurance is
+                  available for this actor.
                 </p>
-              </div>
-
-              <div
-                className="actor-profile-applicability"
-                role="group"
-                aria-label="Negotiation profile applicability"
-              >
-                <button
-                  className={`actor-applicability-button ${
-                    !profileApplicable
-                      ? "is-active"
-                      : ""
-                  }`}
-                  type="button"
-                  onClick={() =>
-                    handleProfileApplicabilityChange(
-                      false,
-                    )
-                  }
-                >
-                  Not applicable
-                </button>
-
-                <button
-                  className={`actor-applicability-button ${
-                    profileApplicable
-                      ? "is-active"
-                      : ""
-                  }`}
-                  type="button"
-                  onClick={() =>
-                    handleProfileApplicabilityChange(
-                      true,
-                    )
-                  }
-                >
-                  Applicable
-                </button>
               </div>
             </div>
 
+            <div className="actor-insurance-options">
+              <label
+                className={[
+                  "actor-choice-card",
+
+                  insuranceOption === "yes"
+                    ? "actor-choice-card-selected"
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <input
+                  type="radio"
+                  name="legal-expenses-insurance"
+                  value="yes"
+                  checked={
+                    insuranceOption ===
+                    "yes"
+                  }
+                  onChange={(event) =>
+                    update(
+                      "has_legal_expenses_insurance",
+
+                      parseInsuranceOption(
+                        event.target.value,
+                      ),
+                    )
+                  }
+                />
+
+                <span className="actor-choice-indicator" />
+
+                <span className="actor-choice-copy">
+                  <strong>
+                    Yes
+                  </strong>
+
+                  <small>
+                    This actor has legal
+                    expenses insurance.
+                  </small>
+                </span>
+              </label>
+
+              <label
+                className={[
+                  "actor-choice-card",
+
+                  insuranceOption === "no"
+                    ? "actor-choice-card-selected"
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <input
+                  type="radio"
+                  name="legal-expenses-insurance"
+                  value="no"
+                  checked={
+                    insuranceOption ===
+                    "no"
+                  }
+                  onChange={(event) =>
+                    update(
+                      "has_legal_expenses_insurance",
+
+                      parseInsuranceOption(
+                        event.target.value,
+                      ),
+                    )
+                  }
+                />
+
+                <span className="actor-choice-indicator" />
+
+                <span className="actor-choice-copy">
+                  <strong>
+                    No
+                  </strong>
+
+                  <small>
+                    This actor does not
+                    have legal expenses
+                    insurance.
+                  </small>
+                </span>
+              </label>
+
+              <label
+                className={[
+                  "actor-choice-card",
+
+                  insuranceOption ===
+                  "not_applicable"
+                    ? "actor-choice-card-selected"
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <input
+                  type="radio"
+                  name="legal-expenses-insurance"
+                  value="not_applicable"
+                  checked={
+                    insuranceOption ===
+                    "not_applicable"
+                  }
+                  onChange={(event) =>
+                    update(
+                      "has_legal_expenses_insurance",
+
+                      parseInsuranceOption(
+                        event.target.value,
+                      ),
+                    )
+                  }
+                />
+
+                <span className="actor-choice-indicator" />
+
+                <span className="actor-choice-copy">
+                  <strong>
+                    Not applicable
+                  </strong>
+
+                  <small>
+                    Suitable for courts,
+                    public authorities or
+                    similar institutions.
+                  </small>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <section className="actor-form-section">
+            <div className="actor-section-heading actor-section-heading-with-control">
+              <div className="actor-section-heading-main">
+                <span className="actor-section-number">
+                  04
+                </span>
+
+                <div>
+                  <h3>
+                    Negotiation profile
+                  </h3>
+
+                  <p>
+                    Optional behavioural
+                    characteristics used
+                    when simulating
+                    decisions and
+                    negotiations.
+                  </p>
+                </div>
+              </div>
+
+              <label className="actor-profile-toggle">
+                <input
+                  type="checkbox"
+                  checked={
+                    !profileApplicable
+                  }
+                  onChange={(event) =>
+                    handleProfileApplicabilityChange(
+                      !event.target.checked,
+                    )
+                  }
+                />
+
+                <span className="actor-profile-toggle-control" />
+
+                <span>
+                  Not applicable
+                </span>
+              </label>
+            </div>
 
             {!profileApplicable ? (
-              <div className="actor-profile-empty-state">
-                <div className="actor-profile-empty-icon">
+              <div className="actor-profile-disabled">
+                <span className="actor-profile-disabled-icon">
                   —
-                </div>
+                </span>
 
                 <div>
                   <strong>
@@ -710,20 +1044,23 @@ export default function ActorModal({
                   </strong>
 
                   <p>
-                    This is suitable for courts,
-                    authorities, administrative bodies,
-                    or other actors for whom personal
-                    negotiation behaviour is not
+                    This is suitable for
+                    courts, authorities,
+                    administrative bodies
+                    or other actors for whom
+                    personal negotiation
+                    behaviour is not
                     applicable.
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="actor-slider-list">
+              <div className="actor-negotiation-profile">
                 {NEGOTIATION_FIELDS.map(
                   (field) => {
                     const value =
-                      form.negotiation_profile?.[
+                      form
+                        .negotiation_profile?.[
                         field.key
                       ] ??
                       DEFAULT_NEGOTIATION_PROFILE[
@@ -732,25 +1069,25 @@ export default function ActorModal({
 
                     return (
                       <div
-                        className="actor-slider-card"
+                        className="actor-slider-field"
                         key={field.key}
                       >
-                        <div className="actor-slider-header">
+                        <div className="actor-slider-heading">
                           <div>
                             <label
-                              className="actor-slider-label"
                               htmlFor={`actor-${field.key}`}
                             >
                               {field.label}
                             </label>
 
-                            <p className="actor-slider-description">
-                              {field.description}
+                            <p>
+                              {
+                                field.description
+                              }
                             </p>
                           </div>
 
                           <output
-                            className="actor-slider-value"
                             htmlFor={`actor-${field.key}`}
                           >
                             {value}
@@ -759,12 +1096,16 @@ export default function ActorModal({
 
                         <input
                           id={`actor-${field.key}`}
-                          className="actor-range-input"
+                          className="actor-slider"
                           type="range"
                           min="0"
                           max="100"
                           step="1"
                           value={value}
+                          style={{
+                            "--actor-slider-value":
+                              `${value}%`,
+                          }}
                           onChange={(event) =>
                             updateNegotiationProfile(
                               field.key,
@@ -773,15 +1114,17 @@ export default function ActorModal({
                           }
                         />
 
-                        <div className="actor-slider-scale">
+                        <div className="actor-slider-labels">
                           <span>
-                            {field.lowLabel}
+                            {
+                              field.lowLabel
+                            }
                           </span>
 
-                          <span>50</span>
-
                           <span>
-                            {field.highLabel}
+                            {
+                              field.highLabel
+                            }
                           </span>
                         </div>
                       </div>
@@ -792,10 +1135,9 @@ export default function ActorModal({
             )}
           </section>
 
-
           {validationError && (
             <div
-              className="actor-validation-error"
+              className="actor-modal-error"
               role="alert"
             >
               {validationError}
@@ -803,8 +1145,7 @@ export default function ActorModal({
           )}
         </div>
 
-
-        <div className="actor-modal-actions">
+        <footer className="actor-modal-footer">
           <button
             className="actor-button actor-button-secondary"
             type="button"
@@ -818,9 +1159,11 @@ export default function ActorModal({
             type="button"
             onClick={handleSave}
           >
-            Save Actor
+            {actor
+              ? "Save Changes"
+              : "Add Actor"}
           </button>
-        </div>
+        </footer>
       </div>
     </div>
   );

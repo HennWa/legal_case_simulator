@@ -9,15 +9,49 @@ import {
 
 export default function Sidebar({ selectedNode }) {
   // --------------------------------------------------
-  // PAYMENT DATA
+  // FINANCIAL DATA
   // --------------------------------------------------
+  function formatCurrency(value) {
+      return new Intl.NumberFormat("de-DE", {
+        style: "currency",
+        currency: "EUR",
+      }).format(Number(value) || 0);
+  }
+
   const actorData = Object.entries(
-    selectedNode?.payment_info || {}
-  ).map(([actorName, paymentInfo]) => ({
-    name: actorName,
-    paid: Number(paymentInfo?.paid) || 0,
-    received: Number(paymentInfo?.received) || 0,
-  }));
+      selectedNode?.financial_info ??
+        selectedNode?.payment_info ??
+        {}
+    ).map(([actorName, financialInfo]) => {
+      const expenses =
+        financialInfo?.expenses ?? [];
+
+      const income =
+        financialInfo?.income ?? [];
+
+      const totalExpenses =
+        financialInfo?.total_expenses ??
+        expenses.reduce(
+          (sum, expense) =>
+            sum + (Number(expense?.amount) || 0),
+          0
+        );
+
+      const totalIncome =
+        financialInfo?.total_income ??
+        income.reduce(
+          (sum, incomeItem) =>
+            sum +
+            (Number(incomeItem?.amount) || 0),
+          0
+        );
+
+      return {
+        name: actorName,
+        expenses: Number(totalExpenses) || 0,
+        income: Number(totalIncome) || 0,
+      };
+    });
 
   // --------------------------------------------------
   // STATE TIMELINE DATA
@@ -146,7 +180,7 @@ export default function Sidebar({ selectedNode }) {
               opacity: 0.5,
             }}
           >
-            No actor payment data for this path
+            No actor financial data for this path
           </div>
         ) : (
           <div style={{ height: 220 }}>
@@ -174,8 +208,10 @@ export default function Sidebar({ selectedNode }) {
 
                 <Tooltip
                   formatter={(value, name) => [
-                    value,
-                    name === "paid" ? "Paid" : "Received",
+                    formatCurrency(value),
+                    name === "expenses"
+                      ? "Expenses"
+                      : "Income",
                   ]}
                   contentStyle={{
                     backgroundColor: "#1b1216",
@@ -193,15 +229,15 @@ export default function Sidebar({ selectedNode }) {
                 />
 
                 <Bar
-                  dataKey="paid"
-                  name="Paid"
+                  dataKey="expenses"
+                  name="Expenses"
                   fill="#c08497"
                   radius={[4, 4, 0, 0]}
                 />
 
                 <Bar
-                  dataKey="received"
-                  name="Received"
+                  dataKey="income"
+                  name="Income"
                   fill="#8f6b75"
                   radius={[4, 4, 0, 0]}
                 />
