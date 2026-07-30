@@ -39,7 +39,7 @@ class PromptBuilder:
             You are a legal process simulation engine.
 
             ## TASK
-            Your task is to simulate the next most step in a legal procedure based on a given legal action. 
+            Your task is to simulate the next step in a legal procedure based on a given legal action. 
             
             The legal procedure is represented 
             as a graph, where nodes represent legal states and edges represent legal events or actions that transition 
@@ -388,8 +388,33 @@ class PromptBuilder:
             2. A causal path of past legal events
             3. A narrative summary of the case progression
             4. A selection of laws relevant for the legal action and state
-            5. A selection of law cases relevant for the legal action and state 
-
+            5. A selection of law cases relevant for the legal action and state
+            
+            ## DEFINITIONS
+            Legal Action:
+            A legal action is considered to be an actions and communication between legal parties which 
+            are called actors here. Actions within one legal party for example the communication between a 
+            client and his lawyer is not to be considered a legal action.
+            
+            A legal action can include multiple parties as for example a court date.
+            
+            Legal State:
+            A legal state is the status between actions. Nothing is changing at that state. all relevant legal changes 
+            are conducted in legal actions. A legal state summarize the outcome of the previous legal action.
+            
+            Here are examples of sequences of legal actions and legal states: 
+            Example 1.
+            Action 1: Actor requests a hearing.
+            State 1: A court hearing has been requested.
+            
+            Action 2: Court summons parties to a hearing.
+            State 2: Actors are informed about hearing.
+            
+            Action 3: A hearing takes place, resulting in a suspicion against actor ABC.  
+            (The outcome is part of the action and must be clear in the definition of the action.
+            An action can never have to following states.)
+            State 3: The actor ABC is suspected by the court.
+            
             
             ## INSTRUCTIONS STEP BY STEP:
             step1: Analyze the provided causal path of past legal events, 
