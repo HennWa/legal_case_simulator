@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import LandingPage from "./LandingPage";
+import Impressum from "./Impressum";
 
 
 const LANDING_ONLY =
@@ -36,6 +37,11 @@ export default function App() {
           <Route
             path="/"
             element={<LandingPage />}
+          />
+
+          <Route
+            path="/impressum"
+            element={<Impressum />}
           />
 
           <Route

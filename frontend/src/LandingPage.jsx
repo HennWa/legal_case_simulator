@@ -290,9 +290,8 @@ export default function LandingPage() {
           <a href="#platform">Platform</a>
           <a href="#features">Features</a>
           <a href="#workflow">How it works</a>
-          <ApplicationLink>
-            Application
-          </ApplicationLink>
+          <Link to="/app">Application</Link>
+          <Link to="/impressum">Impressum</Link>
         </div>
 
         <p className="landing-footer-note">
