@@ -292,6 +292,7 @@ export default function LandingPage() {
           <a href="#workflow">How it works</a>
           <Link to="/app">Application</Link>
           <Link to="/impressum">Impressum</Link>
+          <Link to="/privacy">Privacy Policy</Link>
         </div>
 
         <p className="landing-footer-note">

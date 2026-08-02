@@ -9,6 +9,7 @@ import {
 
 import LandingPage from "./LandingPage";
 import Impressum from "./Impressum";
+import PrivacyPolicy from "./PrivacyPolicy";
 
 
 const LANDING_ONLY =
@@ -42,6 +43,11 @@ export default function App() {
           <Route
             path="/impressum"
             element={<Impressum />}
+          />
+
+          <Route
+              path="/privacy"
+              element={<PrivacyPolicy />}
           />
 
           <Route
