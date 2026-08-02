@@ -5,6 +5,9 @@ import caseGraphImage from "./assets/landing/case_graph.png";
 
 import "./LandingPage.css";
 
+const LANDING_ONLY =
+  import.meta.env.VITE_LANDING_ONLY === "true";
+
 const features = [
   {
     icon: <GraphIcon />,
@@ -76,10 +79,10 @@ export default function LandingPage() {
             <a href="#workflow">How it works</a>
           </nav>
 
-          <Link to="/app" className="header-app-link">
-            Open Application
-            <ArrowIcon />
-          </Link>
+          <ApplicationLink className="header-app-link">
+              Open Application
+              <ArrowIcon />
+          </ApplicationLink>
         </header>
 
         <div className="hero-layout">
@@ -102,10 +105,10 @@ export default function LandingPage() {
             </p>
 
             <div className="hero-actions">
-              <Link to="/app" className="primary-landing-button">
-                Start a Case
-                <ArrowIcon />
-              </Link>
+                <ApplicationLink className="primary-landing-button">
+                  Start a Case
+                  <ArrowIcon />
+                </ApplicationLink>
 
               <a href="#platform" className="secondary-landing-button">
                 See how it works
@@ -265,10 +268,10 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <Link to="/app" className="cta-large-button">
-            Open Casendra
-            <ArrowIcon />
-          </Link>
+          <ApplicationLink className="cta-large-button">
+              Open Casendra
+              <ArrowIcon />
+          </ApplicationLink>
         </div>
       </section>
 
@@ -287,7 +290,9 @@ export default function LandingPage() {
           <a href="#platform">Platform</a>
           <a href="#features">Features</a>
           <a href="#workflow">How it works</a>
-          <Link to="/app">Application</Link>
+          <ApplicationLink>
+            Application
+          </ApplicationLink>
         </div>
 
         <p className="landing-footer-note">
@@ -295,6 +300,35 @@ export default function LandingPage() {
         </p>
       </footer>
     </main>
+  );
+}
+
+function ApplicationLink({
+  className,
+  children,
+}) {
+  if (LANDING_ONLY) {
+    return (
+      <a
+        href="/app"
+        className={className}
+        aria-disabled="true"
+        onClick={(event) => {
+          event.preventDefault();
+        }}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      to="/app"
+      className={className}
+    >
+      {children}
+    </Link>
   );
 }
 
