@@ -317,7 +317,7 @@ function ApplicationLink({
           event.preventDefault();
         }}
       >
-        {children}
+        Coming Soon
       </a>
     );
   }
