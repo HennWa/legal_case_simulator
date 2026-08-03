@@ -670,9 +670,17 @@ img {
 
   display: block;
 
-  width: 138%;
+  /*
+   * Fixed geometry prevents different flex-shrink and percentage-resolution
+   * results in Firefox and Chromium browsers.
+   */
+  width: 700px;
+  min-width: 700px;
   max-width: none;
   height: auto;
+
+  flex: 0 0 auto;
+  object-fit: contain;
 
   opacity: 0.96;
 
@@ -683,6 +691,8 @@ img {
     translateX(8%)
     translateY(-1%)
     rotate(-0.7deg);
+  transform-box: border-box;
+  transform-origin: center center;
 }
 
 .hero-bottom-strip {
@@ -1661,7 +1671,8 @@ img {
   }
 
   .graph-background-image {
-    width: 135%;
+    width: 1040px;
+    min-width: 1040px;
   }
 
   .platform-layout {
@@ -1736,7 +1747,8 @@ img {
   }
 
   .graph-background-image {
-    width: 128%;
+    width: 1000px;
+    min-width: 1000px;
 
     transform:
       translateX(4%)
@@ -1968,7 +1980,8 @@ img {
   }
 
   .graph-background-image {
-    width: 126%;
+    width: 720px;
+    min-width: 720px;
 
     opacity: 0.94;
 
@@ -2108,6 +2121,12 @@ img {
     width: 570px;
     height: 420px;
   }
+
+  .graph-background-image {
+    width: 640px;
+    min-width: 640px;
+  }
+
 }
 
 /* =========================================================
