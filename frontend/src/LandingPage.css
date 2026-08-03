@@ -1980,8 +1980,8 @@ img {
   }
 
   .graph-background-image {
-    width: 720px;
-    min-width: 720px;
+    width: 400px;
+    min-width: 400px;
 
     opacity: 0.94;
 
@@ -2123,8 +2123,8 @@ img {
   }
 
   .graph-background-image {
-    width: 640px;
-    min-width: 640px;
+    width: 300px;
+    min-width: 300px;
   }
 
 }
