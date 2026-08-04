@@ -59,7 +59,7 @@ export default function Impressum() {
               href="mailto:saif.oppspring@gmail.com"
               style={styles.emailLink}
             >
-              saif.oppspring@gmail.com
+              casendra.legal@gmail.com
             </a>
           </p>
         </div>
