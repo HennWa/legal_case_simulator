@@ -1,11 +1,26 @@
+# backend/database/mongo.py
+
+from __future__ import annotations
+
 from pymongo import MongoClient
-import os
-from dotenv import load_dotenv
+from pymongo.database import Database
 
-load_dotenv()
+from backend.config import settings
 
-MONGO_URI = os.getenv("MONGODB_URI")
 
-client = MongoClient(MONGO_URI)
+client: MongoClient = MongoClient(
+    settings.mongodb_uri,
+    serverSelectionTimeoutMS=10_000,
+)
 
-db = client["legal_case_simulator"]
+db: Database = client[settings.mongodb_database]
+
+
+def verify_database_connection() -> None:
+    """
+    Fail early if MongoDB is unreachable.
+
+    This is called during FastAPI startup so that configuration or
+    connectivity errors are reported immediately.
+    """
+    client.admin.command("ping")
