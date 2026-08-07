@@ -5,7 +5,7 @@ from pymongo.collection import Collection
 from langchain_core.documents import Document
 from openai import OpenAI
 
-from backend.database.mongo import db
+from backend.database.mongo import vector_db
 
 
 class VectorRepository:
@@ -18,7 +18,7 @@ class VectorRepository:
         embedding_model: str = "text-embedding-3-small",
         index_name: str = "law_vector_index",
     ):
-        self.collection = db["law_embeddings"]
+        self.collection = vector_db["law_embeddings"]
         self.index_name = index_name
 
         self.client = OpenAI()

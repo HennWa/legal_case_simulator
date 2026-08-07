@@ -27,6 +27,8 @@ class RAGEngine:
             k=self.k_docs,
         )
 
+        print(f'In RAG research {len(docs)} documents retrieved')
+
         return "\n\n" + ("\n" + "=" * 80 + "\n\n").join(
             doc.page_content
             for doc in docs

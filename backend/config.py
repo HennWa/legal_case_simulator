@@ -55,6 +55,7 @@ class Settings:
 
     mongodb_uri: str
     mongodb_database: str
+    mongodb_vector_database: str
 
     dev_user_id: str
     dev_user_email: str
@@ -96,6 +97,16 @@ class Settings:
                 "MONGODB_DATABASE must not be empty."
             )
 
+        mongodb_vector_database = os.getenv(
+            "MONGODB_VECTOR_DATABASE",
+            "legal_case_simulator",
+        ).strip()
+
+        if not mongodb_vector_database:
+            raise RuntimeError(
+                "MONGODB_VECTOR_DATABASE must not be empty."
+            )
+
         dev_user_id = os.getenv(
             "DEV_USER_ID",
             "usr_dev_henning",
@@ -129,6 +140,7 @@ class Settings:
             auth_mode=auth_mode,
             mongodb_uri=mongodb_uri,
             mongodb_database=mongodb_database,
+            mongodb_vector_database=mongodb_vector_database,
             dev_user_id=dev_user_id,
             dev_user_email=dev_user_email,
             dev_user_display_name=dev_user_display_name,

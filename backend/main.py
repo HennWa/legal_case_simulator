@@ -53,6 +53,8 @@ from backend.config import settings
 from backend.database.init_db import create_indexes
 from backend.database.mongo import (
     verify_database_connection,
+    db,
+    vector_db,
 )
 
 
@@ -66,11 +68,15 @@ async def lifespan(app: FastAPI):
     verify_database_connection()
     create_indexes()
 
+    print(f"Application DB: {db.name}")
+    print(f"Vector DB: {vector_db.name}")
+
     print(
         "Casendra backend started "
         f"[environment={settings.app_environment.value}, "
         f"auth_mode={settings.auth_mode.value}, "
-        f"database={settings.mongodb_database}]"
+        f"application_database={db.name}, "
+        f"vector_database={vector_db.name}]"
     )
 
     yield
