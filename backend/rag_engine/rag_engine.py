@@ -13,7 +13,7 @@ load_dotenv(override=True)
 
 class RAGEngine:
 
-    def __init__(self, embedding_model="text-embedding-3-small", k_docs=7):
+    def __init__(self, embedding_model="text-embedding-3-small", k_docs=20):
         self.repo = VectorRepository(
             embedding_model=embedding_model
         )
