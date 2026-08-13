@@ -1,5 +1,5 @@
 import json
-from backend.object_graph_runtime.graph_classes import LegalBranchNode, LegalBranches, ArtifactCollection
+from backend.object_graph_runtime.graph_classes import LegalNode, LegalBranchNode, LegalBranches, ArtifactCollection
 
 from backend.object_graph_runtime.graph_classes import CaseGraph
 
@@ -18,6 +18,11 @@ schema_json_single_node = json.dumps(
 schema_json_artifacts = json.dumps(
     ArtifactCollection.model_json_schema(),
     indent=2
+)
+
+schema_json_node = json.dumps(
+    LegalNode.model_json_schema(),
+    indent=2,
 )
 
 
@@ -185,5 +190,102 @@ def legal_check_node_user_prompt(graph: CaseGraph, node_id: str,
 
     TASK:
     Check the last legal state and action for conformity with law and correct if necessary.
+    """
+
+#------------------------------- Legal Check initial prompt ---------------------------------
+def legal_check_initial_node_prompt(
+    graph: CaseGraph,
+    node_id: str,
+    rag_results_law: str,
+    rag_results_cases: str,
+) -> dict[str, str]:
+
+    system_prompt = legal_check_initial_node_system_prompt()
+
+    user_prompt = legal_check_initial_node_user_prompt(
+        graph=graph,
+        node_id=node_id,
+        rag_results_law=rag_results_law,
+        rag_results_cases=rag_results_cases,
+    )
+
+    return {
+        "system_prompt": system_prompt,
+        "user_prompt": user_prompt,
+    }
+
+def legal_check_initial_node_system_prompt() -> str:
+    return f"""
+    You are a legal expert as part of a legal process
+    simulation engine.
+
+    ## TASK
+
+    You are given the initial legal state of a legal case.
+
+    There is no preceding legal action because this is the
+    initial state from which the simulation begins.
+
+    Check the initial legal state for legal consistency.
+
+    Add all relevant legal references that apply to the
+    state.
+
+    Correct legally inconsistent information if necessary,
+    but preserve the factual information supplied by the
+    user unless it is clearly represented incorrectly.
+
+    ## OUTPUT FORMAT
+
+    - Only output valid JSON
+    - Never output explanations outside JSON
+    - Your output must strictly follow this schema:
+
+    {schema_json_node}
+
+    ## IMPORTANT
+
+    - DO NOT CHANGE THE NODE ID
+    - There is no preceding edge
+    - Do not invent a legal action before the initial state
+    - Do not change graph linkage information
+    """
+
+
+def legal_check_initial_node_user_prompt(
+    graph: CaseGraph,
+    node_id: str,
+    rag_results_law: str,
+    rag_results_cases: str,
+) -> str:
+
+    node = graph.get_node(node_id)
+
+    path = graph.build_path(node_id)
+    narrative = graph.build_narrative(path)
+
+    return f"""
+    # INITIAL LEGAL STATE TO BE CHECKED
+
+    {json.dumps(node.model_dump(), indent=2)}
+
+    ---
+
+    # CASE CONTEXT
+
+    {narrative}
+
+    ---
+
+    # SELECTION OF RELEVANT LAWS
+
+    {rag_results_law}
+
+    ---
+
+    TASK:
+
+    Check the initial legal state for conformity with the
+    applicable law and add relevant legal references.
     """
 

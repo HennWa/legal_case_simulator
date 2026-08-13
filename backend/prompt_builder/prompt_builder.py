@@ -4,9 +4,10 @@ from backend.object_graph_runtime.graph_classes import LegalBranchNode, LegalBra
 from backend.object_graph_runtime.graph_classes import CaseGraph
 
 from backend.prompt_builder.expand_node_prompt import create_expand_node_by_action_prompt, create_expand_node_prompt
-from backend.prompt_builder.legal_check_prompt import legal_check_node_prompt
+from backend.prompt_builder.legal_check_prompt import legal_check_node_prompt, legal_check_initial_node_prompt
 from backend.prompt_builder.create_artifacts_prompt import create_artifacts_prompt
 from backend.prompt_builder.add_possible_actions_prompt import create_add_possible_actions_prompt
+
 
 
 
@@ -36,6 +37,15 @@ class PromptBuilder:
 
         return legal_check_node_prompt(graph = graph, node_id = node_id,
                                      rag_results_law = rag_results_law, rag_results_cases = rag_results_cases)
+
+    # --------------------------------- legal check initial prompts ---------------------------------
+    @staticmethod
+    def legal_check_initial_node_prompt(graph: CaseGraph,node_id: str, rag_results_law: str, rag_results_cases: str):
+
+        return legal_check_initial_node_prompt(graph=graph, node_id=node_id,
+            rag_results_law=rag_results_law,
+            rag_results_cases=rag_results_cases,
+        )
 
     # --------------------------------- create artifacts prompts ---------------------------------
 

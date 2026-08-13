@@ -1,12 +1,16 @@
 from abc import ABC, abstractmethod
 from openai import OpenAI
-from backend.object_graph_runtime.graph_classes import LegalBranchNode, ArtifactCollection, PossibleActions
+from backend.object_graph_runtime.graph_classes import LegalNode, LegalBranchNode, ArtifactCollection, PossibleActions
 
 
 class BaseLLMProvider(ABC):
 
     @abstractmethod
     def generate(self, prompt: dict[str, str]) -> LegalBranchNode:
+        pass
+
+    @abstractmethod
+    def generate_node(self, prompt: dict[str, str]) -> LegalNode:
         pass
 
     @abstractmethod
@@ -36,6 +40,26 @@ class MockLLMProvider(BaseLLMProvider):
         )
 
         result: LegalBranchNode = response.output_parsed
+
+        return result
+
+    def generate_node(self, prompt_messages: dict[str, str]) -> LegalNode:
+        response = self.openai.responses.parse(
+            model=self.model,
+            input=[
+                {
+                    "role": "system",
+                    "content": prompt_messages["system_prompt"],
+                },
+                {
+                    "role": "user",
+                    "content": prompt_messages["user_prompt"],
+                },
+            ],
+            text_format=LegalNode,
+        )
+
+        result: LegalNode = response.output_parsed
 
         return result
 

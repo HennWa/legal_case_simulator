@@ -23,27 +23,100 @@ class LegalServices:
         self.llm = llm
         self.prompt_builder = PromptBuilder()
 
-    def legal_check(self, node_id: str) -> (LegalBranchNode, str):
+    def legal_check(self, node_id: str):
 
-        # Legal law research RAG
-        print(f'RAG research for: {node_id}')
-        narrative = self.graph.build_narrative(self.graph.build_path(node_id))
+        node = self.graph.get_node(node_id)
+
+        print(f"RAG research for: {node_id}")
+
+        path = self.graph.build_path(node_id)
+        narrative = self.graph.build_narrative(path)
+
         rag_engine = RAGEngine()
-        #rag_engine = RAGEngine(db_dir)
         rag_results_law = rag_engine.get_docs(narrative)
-        print(f'RAG research done for: {node_id}')
 
-        # legal case research
+        print(f"RAG research done for: {node_id}")
+
         rag_results_cases = ""
 
-        # legal compliance check
-        prompt_messages = self.prompt_builder.legal_check_node_prompt(self.graph, node_id,
-                                                                      rag_results_law,
-                                                                      rag_results_cases)
-        branch_node = self.llm.generate(prompt_messages)
+        # -------------------------------------------------
+        # Root node: check state only
+        # -------------------------------------------------
 
-        # update extended or corrected branch
-        self.graph.update_branch_obj(branch_node)
-        self.graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
+        if len(node.incoming) == 0:
 
-        return branch_node, rag_results_law
+            prompt_messages = (
+                self.prompt_builder
+                .legal_check_initial_node_prompt(
+                    self.graph,
+                    node_id,
+                    rag_results_law,
+                    rag_results_cases,
+                )
+            )
+
+            checked_node = self.llm.generate_node(
+                prompt_messages
+            )
+
+            # Never trust LLM-generated topology.
+            checked_node.id = node_id
+
+            self.graph.update_node_obj(
+                checked_node
+            )
+
+            result = checked_node
+
+        # -------------------------------------------------
+        # Normal node: check incoming action + state
+        # -------------------------------------------------
+
+        elif len(node.incoming) == 1:
+
+            prompt_messages = (
+                self.prompt_builder
+                .legal_check_node_prompt(
+                    self.graph,
+                    node_id,
+                    rag_results_law,
+                    rag_results_cases,
+                )
+            )
+
+            branch_node = self.llm.generate(
+                prompt_messages
+            )
+
+            # Explicitly preserve IDs.
+            original_edge = (
+                self.graph.get_incoming_edges(
+                    node_id
+                )[0]
+            )
+
+            branch_node.node.id = node_id
+            branch_node.edge.id = original_edge.id
+
+            self.graph.update_branch_obj(
+                branch_node
+            )
+
+            result = branch_node
+
+        else:
+            raise ValueError(
+                f"Node '{node_id}' has "
+                f"{len(node.incoming)} incoming edges. "
+                "Legal check currently requires a unique "
+                "causal predecessor."
+            )
+
+        self.graph.to_json(
+            os.path.join(
+                get_frontend_dir(),
+                "src/data/graph.json",
+            )
+        )
+
+        return result, rag_results_law

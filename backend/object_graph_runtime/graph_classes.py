@@ -435,6 +435,26 @@ class CaseGraph:
         node = self.get_node(node_id)
         return node.model_dump()
 
+    def update_node_obj(self, node: LegalNode) -> None:
+
+        node_id = node.id
+
+        if node_id not in self.nodes:
+            raise KeyError(
+                f"Node '{node_id}' does not exist"
+            )
+
+        # Preserve graph topology.
+        incoming = self.nodes[node_id].incoming
+        outgoing = self.nodes[node_id].outgoing
+
+        updated_node = node.model_copy(deep=True)
+
+        updated_node.incoming = incoming
+        updated_node.outgoing = outgoing
+
+        self.nodes[node_id] = updated_node
+
     # -------------------------
     # Edge
     # -------------------------
