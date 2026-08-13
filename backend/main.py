@@ -46,6 +46,9 @@ from backend.api.sidebar_stats import (
 from backend.api.upload_document import (
     router as upload_document_router,
 )
+from backend.api.add_possible_actions import (
+    router as add_possible_actions_router,
+)
 from backend.auth.router import (
     router as auth_router,
 )
@@ -199,7 +202,13 @@ app.include_router(
 )
 
 app.include_router(
+    add_possible_actions_router,
+    prefix="/api",
+)
+
+app.include_router(
     upload_document_router,
     prefix="/api",
     tags=["documents"],
 )
+

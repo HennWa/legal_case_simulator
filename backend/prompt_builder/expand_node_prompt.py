@@ -15,12 +15,6 @@ schema_json_single_node = json.dumps(
     indent=2
 )
 
-schema_json_artifacts = json.dumps(
-    ArtifactCollection.model_json_schema(),
-    indent=2
-)
-
-
 
 
 # --------------------------------- node by action expansion prompts ---------------------------------
@@ -105,6 +99,10 @@ def create_expand_node_by_action_system_prompt() -> str:
             3. The actor status is updated accordingly, including any payments made or received.
             4. The summary of the new node clearly describes the new legal state and how it relates to the 
                previous state and the overall case progression.
+               
+        step4: Describe the most likely potential next actions (3-5) that could follow this action in a list. 
+           Use your legal knowledge to find the most realistic following options for actions.
+           Use not more than four word s for each action.
 
         ## OUTPUT FORMAT:
         - Only output valid JSON
@@ -258,7 +256,7 @@ def create_expand_node_system_prompt() -> str:
             state.
             - The content must be written in a formal and legally plausible way, as if it were written by a lawyer. 
               The document should have the quality so that they can be directly used in a real legal case. 
-            - The document maust be consistent with the legal action and state.
+            - The document must be consistent with the legal action and state.
         
         step5: Ensure that the next state resulting from this action is fully structured and 
               consistent with the legal context of the case. This includes:

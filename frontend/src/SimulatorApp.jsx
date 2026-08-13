@@ -42,6 +42,7 @@ import { addNodeByAction } from "./api/add_node_by_action";
 import { deleteNode } from "./api/delete_node";
 import { legalCheck } from "./api/legal_check";
 import { createArtifacts } from "./api/create_artifacts";
+import { addPossibleActions } from "./api/add_possible_actions";
 
 function SimulatorApp() {
   const [graphData, setGraphData] =
@@ -123,22 +124,67 @@ function SimulatorApp() {
     setProcessingNodeId,
   ] = useState(null);
 
-  const createCase_ = async (payload) => {
-      const creationResult =
-        await createCase(payload);
+    const createCase_ = async (payload) => {
+      try {
+        setIsProcessing(true);
 
-      const newCase =
-        creationResult.case;
+        // 1. Create case + initial node
+        const creationResult =
+          await createCase(payload);
 
-      setCases((previousCases) => [
-        ...previousCases,
-        newCase,
-      ]);
+        const newCase =
+          creationResult.case;
 
-      setSelectedCaseId(newCase.id);
+        const initialNodeId =
+          creationResult.initial_node_id;
 
-      return creationResult;
-  };
+        setCases((previousCases) => [
+          ...previousCases,
+          newCase,
+        ]);
+
+        setSelectedCaseId(newCase.id);
+
+        // 2. Add possible actions
+        await addPossibleActions(
+          newCase.id,
+          initialNodeId
+        );
+
+        setIsProcessing(false);
+
+        // 3. Run legal check on initial node
+        setIsLegalCheck(true);
+
+        await legalCheck(
+          newCase.id,
+          initialNodeId
+        );
+
+        setIsLegalCheck(false);
+
+        // 4. Load graph again so the frontend
+        // gets the legally enriched node
+        const updatedGraph =
+          await fetchGraph(newCase.id);
+
+        setGraphData(updatedGraph);
+
+        return creationResult;
+
+      } catch (err) {
+        console.error(
+          "Case creation workflow failed:",
+          err
+        );
+
+        throw err;
+
+      } finally {
+        setIsProcessing(false);
+        setIsLegalCheck(false);
+      }
+    };
 
   const loadCases = async () => {
     try {

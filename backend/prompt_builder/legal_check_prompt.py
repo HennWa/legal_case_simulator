@@ -116,12 +116,8 @@ def legal_check_node_system_prompt() -> str:
                The value must be in the range 0-1.
             8. Describe if a lawyer needs to involved for this action to be carried out.
             9. Estimate all relevant expenses and income for each actor.
-            
-        step5: Describe the most likely potential next actions (3-5) that could follow this action in a list. 
-               Use your legal knowledge to find the most realistic following options for actions.
-               Use not more than four word s for each action.
-        
-        step6: Ensure that the resulting output is fully structured and 
+                    
+        step5: Ensure that the resulting output is fully structured and 
               consistent with the legal context of the case. This includes:
               
             1. Defining the legal state that results from the action, including all relevant attributes and their values.

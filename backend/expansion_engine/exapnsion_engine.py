@@ -45,6 +45,16 @@ class ExpansionEngine:
     def expand_node_with_multiple(self, node_id: str) -> list[LegalNode]:
         pass
 
+    def add_possible_actions(self, node_id: str) -> LegalBranchNode:
+
+        prompt_messages = self.prompt_builder.create_add_possible_actions_prompt(self.graph, node_id)
+        branch_node = self.llm.generate(prompt_messages)
+
+        # update branch with possible actions
+        self.graph.update_branch_obj(branch_node)
+        self.graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
+
+        return branch_node
 
     def create_artifacts(self, edge_id: str) -> ArtifactCollection:
 
