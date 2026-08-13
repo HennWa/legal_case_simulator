@@ -18,13 +18,15 @@ class AddPossibleActionsRequest(BaseModel):
 
 @router.post("/add_possible_actions")
 def add_possible_actions(payload: AddPossibleActionsRequest):
+
     repo = GraphRepository()
     graph = repo.load_graph(payload.case_id)
 
     llm = MockLLMProvider(key=openai_api_key)
     engine = ExpansionEngine(graph, llm)
 
-    branch_node = engine.add_possible_actions(payload.node_id)
+    node = engine.add_possible_actions(payload.node_id)
+
     repo.save_graph(graph)
 
-    return branch_node.model_dump()
+    return node.model_dump()

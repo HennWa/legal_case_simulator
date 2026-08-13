@@ -1,14 +1,12 @@
 import json
-from backend.object_graph_runtime.graph_classes import LegalBranchNode, LegalBranches, ArtifactCollection
+from backend.object_graph_runtime.graph_classes import PossibleActions
 
 from backend.object_graph_runtime.graph_classes import CaseGraph
 
 
-
-
-schema_json_single_node = json.dumps(
-    LegalBranchNode.model_json_schema(),
-    indent=2
+schema_json_possible_actions = json.dumps(
+    PossibleActions.model_json_schema(),
+    indent=2,
 )
 
 
@@ -59,7 +57,7 @@ def create_possible_actions_system_prompt() -> str:
         - Never output explanations outside JSON
         - Your output must be strictly in this format:
 
-        {schema_json_single_node}
+        {schema_json_possible_actions}
 
         ## GENERAL GUIDELINES:
         - Consider legal procedural logic and realistic human behavior

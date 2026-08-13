@@ -350,6 +350,13 @@ class PathStep(BaseModel):
     summary: str = Field(description='Narrative summary of the legal state at this step')
 
 
+class PossibleActions(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    actions: List[str] = Field(default_factory=list,
+        description="Possible next legal actions from the current state")
+
+
 # -------------------------
 # Graph Engine and Helper Classes
 # -------------------------

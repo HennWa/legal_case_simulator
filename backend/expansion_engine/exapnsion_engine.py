@@ -56,6 +56,35 @@ class ExpansionEngine:
 
         return branch_node
 
+    def add_possible_actions(self, node_id: str) -> LegalNode:
+
+        # Make sure node exists
+        node = self.graph.get_node(node_id)
+
+        # Ask LLM only for possible actions
+        prompt_messages = (
+            self.prompt_builder.create_add_possible_actions_prompt(
+                self.graph,
+                node_id,
+            )
+        )
+
+        possible_actions = self.llm.generate_possible_actions(
+            prompt_messages
+        )
+
+        # Update only the field we actually want to update
+        node.state.potential_next_states = possible_actions.actions
+
+        self.graph.to_json(
+            os.path.join(
+                get_frontend_dir(),
+                "src/data/graph.json",
+            )
+        )
+
+        return node
+
     def create_artifacts(self, edge_id: str) -> ArtifactCollection:
 
         prompt_messages = self.prompt_builder.create_artifacts_prompt(self.graph, edge_id)

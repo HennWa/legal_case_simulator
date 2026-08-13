@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from openai import OpenAI
-from backend.object_graph_runtime.graph_classes import LegalBranchNode, ArtifactCollection
+from backend.object_graph_runtime.graph_classes import LegalBranchNode, ArtifactCollection, PossibleActions
 
 
 class BaseLLMProvider(ABC):
@@ -11,6 +11,10 @@ class BaseLLMProvider(ABC):
 
     @abstractmethod
     def generate_artifacts(self, prompt: dict[str, str]) -> ArtifactCollection:
+        pass
+
+    @abstractmethod
+    def generate_possible_actions(self, prompt: dict[str, str]) -> PossibleActions:
         pass
 
 class MockLLMProvider(BaseLLMProvider):
@@ -48,5 +52,26 @@ class MockLLMProvider(BaseLLMProvider):
         )
 
         result: ArtifactCollection = response.output_parsed
+
+        return result
+
+    def generate_possible_actions(self, prompt_messages: dict[str, str]) -> PossibleActions:
+
+        response = self.openai.responses.parse(
+            model=self.model,
+            input=[
+                {
+                    "role": "system",
+                    "content": prompt_messages["system_prompt"],
+                },
+                {
+                    "role": "user",
+                    "content": prompt_messages["user_prompt"],
+                },
+            ],
+            text_format=PossibleActions,
+        )
+
+        result: PossibleActions = response.output_parsed
 
         return result
