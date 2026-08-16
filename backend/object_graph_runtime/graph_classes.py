@@ -234,6 +234,46 @@ class ActorStatus(BaseModel):
         ))
 
 
+class CaseFact(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(
+        description='Stable unique identifier of the fact within the legal case'
+    )
+
+    description: str = Field(
+        description='Atomic factual proposition relevant to the current legal state'
+    )
+
+
+class FactReference(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    fact_id: str = Field(
+        description='ID of the CaseFact to which the legal application refers'
+    )
+
+    relevance: Optional[str] = Field(
+        default=None,
+        description='Explanation of why the referenced fact is relevant for the application '
+                    'of the legal reference'
+    )
+
+
+class LegalApplication(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    applies_to: List[FactReference] = Field(
+        default_factory=list,
+        description='Facts of the current legal state to which this legal reference is applied'
+    )
+
+    application: str = Field(
+        description='Explanation of how the legal reference applies to the referenced facts '
+                    'in the specific case'
+    )
+
+
 class LegalReference(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -241,6 +281,11 @@ class LegalReference(BaseModel):
     reference: str = Field(description='Legal reference e.g.: § 433 BGB – Vertragstypische Pflichten beim Kaufvertrag')
     extract: str = Field(description='Long extract of the reference from the source')
     summary: str = Field(description='Summary of the reference')
+
+    applications: List[LegalApplication] = Field(
+        default_factory=list,
+        description='Applications of this legal reference to concrete facts of the current legal case'
+    )
 
 
 class Deadline(BaseModel):
@@ -287,10 +332,19 @@ class LegalState(BaseModel):
     start_time: str = Field(default_factory=utc_now, description='Start time of this state in ISO 8601 format. '
                                                                  'Begins with end of previous action.')
     end_time: str = Field(default_factory=utc_now, description='End time of this state in ISO 8601 format. '
-                                                                 'End time is equal to start of following action.')
-    description: str = Field(description='Detailed description of the state referring to the previous steps and describing '
-                                    'the state of all actors.')
-    legal_issue: str = Field(description='The legal issue that follows from the state, e.g. payment overdue according to law')
+                                                               'End time is equal to start of following action.')
+    description: str = Field(
+        description='Detailed description of the state referring to the previous steps and describing '
+                    'the state of all actors.')
+
+    facts: List[CaseFact] = Field(
+        default_factory=list,
+        description='Atomic factual propositions that define the current legal state and can be '
+                    'referenced by legal applications'
+    )
+
+    legal_issue: str = Field(
+        description='The legal issue that follows from the state, e.g. payment overdue according to law')
     final_state: bool = Field(description='Bool to indicate if this step is the last step in the legal process')
     actors_status: List[ActorStatus] = Field(default_factory=list, description='Status of each actor that '
                                                                                'is relevant for the legal state.')
@@ -298,8 +352,8 @@ class LegalState(BaseModel):
                                                                                      'are relevant for the case and '
                                                                                      'current state of the process')
     artifact_ids: List[str] = Field(default_factory=list, description='List of artifacts associated '
-                                                                        'with this legal state, like contracts, '
-                                                                        'dunning letter, emails etc.')
+                                                                      'with this legal state, like contracts, '
+                                                                      'dunning letter, emails etc.')
     deadlines: List[Deadline] = Field(default_factory=list, description='List of deadlines related to the state, can '
                                                                         'include response deadlines etc.')
     potential_next_states: List[str] = Field(default_factory=list, description='List of potential next states that '

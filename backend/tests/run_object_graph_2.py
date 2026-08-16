@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 from backend.object_graph_runtime.graph_classes import (CaseGraph, LegalState, Actor, ActorStatus, LegalNode,
-                                                        Case, utc_now, NegotiationProfile)
+                                                        Case, utc_now, NegotiationProfile, CaseFact)
 from backend.expansion_engine.exapnsion_engine import ExpansionEngine
 from backend.llm_interface.llm_interface import MockLLMProvider
 from backend.database.repositories.graph_repository import GraphRepository
@@ -74,11 +74,31 @@ if __name__ == "__main__":
                              negotiation_profile=default_negotiation_profile,
                              )
 
+    facts = [
+        CaseFact(
+            id='fact_001',
+            description='Andi owes Tim money from an invoice.'
+        ),
+        CaseFact(
+            id='fact_002',
+            description='Andi has not paid the invoice.'
+        ),
+        CaseFact(
+            id='fact_003',
+            description='A reminder was sent to Andi.'
+        ),
+        CaseFact(
+            id='fact_004',
+            description='Andi has not paid the invoice after the reminder was sent.'
+        ),
+    ]
+
     state = LegalState(
         start_time= '2026-04-19T13:00:00',
         end_time='2026-04-27T13:00:00',
         legal_issue="Debtor has not paid the invoice after a reminder was sent.",
         description="Debtor has not paid the invoice after a reminder was sent.",
+        facts=facts,
         final_state=False,
         actors_status=[status_tim, status_andi],
         legal_references=[],
@@ -157,11 +177,23 @@ if __name__ == "__main__":
                              negotiation_profile=default_negotiation_profile,
                              )
 
+    facts2 = [
+        CaseFact(
+            id='fact_001',
+            description='Georg has taken the car of Sebo.'
+        ),
+        CaseFact(
+            id='fact_002',
+            description='The car belongs to Sebo.'
+        ),
+    ]
+
     state2 = LegalState(
         start_time= '2026-04-19T13:00:00',
         end_time='2026-04-27T13:00:00',
         legal_issue="car theft",
         description="Georg has stolen the car of Sebo",
+        facts=facts2,
         final_state=False,
         actors_status=[status_sebo, status_georg],
         legal_references=[],
@@ -201,7 +233,3 @@ if __name__ == "__main__":
     repo.save_graph(graph2)
     print('read node from mongo db')
     loaded = repo.load_graph('555')
-
-
-
-
