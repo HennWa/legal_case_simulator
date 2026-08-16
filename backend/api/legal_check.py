@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from backend.legal_services.legal_services import LegalServices
-from backend.llm_interface.llm_interface import MockLLMProvider
+from backend.llm_interface.llm_interface import LegalLLMProvider
 from backend.database.repositories.graph_repository import GraphRepository
 import os
 from dotenv import load_dotenv
@@ -21,7 +21,11 @@ def legal_check(payload: LegalCheckRequest):
     repo = GraphRepository()
     graph = repo.load_graph(payload.case_id)
 
-    llm = MockLLMProvider(key=openai_api_key)
+    llm = LegalLLMProvider(
+        key=openai_api_key,
+        model="gpt-5",
+        search_context_size="high",
+    )
     legal_services = LegalServices(graph, llm)
 
     legal_services.legal_check(payload.node_id)
