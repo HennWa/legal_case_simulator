@@ -4,7 +4,9 @@ import {
   useState,
 } from "react";
 
-import { createPortal } from "react-dom";
+import {
+  createPortal,
+} from "react-dom";
 
 import ReactFlow, {
   Background,
@@ -24,6 +26,7 @@ import PotentialActionNode from "./AppComponents/PotentialActionNode";
 import PotentialEdge from "./AppComponents/PotentialEdge";
 
 import Sidebar from "./AppComponents/Sidebar";
+
 import ContextMenuRightClick from "./AppComponents/ContextMenuRightClick";
 
 import NodeDetailsPanel from "./AppComponents/NodeDetailsPanel/NodeDetailsPanel";
@@ -34,83 +37,110 @@ import CreateCaseModal from "./AppComponents/CreateCaseModal/CreateCaseModal";
 
 import DocumentsView from "./AppComponents/DocumentsView/DocumentsView";
 
-import { layoutGraph } from "./layout";
+import {
+  layoutGraph,
+} from "./layout";
 
-import { fetchCases } from "./api/cases";
-import { createCase } from "./api/create_case";
-import { fetchNode } from "./api/node";
-import { fetchGraph } from "./api/graph";
-import { fetchSidebarStats } from "./api/sidebar_stats";
-import { addNode } from "./api/add_node";
-import { addNodeByAction } from "./api/add_node_by_action";
-import { deleteNode } from "./api/delete_node";
-import { legalCheck } from "./api/legal_check";
-import { createArtifacts } from "./api/create_artifacts";
-import { addPossibleActions } from "./api/add_possible_actions";
+import {
+  fetchCases,
+} from "./api/cases";
+
+import {
+  createCase,
+} from "./api/create_case";
+
+import {
+  fetchNode,
+} from "./api/node";
+
+import {
+  fetchGraph,
+} from "./api/graph";
+
+import {
+  fetchSidebarStats,
+} from "./api/sidebar_stats";
+
+import {
+  addNode,
+} from "./api/add_node";
+
+import {
+  addNodeByAction,
+} from "./api/add_node_by_action";
+
+import {
+  deleteNode,
+} from "./api/delete_node";
+
+import {
+  legalCheck,
+} from "./api/legal_check";
+
+import {
+  createArtifacts,
+} from "./api/create_artifacts";
+
+import {
+  addPossibleActions,
+} from "./api/add_possible_actions";
 
 
 /*
  * =========================================================
- * POTENTIAL ACTION LAYOUT CONFIGURATION
+ * GRAPH DIMENSIONS
  * =========================================================
  */
 
 /*
- * Dagre currently uses this width for
- * normal graph nodes.
+ * MUST match:
+ *
+ * CustomNode.jsx
+ * layout.js
  */
 const REAL_NODE_WIDTH = 320;
 
 
 /*
- * Real nodes have dynamic visual heights because
- * CustomNode uses minHeight rather than a fixed height.
- *
- * We therefore use a conservative height when checking
- * whether potential actions would overlap a real node.
+ * Because the real node text is now clamped,
+ * this can be much closer to the actual maximum
+ * node height.
  */
-const REAL_NODE_COLLISION_HEIGHT = 420;
+const REAL_NODE_COLLISION_HEIGHT =
+  280;
 
 
 /*
- * Virtual potential-action dimensions.
- *
- * These are only used for manual frontend layout.
+ * MUST match PotentialActionNode.jsx.
  */
-const POTENTIAL_NODE_WIDTH = 220;
-const POTENTIAL_NODE_HEIGHT = 34;
+const POTENTIAL_NODE_WIDTH =
+  160;
+
+const POTENTIAL_NODE_HEIGHT =
+  34;
 
 
 /*
- * Used when a node has NO real outgoing branch.
- *
- * The potential frontier appears to the right
- * of the source node.
+ * Used only if there is NO later
+ * real graph column.
  */
-const POTENTIAL_X_OFFSET = 430;
+const POTENTIAL_X_OFFSET =
+  430;
 
 
 /*
- * Vertical spacing between potential actions.
- *
- * Deliberately compact.
+ * Compact vertical spacing.
  */
-const POTENTIAL_NODE_GAP = 6;
+const POTENTIAL_NODE_GAP =
+  20;
 
 
-/*
- * If a node already has a real successor,
- * remaining alternatives are placed below
- * the real branch.
- */
-const POTENTIAL_BRANCH_GAP = 40;
+const POTENTIAL_BRANCH_GAP =
+  40;
 
 
-/*
- * Padding between potential groups and
- * other graph elements.
- */
-const POTENTIAL_COLLISION_PADDING = 25;
+const POTENTIAL_COLLISION_PADDING =
+  25;
 
 
 /*
@@ -129,7 +159,10 @@ function normalizeActionText(
     return "";
   }
 
-  return String(value)
+
+  return String(
+    value
+  )
     .trim()
     .toLowerCase();
 }
@@ -145,6 +178,7 @@ function getPotentialActionText(
     return potentialAction;
   }
 
+
   if (
     !potentialAction ||
     typeof potentialAction !==
@@ -152,6 +186,7 @@ function getPotentialActionText(
   ) {
     return "";
   }
+
 
   return (
     potentialAction.action ??
@@ -202,49 +237,65 @@ function SimulatorApp() {
   const [
     graphData,
     setGraphData,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const [
     loading,
     setLoading,
-  ] = useState(true);
+  ] = useState(
+    true
+  );
 
 
   const [
     cases,
     setCases,
-  ] = useState([]);
+  ] = useState(
+    []
+  );
 
 
   const [
     selectedCaseId,
     setSelectedCaseId,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const [
     activeTab,
     setActiveTab,
-  ] = useState("graph");
+  ] = useState(
+    "graph"
+  );
 
 
   const [
     selectedNodeId,
     setSelectedNodeId,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const [
     selectedNodeData,
     setSelectedNodeData,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const [
     selectedSidebarStats,
     setSelectedSidebarStats,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const nodeTypes =
@@ -276,49 +327,65 @@ function SimulatorApp() {
   const [
     contextMenuRightClick,
     setContextMenuRightClick,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const [
     detailsNode,
     setDetailsNode,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const [
     createCaseModalOpen,
     setCreateCaseModalOpen,
-  ] = useState(false);
+  ] = useState(
+    false
+  );
 
 
   const [
     isProcessing,
     setIsProcessing,
-  ] = useState(false);
+  ] = useState(
+    false
+  );
 
 
   const [
     isLegalCheck,
     setIsLegalCheck,
-  ] = useState(false);
+  ] = useState(
+    false
+  );
 
 
   const [
     isCreatingArtifacts,
     setIsCreatingArtifacts,
-  ] = useState(false);
+  ] = useState(
+    false
+  );
 
 
   const [
     processingNodeId,
     setProcessingNodeId,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   const [
     processingPotentialAction,
     setProcessingPotentialAction,
-  ] = useState(null);
+  ] = useState(
+    null
+  );
 
 
   /*
@@ -337,9 +404,6 @@ function SimulatorApp() {
         );
 
 
-        /*
-         * 1. Create case + initial node
-         */
         const creationResult =
           await createCase(
             payload
@@ -376,7 +440,7 @@ function SimulatorApp() {
 
 
         /*
-         * 2. Legal check
+         * Legal check
          */
         setIsLegalCheck(
           true
@@ -395,7 +459,7 @@ function SimulatorApp() {
 
 
         /*
-         * 3. Generate possible actions
+         * Generate possible actions.
          */
         await addPossibleActions(
           newCase.id,
@@ -404,7 +468,7 @@ function SimulatorApp() {
 
 
         /*
-         * 4. Reload graph
+         * Reload.
          */
         const updatedGraph =
           await fetchGraph(
@@ -419,11 +483,14 @@ function SimulatorApp() {
 
         return creationResult;
 
-      } catch (err) {
+      } catch (
+        err
+      ) {
         console.error(
           "Case creation workflow failed:",
           err
         );
+
 
         throw err;
 
@@ -431,6 +498,7 @@ function SimulatorApp() {
         setIsProcessing(
           false
         );
+
 
         setIsLegalCheck(
           false
@@ -464,7 +532,8 @@ function SimulatorApp() {
 
 
         if (
-          data.length > 0 &&
+          data.length >
+            0 &&
           !selectedCaseId
         ) {
           setSelectedCaseId(
@@ -472,7 +541,9 @@ function SimulatorApp() {
           );
         }
 
-      } catch (err) {
+      } catch (
+        err
+      ) {
         console.error(
           err
         );
@@ -515,7 +586,9 @@ function SimulatorApp() {
           data
         );
 
-      } catch (err) {
+      } catch (
+        err
+      ) {
         console.error(
           err
         );
@@ -572,9 +645,6 @@ function SimulatorApp() {
         );
 
 
-        /*
-         * Legal check
-         */
         setIsLegalCheck(
           true
         );
@@ -591,9 +661,6 @@ function SimulatorApp() {
         );
 
 
-        /*
-         * Generate actions and artifacts
-         */
         setIsCreatingArtifacts(
           true
         );
@@ -618,7 +685,9 @@ function SimulatorApp() {
 
         await loadGraph();
 
-      } catch (err) {
+      } catch (
+        err
+      ) {
         console.error(
           err
         );
@@ -648,7 +717,7 @@ function SimulatorApp() {
 
   /*
    * =======================================================
-   * ADD NODE BY POTENTIAL ACTION
+   * ADD NODE BY ACTION
    * =======================================================
    */
 
@@ -659,7 +728,8 @@ function SimulatorApp() {
     ) => {
       const cleanedAction =
         String(
-          action ?? ""
+          action ??
+          ""
         ).trim();
 
 
@@ -715,9 +785,6 @@ function SimulatorApp() {
         );
 
 
-        /*
-         * Legal check
-         */
         setIsLegalCheck(
           true
         );
@@ -734,10 +801,6 @@ function SimulatorApp() {
         );
 
 
-        /*
-         * Generate possible actions
-         * and artifacts for new state.
-         */
         setIsCreatingArtifacts(
           true
         );
@@ -760,15 +823,11 @@ function SimulatorApp() {
         );
 
 
-        /*
-         * Reload actual persisted graph.
-         *
-         * The clicked virtual action will
-         * then be replaced by the real branch.
-         */
         await loadGraph();
 
-      } catch (err) {
+      } catch (
+        err
+      ) {
         console.error(
           err
         );
@@ -879,7 +938,9 @@ function SimulatorApp() {
 
         await loadGraph();
 
-      } catch (err) {
+      } catch (
+        err
+      ) {
         console.error(
           err
         );
@@ -901,10 +962,6 @@ function SimulatorApp() {
       event.preventDefault();
 
 
-      /*
-       * Potential actions are not
-       * actual persisted graph nodes.
-       */
       if (
         node.type ===
         "potentialAction"
@@ -1009,7 +1066,6 @@ function SimulatorApp() {
       ) {
         loadGraph();
       }
-
     },
     [
       selectedCaseId,
@@ -1177,7 +1233,7 @@ function SimulatorApp() {
 
       /*
        * ===================================================
-       * 1. REAL NODES
+       * REAL NODES
        * ===================================================
        */
 
@@ -1236,7 +1292,7 @@ function SimulatorApp() {
 
       /*
        * ===================================================
-       * 2. REAL EDGES
+       * REAL EDGES
        * ===================================================
        */
 
@@ -1298,7 +1354,7 @@ function SimulatorApp() {
 
       /*
        * ===================================================
-       * 3. LAYOUT REAL GRAPH ONLY
+       * LAYOUT REAL GRAPH ONLY
        * ===================================================
        */
 
@@ -1326,11 +1382,8 @@ function SimulatorApp() {
 
       /*
        * ===================================================
-       * 4. COLLISION RECTANGLES FOR REAL NODES
+       * COLLISION RECTANGLES
        * ===================================================
-       *
-       * We deliberately use a larger collision height than
-       * Dagre itself because CustomNode can grow vertically.
        */
 
       const realNodeRectangles =
@@ -1355,9 +1408,6 @@ function SimulatorApp() {
           );
 
 
-      /*
-       * Track already placed potential groups.
-       */
       const occupiedPotentialGroups =
         [];
 
@@ -1372,7 +1422,7 @@ function SimulatorApp() {
 
       /*
        * ===================================================
-       * 5. BUILD POTENTIAL ACTION FRONTIER
+       * POTENTIAL ACTIONS
        * ===================================================
        */
 
@@ -1410,9 +1460,6 @@ function SimulatorApp() {
           }
 
 
-          /*
-           * Real outgoing branches from this state.
-           */
           const outgoingRealEdges =
             rawEdges.filter(
               (
@@ -1423,10 +1470,6 @@ function SimulatorApp() {
             );
 
 
-          /*
-           * Which possible actions have already
-           * become actual graph branches?
-           */
           const existingOutgoingActions =
             new Set(
               outgoingRealEdges
@@ -1444,9 +1487,6 @@ function SimulatorApp() {
             );
 
 
-          /*
-           * Keep only unexpanded possibilities.
-           */
           const remainingActions =
             potentialNextStates
               .map(
@@ -1491,9 +1531,6 @@ function SimulatorApp() {
           }
 
 
-          /*
-           * Total vertical height of this group.
-           */
           const groupHeight =
             remainingActions.length *
               POTENTIAL_NODE_HEIGHT +
@@ -1507,26 +1544,105 @@ function SimulatorApp() {
 
 
           /*
-           * groupX needs to be mutable because
-           * nodes with an existing real successor
-           * use a different placement strategy.
+           * =================================================
+           * HORIZONTAL POSITION
+           * =================================================
+           *
+           * Default:
+           *
+           * If this is the current frontier and there is no
+           * later real node column, position it normally to
+           * the right.
            */
+
           let groupX =
             sourceNode.position.x +
             POTENTIAL_X_OFFSET;
 
 
-          let groupY;
+          /*
+           * Find the nearest REAL graph column to the right.
+           *
+           * Because all real nodes now have exactly the same
+           * 320 px layout/render width, this calculation is
+           * geometrically consistent.
+           */
+          const nextRealNode =
+            layoutedRealGraph
+              .nodes
+              .filter(
+                (
+                  node
+                ) =>
+                  node.position.x >
+                  sourceNode.position.x
+              )
+              .sort(
+                (
+                  a,
+                  b
+                ) =>
+                  a.position.x -
+                  b.position.x
+              )[0];
+
+
+          if (
+            nextRealNode
+          ) {
+            /*
+             * Center of source real node.
+             */
+            const sourceCenterX =
+              sourceNode.position.x +
+              REAL_NODE_WIDTH /
+                2;
+
+
+            /*
+             * Center of next real node.
+             */
+            const nextCenterX =
+              nextRealNode.position.x +
+              REAL_NODE_WIDTH /
+                2;
+
+
+            /*
+             * EXACT midpoint between
+             * the two real-node centers.
+             */
+            const midpointX =
+              (
+                sourceCenterX +
+                nextCenterX
+              ) /
+              2;
+
+
+            /*
+             * React Flow position.x describes
+             * the LEFT side of the potential
+             * node.
+             *
+             * Therefore subtract half its width
+             * to put its center at midpointX.
+             */
+            groupX =
+              midpointX -
+              POTENTIAL_NODE_WIDTH /
+                2;
+          }
 
 
           /*
            * =================================================
-           * SOURCE ALREADY HAS REAL SUCCESSOR(S)
+           * VERTICAL POSITION
            * =================================================
-           *
-           * The remaining alternatives are deliberately
-           * placed BELOW the existing real branch.
            */
+
+          let groupY;
+
 
           if (
             outgoingRealEdges.length >
@@ -1568,40 +1684,11 @@ function SimulatorApp() {
             );
 
 
-            /*
-             * Vertical placement:
-             *
-             * safely below the complete successor branch.
-             */
             groupY =
               lowestRelevantBottom +
               POTENTIAL_BRANCH_GAP;
-
-
-            /*
-             * Horizontal placement:
-             *
-             * keep remaining options relatively close to
-             * the originating state rather than putting
-             * them underneath the successor card.
-             */
-            groupX =
-              sourceNode.position.x +
-              REAL_NODE_WIDTH +
-              80;
           }
 
-
-          /*
-           * =================================================
-           * SOURCE HAS NO REAL SUCCESSOR
-           * =================================================
-           *
-           * This is the frontier of the graph.
-           *
-           * Center the possibilities vertically around
-           * their source node.
-           */
 
           else {
             const sourceCenterY =
@@ -1621,6 +1708,13 @@ function SimulatorApp() {
            * =================================================
            * COLLISION AVOIDANCE
            * =================================================
+           *
+           * IMPORTANT:
+           *
+           * This only modifies Y.
+           *
+           * groupX remains exactly at the midpoint calculated
+           * above.
            */
 
           let groupRectangle = {
@@ -1678,8 +1772,9 @@ function SimulatorApp() {
                 )
               ) {
                 /*
-                 * Move the whole potential-action group
-                 * below the object it overlaps.
+                 * Only move vertically.
+                 *
+                 * Horizontal midpoint stays unchanged.
                  */
                 groupY =
                   occupiedRectangle.y +
@@ -1699,20 +1794,12 @@ function SimulatorApp() {
                   true;
 
 
-                /*
-                 * Restart checking from the beginning
-                 * because this new position may collide
-                 * with another node/group.
-                 */
                 break;
               }
             }
           }
 
 
-          /*
-           * Remember occupied area for subsequent groups.
-           */
           occupiedPotentialGroups.push(
             groupRectangle
           );
@@ -1720,7 +1807,7 @@ function SimulatorApp() {
 
           /*
            * =================================================
-           * CREATE INDIVIDUAL ACTION NODES
+           * CREATE POTENTIAL NODES / EDGES
            * =================================================
            */
 
@@ -1758,9 +1845,6 @@ function SimulatorApp() {
                   );
 
 
-              /*
-               * Frontend-only virtual node.
-               */
               potentialNodes.push({
                 id:
                   virtualNodeId,
@@ -1800,9 +1884,6 @@ function SimulatorApp() {
               });
 
 
-              /*
-               * Frontend-only virtual edge.
-               */
               potentialEdges.push({
                 id:
                   virtualEdgeId,
@@ -1837,12 +1918,6 @@ function SimulatorApp() {
         }
       );
 
-
-      /*
-       * ===================================================
-       * 6. COMBINE REAL GRAPH + VISUAL FRONTIER
-       * ===================================================
-       */
 
       return {
         nodes: [
@@ -2048,11 +2123,6 @@ function SimulatorApp() {
                       event,
                       node
                     ) => {
-                      /*
-                       * Potential action:
-                       *
-                       * Create corresponding real node.
-                       */
                       if (
                         node.type ===
                         "potentialAction"
@@ -2078,9 +2148,6 @@ function SimulatorApp() {
                       }
 
 
-                      /*
-                       * Normal persisted graph node.
-                       */
                       try {
                         const data =
                           await fetchNode(
@@ -2115,7 +2182,9 @@ function SimulatorApp() {
                           stats
                         );
 
-                      } catch (err) {
+                      } catch (
+                        err
+                      ) {
                         console.error(
                           err
                         );
@@ -2305,8 +2374,7 @@ function SimulatorApp() {
 
               <p
                 style={{
-                  margin:
-                    0,
+                  margin: 0,
                 }}
               >
                 The Actors view will be

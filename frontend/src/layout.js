@@ -1,8 +1,25 @@
 import dagre from "dagre";
 
 
-const nodeWidth = 320;
-const nodeHeight = 160;
+/*
+ * IMPORTANT:
+ *
+ * These dimensions should correspond
+ * to the actual rendered CustomNode.
+ */
+const NODE_WIDTH = 320;
+
+/*
+ * Conservative layout height for:
+ *
+ * - icon
+ * - state number
+ * - title up to 2 lines
+ * - summary up to 4 lines
+ * - badge
+ * - padding
+ */
+const NODE_HEIGHT = 280;
 
 
 export function layoutGraph(
@@ -12,53 +29,52 @@ export function layoutGraph(
   const g =
     new dagre.graphlib.Graph();
 
+
   g.setDefaultEdgeLabel(
     () => ({})
   );
 
 
-  /*
-   * IMPORTANT:
-   *
-   * This function now lays out ONLY
-   * actual persisted graph nodes.
-   *
-   * Potential actions must NOT be
-   * passed into this function.
-   */
   g.setGraph({
+    /*
+     * Legal simulation flows
+     * from left to right.
+     */
     rankdir: "LR",
 
     /*
      * Horizontal distance between
-     * actual legal states.
+     * actual state columns.
      */
     ranksep: 220,
 
     /*
      * Vertical distance between
-     * real branches.
+     * real graph branches.
      */
     nodesep: 120,
 
     marginx: 40,
+
     marginy: 40,
   });
 
 
   /*
-   * REAL NODES
+   * REAL GRAPH NODES ONLY
    */
   nodes.forEach(
-    (node) => {
+    (
+      node
+    ) => {
       g.setNode(
         node.id,
         {
           width:
-            nodeWidth,
+            NODE_WIDTH,
 
           height:
-            nodeHeight,
+            NODE_HEIGHT,
         }
       );
     }
@@ -66,10 +82,12 @@ export function layoutGraph(
 
 
   /*
-   * REAL EDGES
+   * REAL GRAPH EDGES ONLY
    */
   edges.forEach(
-    (edge) => {
+    (
+      edge
+    ) => {
       g.setEdge(
         edge.source,
         edge.target
@@ -78,14 +96,21 @@ export function layoutGraph(
   );
 
 
-  dagre.layout(g);
+  dagre.layout(
+    g
+  );
 
 
   const layoutedNodes =
     nodes.map(
-      (node) => {
+      (
+        node
+      ) => {
         const pos =
-          g.node(node.id);
+          g.node(
+            node.id
+          );
+
 
         return {
           ...node,
@@ -93,11 +118,13 @@ export function layoutGraph(
           position: {
             x:
               pos.x -
-              nodeWidth / 2,
+              NODE_WIDTH /
+                2,
 
             y:
               pos.y -
-              nodeHeight / 2,
+              NODE_HEIGHT /
+                2,
           },
         };
       }

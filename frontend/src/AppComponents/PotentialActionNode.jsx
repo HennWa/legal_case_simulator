@@ -8,56 +8,94 @@ export default function PotentialActionNode({
   data,
 }) {
   const isProcessing =
-    Boolean(data?.isProcessing);
+    Boolean(
+      data?.isProcessing
+    );
+
 
   return (
     <div
       className="nodrag nopan"
       style={{
-        width: 220,
+        /*
+         * IMPORTANT:
+         *
+         * Must match
+         * POTENTIAL_NODE_WIDTH
+         * in SimulatorApp.jsx.
+         */
+        width: 160,
+
+        boxSizing:
+          "border-box",
 
         display: "flex",
-        alignItems: "center",
 
-        position: "relative",
+        alignItems:
+          "center",
 
-        pointerEvents: "all",
+        position:
+          "relative",
 
-        opacity: isProcessing
-          ? 0.65
-          : 1,
+        pointerEvents:
+          "all",
+
+        opacity:
+          isProcessing
+            ? 0.65
+            : 1,
 
         transition:
           "opacity 0.2s ease",
       }}
     >
-      {/* Invisible target anchor for React Flow */}
+      {/* Invisible React Flow target */}
       <Handle
         type="target"
-        position={Position.Left}
-        isConnectable={false}
+        position={
+          Position.Left
+        }
+        isConnectable={
+          false
+        }
         style={{
           width: 1,
+
           height: 1,
 
           left: 0,
 
           opacity: 0,
-          pointerEvents: "none",
+
+          pointerEvents:
+            "none",
         }}
       />
 
-      {/* Clickable potential action */}
+
+      {/* Clickable action */}
       <div
         style={{
           width: "100%",
 
+          /*
+           * Critical:
+           *
+           * The padding and border stay
+           * inside the 220px width.
+           */
+          boxSizing:
+            "border-box",
+
           display: "flex",
-          alignItems: "center",
+
+          alignItems:
+            "center",
 
           gap: 8,
 
-          padding: "6px 10px",
+          padding:
+            "6px 10px",
 
           borderRadius: 10,
 
@@ -70,13 +108,16 @@ export default function PotentialActionNode({
           boxShadow:
             "0 2px 7px rgba(156, 88, 102, 0.06)",
 
-          cursor: isProcessing
-            ? "default"
-            : "pointer",
+          cursor:
+            isProcessing
+              ? "default"
+              : "pointer",
 
-          color: "#9c5866",
+          color:
+            "#9c5866",
 
           fontSize: 12,
+
           fontWeight: 600,
 
           lineHeight: 1.4,
@@ -86,34 +127,57 @@ export default function PotentialActionNode({
           transition:
             "all 0.15s ease",
         }}
-        onMouseEnter={(event) => {
-          if (isProcessing) {
+
+        onMouseEnter={(
+          event
+        ) => {
+          if (
+            isProcessing
+          ) {
             return;
           }
 
-          event.currentTarget.style.background =
+
+          event.currentTarget
+            .style.background =
             "#f7ecef";
 
-          event.currentTarget.style.borderColor =
+
+          event.currentTarget
+            .style.borderColor =
             "#c08497";
 
-          event.currentTarget.style.transform =
+
+          event.currentTarget
+            .style.transform =
             "translateX(2px)";
 
-          event.currentTarget.style.boxShadow =
+
+          event.currentTarget
+            .style.boxShadow =
             "0 3px 10px rgba(156, 88, 102, 0.12)";
         }}
-        onMouseLeave={(event) => {
-          event.currentTarget.style.background =
+
+        onMouseLeave={(
+          event
+        ) => {
+          event.currentTarget
+            .style.background =
             "rgba(255, 255, 255, 0.82)";
 
-          event.currentTarget.style.borderColor =
+
+          event.currentTarget
+            .style.borderColor =
             "rgba(192, 132, 151, 0.55)";
 
-          event.currentTarget.style.transform =
+
+          event.currentTarget
+            .style.transform =
             "translateX(0)";
 
-          event.currentTarget.style.boxShadow =
+
+          event.currentTarget
+            .style.boxShadow =
             "0 2px 7px rgba(156, 88, 102, 0.06)";
         }}
       >
@@ -122,20 +186,28 @@ export default function PotentialActionNode({
             flexShrink: 0,
 
             width: 20,
+
             height: 20,
 
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
 
-            borderRadius: "50%",
+            alignItems:
+              "center",
+
+            justifyContent:
+              "center",
+
+            borderRadius:
+              "50%",
 
             background:
               "rgba(192, 132, 151, 0.15)",
 
-            color: "#9c5866",
+            color:
+              "#9c5866",
 
             fontSize: 14,
+
             fontWeight: 500,
           }}
         >
@@ -144,10 +216,24 @@ export default function PotentialActionNode({
             : "+"}
         </span>
 
+
         <span
           style={{
             flex: 1,
+
+            minWidth: 0,
+
+            overflow: "hidden",
+
+            whiteSpace:
+              "nowrap",
+
+            textOverflow:
+              "ellipsis",
           }}
+          title={
+            data?.action ?? ""
+          }
         >
           {isProcessing
             ? "Creating next state..."
