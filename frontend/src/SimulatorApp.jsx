@@ -144,16 +144,9 @@ function SimulatorApp() {
         ]);
 
         setSelectedCaseId(newCase.id);
-
-        // 2. Add possible actions
-        await addPossibleActions(
-          newCase.id,
-          initialNodeId
-        );
-
         setIsProcessing(false);
 
-        // 3. Run legal check on initial node
+        // 2. Legal check
         setIsLegalCheck(true);
 
         await legalCheck(
@@ -163,8 +156,13 @@ function SimulatorApp() {
 
         setIsLegalCheck(false);
 
-        // 4. Load graph again so the frontend
-        // gets the legally enriched node
+        // 3. Generate actions
+        await addPossibleActions(
+          newCase.id,
+          initialNodeId
+        );
+
+        // 4. Reload
         const updatedGraph =
           await fetchGraph(newCase.id);
 
@@ -236,32 +234,37 @@ function SimulatorApp() {
         nodeId
       );
 
-      const newBranch = await addNode(
-        selectedCaseId,
-        nodeId
-      );
+    const newBranch = await addNode(
+      selectedCaseId,
+      nodeId
+    );
 
-      setIsProcessing(false);
+    setIsProcessing(false);
 
-      setIsCreatingArtifacts(true);
+    setIsLegalCheck(true);
 
-      await createArtifacts(
-        selectedCaseId,
-        newBranch.edge.id
-      );
+    await legalCheck(
+      selectedCaseId,
+      newBranch.node.id
+    );
 
-      setIsCreatingArtifacts(false);
+    setIsLegalCheck(false);
 
-      setIsLegalCheck(true);
+    setIsCreatingArtifacts(true);
 
-      await legalCheck(
+    await addPossibleActions(
         selectedCaseId,
         newBranch.node.id
       );
 
-      setIsLegalCheck(false);
+    await createArtifacts(
+        selectedCaseId,
+        newBranch.edge.id
+      );
 
-      await loadGraph();
+    setIsCreatingArtifacts(false);
+
+    await loadGraph();
     } catch (err) {
       console.error(err);
     } finally {
@@ -285,34 +288,39 @@ function SimulatorApp() {
         action
       );
 
-      const newBranch =
-        await addNodeByAction(
-          selectedCaseId,
-          nodeId,
-          action
-        );
+    const newBranch =
+      await addNodeByAction(
+        selectedCaseId,
+        nodeId,
+        action
+      );
 
-      setIsProcessing(false);
+    setIsProcessing(false);
 
-      setIsLegalCheck(true);
+    setIsLegalCheck(true);
 
-      await legalCheck(
+    await legalCheck(
+      selectedCaseId,
+      newBranch.node.id
+    );
+
+    setIsLegalCheck(false);
+
+    setIsCreatingArtifacts(true);
+
+    await addPossibleActions(
         selectedCaseId,
         newBranch.node.id
       );
 
-      setIsLegalCheck(false);
-
-      setIsCreatingArtifacts(true);
-
-      await createArtifacts(
+    await createArtifacts(
         selectedCaseId,
         newBranch.edge.id
       );
 
-      setIsCreatingArtifacts(false);
+    setIsCreatingArtifacts(false);
 
-      await loadGraph();
+    await loadGraph();
     } catch (err) {
       console.error(err);
     } finally {
