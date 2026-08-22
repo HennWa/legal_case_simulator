@@ -21,9 +21,20 @@ export default function DevelopmentAuthProvider({
 
     async function loadCurrentUser() {
       try {
-        const user = await fetchCurrentUser(null);
+        const user =
+          await fetchCurrentUser(null);
+
+        console.log(
+          "fetchCurrentUser returned:",
+          user
+        );
 
         if (!cancelled) {
+          console.log(
+            "Setting current user:",
+            user
+          );
+
           setCurrentUser(user);
         }
       } catch (error) {
@@ -45,8 +56,20 @@ export default function DevelopmentAuthProvider({
     };
   }, []);
 
+  console.log(
+    "DevelopmentAuthProvider state:",
+    {
+      currentUser,
+      isLoading,
+      isAuthenticated:
+        currentUser !== null,
+    }
+  );
+
   const value = {
-    isAuthenticated: currentUser !== null,
+    isAuthenticated:
+      currentUser !== null,
+
     isLoading,
     currentUser,
 
