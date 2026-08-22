@@ -1,12 +1,54 @@
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import { fetchCurrentUser } from "../api/auth";
 import { AuthContext } from "./AuthContext";
 
 
 export default function DevelopmentAuthProvider({
   children,
 }) {
+  const [currentUser, setCurrentUser] =
+    useState(null);
+
+  const [isLoading, setIsLoading] =
+    useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCurrentUser() {
+      try {
+        const user = await fetchCurrentUser(null);
+
+        if (!cancelled) {
+          setCurrentUser(user);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to load development user:",
+          error
+        );
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadCurrentUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const value = {
-    isAuthenticated: true,
-    isLoading: false,
+    isAuthenticated: currentUser !== null,
+    isLoading,
+    currentUser,
 
     login: async () => {
       // No login necessary in development mode.
@@ -17,7 +59,6 @@ export default function DevelopmentAuthProvider({
     },
 
     getAccessToken: async () => {
-      // Development backend does not require an Auth0 token.
       return null;
     },
   };

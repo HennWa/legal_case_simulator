@@ -10,6 +10,7 @@ import {
 import LandingPage from "./LandingPage";
 import Impressum from "./Impressum";
 import PrivacyPolicy from "./PrivacyPolicy";
+import ProtectedRoute from "./auth/ProtectedRoute";
 
 
 const LANDING_ONLY =
@@ -21,12 +22,16 @@ const SimulatorApp = LANDING_ONLY
   : lazy(() => import("./SimulatorApp"));
 
 
-function ProtectedSimulatorRoute() {
+function SimulatorRoute() {
   if (LANDING_ONLY || !SimulatorApp) {
     return <Navigate to="/" replace />;
   }
 
-  return <SimulatorApp />;
+  return (
+    <ProtectedRoute>
+      <SimulatorApp />
+    </ProtectedRoute>
+  );
 }
 
 
@@ -46,13 +51,13 @@ export default function App() {
           />
 
           <Route
-              path="/privacy"
-              element={<PrivacyPolicy />}
+            path="/privacy"
+            element={<PrivacyPolicy />}
           />
 
           <Route
             path="/app"
-            element={<ProtectedSimulatorRoute />}
+            element={<SimulatorRoute />}
           />
 
           <Route
