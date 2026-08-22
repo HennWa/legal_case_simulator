@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -26,25 +27,26 @@ export default function Auth0AuthProvider({
   const [isUserLoading, setIsUserLoading] =
     useState(false);
 
-  const login = async () => {
+  const login = useCallback(async () => {
     await loginWithRedirect({
       appState: {
         returnTo: "/app",
       },
     });
-  };
+  }, [loginWithRedirect]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await auth0Logout({
       logoutParams: {
         returnTo: window.location.origin,
       },
     });
-  };
+  }, [auth0Logout]);
 
-  const getAccessToken = async () => {
-    return await getAccessTokenSilently();
-  };
+  const getAccessToken =
+    useCallback(async () => {
+      return await getAccessTokenSilently();
+    }, [getAccessTokenSilently]);
 
   useEffect(() => {
     if (

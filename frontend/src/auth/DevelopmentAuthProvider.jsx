@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -24,17 +25,7 @@ export default function DevelopmentAuthProvider({
         const user =
           await fetchCurrentUser(null);
 
-        console.log(
-          "fetchCurrentUser returned:",
-          user
-        );
-
         if (!cancelled) {
-          console.log(
-            "Setting current user:",
-            user
-          );
-
           setCurrentUser(user);
         }
       } catch (error) {
@@ -42,6 +33,10 @@ export default function DevelopmentAuthProvider({
           "Failed to load development user:",
           error
         );
+
+        if (!cancelled) {
+          setCurrentUser(null);
+        }
       } finally {
         if (!cancelled) {
           setIsLoading(false);
@@ -56,15 +51,18 @@ export default function DevelopmentAuthProvider({
     };
   }, []);
 
-  console.log(
-    "DevelopmentAuthProvider state:",
-    {
-      currentUser,
-      isLoading,
-      isAuthenticated:
-        currentUser !== null,
-    }
-  );
+  const login = useCallback(async () => {
+    // No login necessary in development mode.
+  }, []);
+
+  const logout = useCallback(async () => {
+    // No logout necessary in development mode.
+  }, []);
+
+  const getAccessToken =
+    useCallback(async () => {
+      return null;
+    }, []);
 
   const value = {
     isAuthenticated:
@@ -73,17 +71,9 @@ export default function DevelopmentAuthProvider({
     isLoading,
     currentUser,
 
-    login: async () => {
-      // No login necessary in development mode.
-    },
-
-    logout: async () => {
-      // No logout necessary in development mode.
-    },
-
-    getAccessToken: async () => {
-      return null;
-    },
+    login,
+    logout,
+    getAccessToken,
   };
 
   return (
