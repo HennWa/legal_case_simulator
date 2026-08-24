@@ -2,12 +2,29 @@
 
 from __future__ import annotations
 
-from fastapi import HTTPException, status
+from fastapi import (
+    Depends,
+    HTTPException,
+    status,
+)
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
 
+from backend.auth.jwt import (
+    TokenValidationError,
+    validate_access_token,
+)
 from backend.auth.models import User
 from backend.config import AuthMode, settings
 from backend.database.repositories.user_repository import (
     UserRepository,
+)
+
+
+bearer_scheme = HTTPBearer(
+    auto_error=False
 )
 
 
@@ -36,19 +53,106 @@ def get_development_user() -> User:
     return user
 
 
-def get_current_user() -> User:
+def get_auth0_user(
+    credentials: HTTPAuthorizationCredentials | None,
+) -> User:
+    """
+    Validate the Auth0 Bearer token and map the Auth0
+    identity to a local Casendra user.
+    """
+
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authorization header is missing.",
+            headers={
+                "WWW-Authenticate": "Bearer",
+            },
+        )
+
+    if credentials.scheme.lower() != "bearer":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unsupported authorization scheme.",
+            headers={
+                "WWW-Authenticate": "Bearer",
+            },
+        )
+
+    token = credentials.credentials
+
+    try:
+        payload = validate_access_token(
+            token
+        )
+    except TokenValidationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
+            headers={
+                "WWW-Authenticate": "Bearer",
+            },
+        ) from exc
+
+    auth0_subject = payload.get("sub")
+
+    if (
+        not isinstance(auth0_subject, str)
+        or not auth0_subject
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=(
+                "Access token does not contain "
+                "a valid subject claim."
+            ),
+            headers={
+                "WWW-Authenticate": "Bearer",
+            },
+        )
+
+    repository = UserRepository()
+
+    user = repository.get_by_auth0_subject(
+        auth0_subject
+    )
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "No Casendra user is linked "
+                "to this Auth0 identity."
+            ),
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="The Casendra user is inactive.",
+        )
+
+    return user
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(
+        bearer_scheme
+    ),
+) -> User:
     """
     Resolve the user making the current request.
 
-    Step 1:
-        development mode returns a fixed MongoDB user.
+    Development:
+        Returns the configured development user.
 
-    Step 3:
-        auth0 mode will validate an Auth0 access token and map its `sub`
-        claim to a local MongoDB user.
+    Auth0:
+        Validates the Bearer access token and maps
+        the token's `sub` claim to a local MongoDB user.
 
     Tests:
-        FastAPI dependency overrides should supply test users directly.
+        FastAPI dependency overrides should supply
+        test users directly.
     """
 
     if settings.auth_mode == AuthMode.DEVELOPMENT:
@@ -64,11 +168,8 @@ def get_current_user() -> User:
         )
 
     if settings.auth_mode == AuthMode.AUTH0:
-        raise HTTPException(
-            status_code=status.HTTP_501_NOT_IMPLEMENTED,
-            detail=(
-                "Auth0 token validation has not been implemented yet."
-            ),
+        return get_auth0_user(
+            credentials
         )
 
     raise HTTPException(
