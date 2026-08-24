@@ -28,11 +28,20 @@ export default function Auth0AuthProvider({
     useState(false);
 
   const login = useCallback(async () => {
-    await loginWithRedirect({
-      appState: {
-        returnTo: "/app",
-      },
-    });
+    console.log("Starting Auth0 login redirect");
+
+    try {
+      await loginWithRedirect({
+        appState: {
+          returnTo: "/app",
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Auth0 login redirect failed:",
+        error
+      );
+    }
   }, [loginWithRedirect]);
 
   const logout = useCallback(async () => {

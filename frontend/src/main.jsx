@@ -14,6 +14,17 @@ const AUTH_MODE =
 
 function Root() {
   if (AUTH_MODE === "auth0") {
+    const handleRedirectCallback = (appState) => {
+      const returnTo =
+        appState?.returnTo ?? "/";
+
+      window.history.replaceState(
+        {},
+        document.title,
+        returnTo
+      );
+    };
+
     return (
       <Auth0Provider
         domain={import.meta.env.VITE_AUTH0_DOMAIN}
@@ -22,6 +33,7 @@ function Root() {
           redirect_uri: window.location.origin,
           audience: import.meta.env.VITE_AUTH0_AUDIENCE,
         }}
+        onRedirectCallback={handleRedirectCallback}
       >
         <Auth0AuthProvider>
           <App />
