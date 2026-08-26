@@ -1,5 +1,6 @@
 from fastapi import (
     APIRouter,
+    Depends,
     File,
     Form,
     HTTPException,
@@ -7,6 +8,8 @@ from fastapi import (
     status,
 )
 
+from backend.auth.dependencies import get_current_user
+from backend.auth.models import User
 from backend.database.repositories.node_repository import (
     NodeRepository,
 )
@@ -31,12 +34,16 @@ async def upload_document(
     file: UploadFile = File(...),
     title: str | None = Form(default=None),
     type: str = Form(default="document"),
-    created_by: str | None = Form(default=None),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Upload, detect and parse a document, then create an artifact
     attached to the given node.
+
+    The artifact creator is derived from the authenticated
+    Casendra user and must not be supplied by the client.
     """
+
     node_repository = NodeRepository()
     document_service = DocumentService()
 
@@ -60,29 +67,38 @@ async def upload_document(
     try:
         file_bytes = await file.read()
 
-        artifact = document_service.create_artifact_from_upload(
-            case_id=case_id,
-            node_id=node_id,
-            file_bytes=file_bytes,
-            original_filename=(
-                file.filename
-                or "unnamed-document"
-            ),
-            declared_content_type=file.content_type,
-            title=title,
-            artifact_type=type,
-            created_by=created_by,
+        artifact = (
+            document_service.create_artifact_from_upload(
+                case_id=case_id,
+                node_id=node_id,
+                file_bytes=file_bytes,
+                original_filename=(
+                    file.filename
+                    or "unnamed-document"
+                ),
+                declared_content_type=file.content_type,
+                title=title,
+                artifact_type=type,
+                created_by=current_user.id,
+            )
         )
 
         if artifact.id not in node.state.artifact_ids:
-            node.state.artifact_ids.append(artifact.id)
-            node_repository.update(node)
+            node.state.artifact_ids.append(
+                artifact.id
+            )
+
+            node_repository.update(
+                node
+            )
 
         return artifact.model_dump()
 
     except UnsupportedDocumentTypeError as exc:
         raise HTTPException(
-            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            status_code=(
+                status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+            ),
             detail=str(exc),
         ) from exc
 
@@ -94,7 +110,9 @@ async def upload_document(
 
     except DocumentParsingError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=(
+                status.HTTP_422_UNPROCESSABLE_ENTITY
+            ),
             detail=str(exc),
         ) from exc
 

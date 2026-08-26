@@ -10,7 +10,6 @@ export interface ActorPayload {
 
 
 export interface CreateCasePayload {
-  owner_id: string;
   title: string;
   applied_law: string;
   description: string;

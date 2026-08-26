@@ -9,6 +9,8 @@ import ActorModal from "./ActorModal";
 
 import { uploadDocument } from "../../api/upload_document";
 
+import {useApiClient } from "../../api/useApiClient";
+
 import "./CreateCaseModal.css";
 
 
@@ -42,7 +44,6 @@ const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024;
 
 
 const EMPTY_CASE = {
-  owner_id: "111",
   title: "",
   applied_law: "de",
   description: "",
@@ -166,6 +167,9 @@ export default function CreateCaseModal({
   onClose,
   onCreate,
 }) {
+
+  const apiFetch = useApiClient();
+
   const fileInputRef = useRef(null);
 
   const [currentStep, setCurrentStep] =
@@ -598,7 +602,9 @@ export default function CreateCaseModal({
         "Uploading and parsing document...",
       );
 
-      return uploadDocument({
+    return uploadDocument(
+      apiFetch,
+      {
         caseId,
         nodeId,
         file: selectedFile,
@@ -608,8 +614,8 @@ export default function CreateCaseModal({
         type:
           documentType.trim() ||
           "document",
-        createdBy: form.owner_id,
-      });
+      },
+    );
     };
 
 

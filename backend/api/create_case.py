@@ -1,8 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, ConfigDict, Field
 
+from backend.auth.dependencies import get_current_user
+from backend.auth.models import User
 from backend.database.repositories.graph_repository import (
     GraphRepository,
 )
@@ -81,7 +83,6 @@ class CreateCasePayload(BaseModel):
         extra="forbid",
     )
 
-    owner_id: str
     title: str
     applied_law: str
     description: str
@@ -141,6 +142,7 @@ def build_negotiation_profile(
 )
 def create_case(
     payload: CreateCasePayload,
+    current_user: User = Depends(get_current_user),
 ) -> CreateCaseResponse:
     case_id = generate_id("case")
 
@@ -220,10 +222,12 @@ def create_case(
 
     graph.case = Case(
         id=case_id,
-        owner_id=payload.owner_id,
+        owner_id=current_user.id,
         title=payload.title.strip(),
         created_at=utc_now(),
-        language=Language(payload.language),
+        language=Language(
+            payload.language
+        ),
         applied_law=AppliedLaw(
             payload.applied_law,
         ),
@@ -246,10 +250,15 @@ def create_case(
         summary=payload.description.strip(),
     )
 
-    graph.add_node_obj(initial_node)
+    graph.add_node_obj(
+        initial_node
+    )
 
     repository = GraphRepository()
-    repository.save_graph(graph)
+
+    repository.save_graph(
+        graph
+    )
 
     return CreateCaseResponse(
         case=graph.case.model_dump(
