@@ -19,6 +19,8 @@ import "reactflow/dist/style.css";
 
 import "./App.css";
 
+import useApiClient from "./api/useApiClient";
+
 import CustomNode from "./AppComponents/CustomNode";
 import CustomEdge from "./AppComponents/CustomEdge";
 
@@ -234,6 +236,9 @@ function rectanglesOverlap(
  */
 
 function SimulatorApp() {
+
+  const apiFetch = useApiClient();
+
   const [
     graphData,
     setGraphData,
@@ -406,9 +411,9 @@ function SimulatorApp() {
 
         const creationResult =
           await createCase(
+            apiFetch,
             payload
           );
-
 
         const newCase =
           creationResult.case;
