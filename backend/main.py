@@ -5,10 +5,12 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+
+from backend.auth.dependencies import get_current_user
 
 from backend.api.add_node import (
     router as add_node_router,
@@ -149,66 +151,79 @@ app.include_router(
 app.include_router(
     graph_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     node_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     cases_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     add_node_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     add_node_by_action_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     delete_node_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     legal_check_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     create_case_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     sidebar_stats_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     create_artifacts_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     artifact_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     add_possible_actions_router,
     prefix="/api",
+    dependencies=[Depends(get_current_user)],
 )
 
 app.include_router(
     upload_document_router,
     prefix="/api",
     tags=["documents"],
+    dependencies=[Depends(get_current_user)],
 )
 
