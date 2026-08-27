@@ -1,4 +1,7 @@
-const API_BASE_URL = "http://localhost:8000/api";
+type ApiFetch = (
+  path: string,
+  options?: RequestInit,
+) => Promise<Response>;
 
 
 export interface CreateUploadedArtifactPayload {
@@ -12,22 +15,26 @@ export interface CreateUploadedArtifactPayload {
 }
 
 
-export async function createArtifact({
-  caseId,
-  nodeId,
-  title,
-  type,
-  originalFilename,
-  extractedContent,
-  content,
-}: CreateUploadedArtifactPayload) {
-  const response = await fetch(
-    `${API_BASE_URL}/create_artifact`,
+export async function createArtifact(
+  apiFetch: ApiFetch,
+  {
+    caseId,
+    nodeId,
+    title,
+    type,
+    originalFilename,
+    extractedContent,
+    content,
+  }: CreateUploadedArtifactPayload,
+) {
+  const response = await apiFetch(
+    "/create_artifact",
     {
       method: "POST",
 
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type":
+          "application/json",
       },
 
       body: JSON.stringify({
@@ -35,51 +42,18 @@ export async function createArtifact({
         node_id: nodeId,
         title,
         type,
-        original_filename: originalFilename,
-        extracted_content: extractedContent,
-
-        /*
-         * The current backend uses payload.content
-         * as created_by.
-         *
-         * Sending an empty value therefore keeps
-         * created_by empty as intended.
-         */
+        original_filename:
+          originalFilename,
+        extracted_content:
+          extractedContent,
         content,
       }),
     },
   );
 
-  if (!response.ok) {
-    let errorMessage =
-      "Failed to create the uploaded artifact.";
-
-    try {
-      const errorData = await response.json();
-
-      if (typeof errorData?.detail === "string") {
-        errorMessage = errorData.detail;
-      } else if (Array.isArray(errorData?.detail)) {
-        errorMessage = errorData.detail
-          .map((item) => item?.msg)
-          .filter(Boolean)
-          .join(", ");
-      }
-    } catch {
-      // Keep the default error message when the
-      // response does not contain valid JSON.
-    }
-
-    throw new Error(errorMessage);
-  }
-
   return response.json();
 }
 
-type ApiFetch = (
-  path: string,
-  options?: RequestInit,
-) => Promise<Response>;
 
 export async function createArtifacts(
   apiFetch: ApiFetch,
