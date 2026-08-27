@@ -85,13 +85,23 @@ class CreateArtifactsRequest(
 )
 def create_artifact(
     payload: CreateArtifactPayload,
+    current_user: User = Depends(
+        get_current_user
+    ),
 ):
     """
-    Legacy/manual artifact creation endpoint.
+    Create an artifact and attach it
+    to an existing case node.
 
-    Authorization and created_by handling for this
-    endpoint will be cleaned up separately in Step 3C.
+    Case ownership and artifact creator
+    are derived from the authenticated
+    Casendra user.
     """
+
+    require_case_access(
+        payload.case_id,
+        current_user,
+    )
 
     graph_repository = (
         GraphRepository()
@@ -104,6 +114,32 @@ def create_artifact(
     node_repository = (
         NodeRepository()
     )
+
+    graph = (
+        graph_repository.load_graph(
+            payload.case_id
+        )
+    )
+
+    node = graph.nodes.get(
+        payload.node_id
+    )
+
+    if node is None:
+        from fastapi import (
+            HTTPException,
+            status,
+        )
+
+        raise HTTPException(
+            status_code=(
+                status.HTTP_404_NOT_FOUND
+            ),
+            detail=(
+                f"Node '{payload.node_id}' "
+                "was not found in this case."
+            ),
+        )
 
     artifact = Artifact(
         id=generate_id(
@@ -121,27 +157,11 @@ def create_artifact(
             payload.extracted_content
         ),
         output_files=[],
-        content=(
-            payload.extracted_content
-        ),
-
-        # Existing behavior.
-        # This will be corrected in Step 3C.
-        created_by=payload.content,
-
+        content=payload.content,
+        created_by=current_user.id,
         timestamp_created=utc_now(),
         timestamp_uploaded=utc_now(),
     )
-
-    graph = (
-        graph_repository.load_graph(
-            payload.case_id
-        )
-    )
-
-    node = graph.nodes[
-        payload.node_id
-    ]
 
     node.state.artifact_ids.append(
         artifact.id
@@ -163,7 +183,7 @@ def create_artifact(
 
         raise
 
-    return artifact
+    return artifact.model_dump()
 
 
 @router.post(
