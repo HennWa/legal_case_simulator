@@ -1,21 +1,32 @@
-export async function addNodeByAction(caseId: string, nodeId: string, action: string) {
-  const res = await fetch("http://localhost:8000/api/add_node_by_action", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+type ApiFetch = (
+  path: string,
+  options?: RequestInit,
+) => Promise<Response>;
+
+
+export async function addNodeByAction(
+  apiFetch: ApiFetch,
+  caseId: string,
+  nodeId: string,
+  action: string,
+) {
+  const response = await apiFetch(
+    "/add_node_by_action",
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+
+      body: JSON.stringify({
+        case_id: caseId,
+        node_id: nodeId,
+        action,
+      }),
     },
-    body: JSON.stringify({
-      case_id: caseId,
-      node_id: nodeId,
-      action: action,
-    }),
-  });
+  );
 
-  if (!res.ok) {
-    throw new Error(`Failed to add node ${nodeId}`);
-  }
-
-  return res.json();
+  return response.json();
 }
-
-

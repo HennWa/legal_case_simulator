@@ -1,95 +1,258 @@
-from fastapi import APIRouter
-from pydantic import BaseModel, Field
-from backend.object_graph_runtime.graph_classes import Artifact, generate_id, utc_now
-from backend.expansion_engine.exapnsion_engine import ExpansionEngine
-from backend.llm_interface.llm_interface import MockLLMProvider
-from backend.database.repositories.graph_repository import GraphRepository
-from backend.database.repositories.node_repository import NodeRepository
-from backend.database.repositories.edge_repository import EdgeRepository
-from backend.database.repositories.artifact_repository import ArtifactRepository
 import os
+
 from dotenv import load_dotenv
+from fastapi import (
+    APIRouter,
+    Depends,
+)
+from pydantic import (
+    BaseModel,
+    Field,
+)
+
+from backend.auth.authorization import (
+    require_case_access,
+)
+from backend.auth.dependencies import (
+    get_current_user,
+)
+from backend.auth.models import User
+from backend.database.repositories.artifact_repository import (
+    ArtifactRepository,
+)
+from backend.database.repositories.edge_repository import (
+    EdgeRepository,
+)
+from backend.database.repositories.graph_repository import (
+    GraphRepository,
+)
+from backend.database.repositories.node_repository import (
+    NodeRepository,
+)
+from backend.expansion_engine.exapnsion_engine import (
+    ExpansionEngine,
+)
+from backend.llm_interface.llm_interface import (
+    MockLLMProvider,
+)
+from backend.object_graph_runtime.graph_classes import (
+    Artifact,
+    generate_id,
+    utc_now,
+)
+
 
 router = APIRouter()
 
-load_dotenv(override=True)
-openai_api_key = os.getenv('OPENAI_API_KEY')
 
-class CreateArtifactPayload(BaseModel):
+load_dotenv(
+    override=True
+)
+
+openai_api_key = os.getenv(
+    "OPENAI_API_KEY"
+)
+
+
+class CreateArtifactPayload(
+    BaseModel
+):
     case_id: str
     node_id: str
 
-    title: str = Field(min_length=1)
-    type: str = Field(min_length=1)
+    title: str = Field(
+        min_length=1
+    )
+
+    type: str = Field(
+        min_length=1
+    )
 
     original_filename: str
     extracted_content: str
     content: str
 
 
-class CreateArtifactsRequest(BaseModel):
+class CreateArtifactsRequest(
+    BaseModel
+):
     case_id: str
     edge_id: str
 
 
-@router.post("/create_artifact")
-def create_artifact(payload: CreateArtifactPayload):
+@router.post(
+    "/create_artifact"
+)
+def create_artifact(
+    payload: CreateArtifactPayload,
+):
+    """
+    Legacy/manual artifact creation endpoint.
 
-    repo = GraphRepository()
-    art_repo = ArtifactRepository()
-    node_repo = NodeRepository()
+    Authorization and created_by handling for this
+    endpoint will be cleaned up separately in Step 3C.
+    """
+
+    graph_repository = (
+        GraphRepository()
+    )
+
+    artifact_repository = (
+        ArtifactRepository()
+    )
+
+    node_repository = (
+        NodeRepository()
+    )
 
     artifact = Artifact(
-        id=generate_id("art"),
+        id=generate_id(
+            "art"
+        ),
         case_id=payload.case_id,
         type=payload.type,
         title=payload.title,
         source_type="uploaded",
-        original_filename=payload.original_filename,
+        original_filename=(
+            payload.original_filename
+        ),
         original_file_url="",
-        extracted_content=payload.extracted_content,
+        extracted_content=(
+            payload.extracted_content
+        ),
         output_files=[],
-        content=payload.extracted_content,
+        content=(
+            payload.extracted_content
+        ),
+
+        # Existing behavior.
+        # This will be corrected in Step 3C.
         created_by=payload.content,
+
         timestamp_created=utc_now(),
         timestamp_uploaded=utc_now(),
     )
 
-    graph = repo.load_graph(payload.case_id)
-    node = graph.nodes[payload.node_id]
-    node.state.artifact_ids.append(artifact.id)
+    graph = (
+        graph_repository.load_graph(
+            payload.case_id
+        )
+    )
+
+    node = graph.nodes[
+        payload.node_id
+    ]
+
+    node.state.artifact_ids.append(
+        artifact.id
+    )
 
     try:
-        art_repo.create(artifact)
-        node_repo.upsert(node)
+        artifact_repository.create(
+            artifact
+        )
+
+        node_repository.upsert(
+            node
+        )
+
     except Exception:
-        art_repo.delete(artifact.id)
+        artifact_repository.delete(
+            artifact.id
+        )
+
         raise
 
     return artifact
 
 
-@router.post("/create_artifacts")
-def create_artifacts(payload: CreateArtifactsRequest):
-    repo = GraphRepository()
-    art_repo = ArtifactRepository()
-    node_repo = NodeRepository()
-    edge_repo = EdgeRepository()
-    graph = repo.load_graph(payload.case_id)
+@router.post(
+    "/create_artifacts"
+)
+def create_artifacts(
+    payload: CreateArtifactsRequest,
+    current_user: User = Depends(
+        get_current_user
+    ),
+):
+    """
+    Generate artifacts for an existing graph edge.
 
-    llm = MockLLMProvider(key=openai_api_key)
-    engine = ExpansionEngine(graph, llm)
+    The authenticated user must own the case before
+    any graph data is loaded or modified.
+    """
 
-    artifact_collection = engine.create_artifacts(payload.edge_id)
+    require_case_access(
+        payload.case_id,
+        current_user,
+    )
 
-    node_repo.update(engine.graph.nodes[engine.graph.edges[payload.edge_id].target_id])
-    edge_repo.update(engine.graph.edges[payload.edge_id])
+    graph_repository = (
+        GraphRepository()
+    )
 
-    for art in artifact_collection.artifacts:
-        art_repo.create(art)
+    artifact_repository = (
+        ArtifactRepository()
+    )
 
-    artifact_ids = [art.id for art in artifact_collection.artifacts]
+    node_repository = (
+        NodeRepository()
+    )
+
+    edge_repository = (
+        EdgeRepository()
+    )
+
+    graph = (
+        graph_repository.load_graph(
+            payload.case_id
+        )
+    )
+
+    llm = MockLLMProvider(
+        key=openai_api_key
+    )
+
+    engine = ExpansionEngine(
+        graph,
+        llm,
+    )
+
+    artifact_collection = (
+        engine.create_artifacts(
+            payload.edge_id
+        )
+    )
+
+    edge = engine.graph.edges[
+        payload.edge_id
+    ]
+
+    target_node = (
+        engine.graph.nodes[
+            edge.target_id
+        ]
+    )
+
+    node_repository.update(
+        target_node
+    )
+
+    edge_repository.update(
+        edge
+    )
+
+    for artifact in (
+        artifact_collection.artifacts
+    ):
+        artifact_repository.create(
+            artifact
+        )
+
+    artifact_ids = [
+        artifact.id
+        for artifact
+        in artifact_collection.artifacts
+    ]
 
     return artifact_ids
-
-

@@ -76,18 +76,24 @@ export async function createArtifact({
   return response.json();
 }
 
+type ApiFetch = (
+  path: string,
+  options?: RequestInit,
+) => Promise<Response>;
 
 export async function createArtifacts(
+  apiFetch: ApiFetch,
   caseId: string,
   edgeId: string,
 ) {
-  const response = await fetch(
-    `${API_BASE_URL}/create_artifacts`,
+  const response = await apiFetch(
+    "/create_artifacts",
     {
       method: "POST",
 
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type":
+          "application/json",
       },
 
       body: JSON.stringify({
@@ -96,12 +102,6 @@ export async function createArtifacts(
       }),
     },
   );
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to create artifacts for edge '${edgeId}'.`,
-    );
-  }
 
   return response.json();
 }

@@ -470,6 +470,7 @@ function SimulatorApp() {
          * Generate possible actions.
          */
         await addPossibleActions(
+          apiFetch,
           newCase.id,
           initialNodeId
         );
@@ -641,6 +642,7 @@ function SimulatorApp() {
 
         const newBranch =
           await addNode(
+            apiFetch,
             selectedCaseId,
             nodeId
           );
@@ -674,12 +676,14 @@ function SimulatorApp() {
 
 
         await addPossibleActions(
+          apiFetch,
           selectedCaseId,
           newBranch.node.id
         );
 
 
         await createArtifacts(
+          aptFetch,
           selectedCaseId,
           newBranch.edge.id
         );
@@ -781,6 +785,7 @@ function SimulatorApp() {
 
         const newBranch =
           await addNodeByAction(
+            apiFetch,
             selectedCaseId,
             nodeId,
             cleanedAction
@@ -815,6 +820,7 @@ function SimulatorApp() {
 
 
         await addPossibleActions(
+          apiFetch,
           selectedCaseId,
           newBranch.node.id
         );
@@ -913,6 +919,7 @@ function SimulatorApp() {
 
 
         await deleteNode(
+          apiFetch,
           selectedCaseId,
           nodeId
         );
@@ -2159,6 +2166,7 @@ function SimulatorApp() {
                       try {
                         const data =
                           await fetchNode(
+                            apiFetch,
                             selectedCaseId,
                             node.id
                           );
@@ -2181,6 +2189,7 @@ function SimulatorApp() {
 
                         const stats =
                           await fetchSidebarStats(
+                            apiFetch,
                             selectedCaseId,
                             node.id
                           );
