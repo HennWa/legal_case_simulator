@@ -1,9 +1,16 @@
-export async function fetchGraph(caseId) {
-  const res = await fetch(`http://localhost:8000/api/graph/${caseId}`);
+type ApiFetch = (
+  path: string,
+  options?: RequestInit,
+) => Promise<Response>;
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch graph");
-  }
 
-  return res.json();
+export async function fetchGraph(
+  apiFetch: ApiFetch,
+  caseId: string,
+) {
+  const response = await apiFetch(
+    `/graph/${caseId}`,
+  );
+
+  return response.json();
 }

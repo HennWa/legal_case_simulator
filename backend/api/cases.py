@@ -1,14 +1,44 @@
-from fastapi import APIRouter
-from backend.database.repositories.case_repository import CaseRepository
+from fastapi import (
+    APIRouter,
+    Depends,
+)
+
+from backend.auth.dependencies import (
+    get_current_user,
+)
+from backend.auth.models import User
+from backend.database.repositories.case_repository import (
+    CaseRepository,
+)
+
 
 router = APIRouter()
 
-@router.get("/cases/{owner_id}")
-def get_cases(owner_id: str):
 
-    repo = CaseRepository()
-    cases = repo.get_by_owner_id(owner_id)
+@router.get("/cases")
+def get_cases(
+    current_user: User = Depends(
+        get_current_user
+    ),
+):
+    """
+    Return all cases owned by the authenticated
+    Casendra user.
 
-    cases_json = [case.model_dump(mode="json") for case in cases]
+    The owner ID is intentionally derived from the
+    authenticated user and must not be supplied by
+    the client.
+    """
 
-    return cases_json
+    repository = CaseRepository()
+
+    cases = repository.get_by_owner_id(
+        current_user.id
+    )
+
+    return [
+        case.model_dump(
+            mode="json"
+        )
+        for case in cases
+    ]

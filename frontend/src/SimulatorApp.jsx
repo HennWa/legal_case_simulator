@@ -455,6 +455,7 @@ function SimulatorApp() {
 
 
         await legalCheck(
+          apiFetch,
           newCase.id,
           initialNodeId
         );
@@ -479,6 +480,7 @@ function SimulatorApp() {
          */
         const updatedGraph =
           await fetchGraph(
+            apiFetch,
             newCase.id
           );
 
@@ -523,13 +525,9 @@ function SimulatorApp() {
   const loadCases =
     async () => {
       try {
-        const defaultOwnerId =
-          "111";
-
-
         const data =
           await fetchCases(
-            defaultOwnerId
+            apiFetch
           );
 
 
@@ -585,6 +583,7 @@ function SimulatorApp() {
 
         const data =
           await fetchGraph(
+            apiFetch,
             selectedCaseId
           );
 
@@ -658,6 +657,7 @@ function SimulatorApp() {
 
 
         await legalCheck(
+          apiFetch,
           selectedCaseId,
           newBranch.node.id
         );
@@ -798,6 +798,7 @@ function SimulatorApp() {
 
 
         await legalCheck(
+          apiFetch,
           selectedCaseId,
           newBranch.node.id
         );
