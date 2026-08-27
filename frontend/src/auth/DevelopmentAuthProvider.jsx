@@ -4,71 +4,158 @@ import {
   useState,
 } from "react";
 
-import { fetchCurrentUser } from "../api/auth";
-import { AuthContext } from "./AuthContext";
+import {
+  fetchCurrentUser,
+} from "../api/auth";
+
+import {
+  AuthContext,
+} from "./AuthContext";
 
 
 export default function DevelopmentAuthProvider({
   children,
 }) {
-  const [currentUser, setCurrentUser] =
-    useState(null);
+  const [
+    currentUser,
+    setCurrentUser,
+  ] = useState(null);
 
-  const [isLoading, setIsLoading] =
-    useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
+  const [
+    authStatus,
+    setAuthStatus,
+  ] = useState(
+    "loading",
+  );
 
-    async function loadCurrentUser() {
-      try {
-        const user =
-          await fetchCurrentUser(null);
 
-        if (!cancelled) {
-          setCurrentUser(user);
-        }
-      } catch (error) {
-        console.error(
-          "Failed to load development user:",
-          error
+  const [
+    authError,
+    setAuthError,
+  ] = useState(
+    null,
+  );
+
+
+  useEffect(
+    () => {
+      let cancelled =
+        false;
+
+
+      async function loadCurrentUser() {
+        setAuthStatus(
+          "loading",
         );
 
-        if (!cancelled) {
-          setCurrentUser(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
+        setAuthError(
+          null,
+        );
+
+
+        try {
+          const user =
+            await fetchCurrentUser(
+              null,
+            );
+
+
+          if (!cancelled) {
+            setCurrentUser(
+              user,
+            );
+
+            setAuthStatus(
+              "authenticated",
+            );
+          }
+
+        } catch (error) {
+          console.error(
+            "Failed to load development user:",
+            error,
+          );
+
+
+          if (!cancelled) {
+            setCurrentUser(
+              null,
+            );
+
+            setAuthError(
+              error,
+            );
+
+            setAuthStatus(
+              "error",
+            );
+          }
         }
       }
-    }
 
-    loadCurrentUser();
 
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+      loadCurrentUser();
 
-  const login = useCallback(async () => {
-    // No login necessary in development mode.
-  }, []);
 
-  const logout = useCallback(async () => {
-    // No logout necessary in development mode.
-  }, []);
+      return () => {
+        cancelled =
+          true;
+      };
+    },
+    [],
+  );
+
+
+  const login =
+    useCallback(
+      async () => {
+        /*
+         * No login necessary
+         * in development mode.
+         */
+      },
+      [],
+    );
+
+
+  const logout =
+    useCallback(
+      async () => {
+        /*
+         * No logout necessary
+         * in development mode.
+         */
+      },
+      [],
+    );
+
 
   const getAccessToken =
-    useCallback(async () => {
-      return null;
-    }, []);
+    useCallback(
+      async () => {
+        return null;
+      },
+      [],
+    );
+
 
   const value = {
-    isAuthenticated:
-      currentUser !== null,
+    authStatus,
 
-    isLoading,
+    authError,
+
+    isAuth0Authenticated:
+      false,
+
+    isAuthenticated:
+      authStatus ===
+      "authenticated",
+
+    isLoading:
+      authStatus ===
+      "loading",
+
     currentUser,
 
     login,
@@ -76,8 +163,11 @@ export default function DevelopmentAuthProvider({
     getAccessToken,
   };
 
+
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={value}
+    >
       {children}
     </AuthContext.Provider>
   );
