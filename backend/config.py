@@ -24,12 +24,15 @@ class AuthMode(StrEnum):
     AUTH0 = "auth0"
 
 
-def _read_required_environment_variable(name: str) -> str:
+def _read_required_environment_variable(
+    name: str,
+) -> str:
     value = os.getenv(name)
 
     if value is None or not value.strip():
         raise RuntimeError(
-            f"Required environment variable {name!r} is missing."
+            f"Required environment variable "
+            f"{name!r} is missing."
         )
 
     return value.strip()
@@ -39,7 +42,10 @@ def _read_comma_separated_environment_variable(
     name: str,
     default: str = "",
 ) -> list[str]:
-    raw_value = os.getenv(name, default)
+    raw_value = os.getenv(
+        name,
+        default,
+    )
 
     return [
         entry.strip()
@@ -61,30 +67,46 @@ class Settings:
     dev_user_email: str
     dev_user_display_name: str
 
-    cors_allowed_origins: tuple[str, ...]
+    cors_allowed_origins: tuple[
+        str,
+        ...,
+    ]
 
-    # These are placeholders for Step 2 and Step 3.
     auth0_domain: str | None
     auth0_audience: str | None
 
     @classmethod
-    def from_environment(cls) -> "Settings":
-        app_environment = AppEnvironment(
-            os.getenv(
-                "APP_ENV",
-                AppEnvironment.DEVELOPMENT.value,
-            ).strip().lower()
+    def from_environment(
+        cls,
+    ) -> "Settings":
+        app_environment = (
+            AppEnvironment(
+                os.getenv(
+                    "APP_ENV",
+                    (
+                        AppEnvironment
+                        .DEVELOPMENT
+                        .value
+                    ),
+                )
+                .strip()
+                .lower()
+            )
         )
 
         auth_mode = AuthMode(
             os.getenv(
                 "AUTH_MODE",
                 AuthMode.DEVELOPMENT.value,
-            ).strip().lower()
+            )
+            .strip()
+            .lower()
         )
 
-        mongodb_uri = _read_required_environment_variable(
-            "MONGODB_URI"
+        mongodb_uri = (
+            _read_required_environment_variable(
+                "MONGODB_URI"
+            )
         )
 
         mongodb_database = os.getenv(
@@ -94,17 +116,22 @@ class Settings:
 
         if not mongodb_database:
             raise RuntimeError(
-                "MONGODB_DATABASE must not be empty."
+                "MONGODB_DATABASE must "
+                "not be empty."
             )
 
-        mongodb_vector_database = os.getenv(
-            "MONGODB_VECTOR_DATABASE",
-            "legal_case_simulator",
-        ).strip()
+        mongodb_vector_database = (
+            os.getenv(
+                "MONGODB_VECTOR_DATABASE",
+                "legal_case_simulator",
+            )
+            .strip()
+        )
 
         if not mongodb_vector_database:
             raise RuntimeError(
-                "MONGODB_VECTOR_DATABASE must not be empty."
+                "MONGODB_VECTOR_DATABASE "
+                "must not be empty."
             )
 
         dev_user_id = os.getenv(
@@ -117,10 +144,13 @@ class Settings:
             "henning@example.test",
         ).strip()
 
-        dev_user_display_name = os.getenv(
-            "DEV_USER_DISPLAY_NAME",
-            "Henning Development",
-        ).strip()
+        dev_user_display_name = (
+            os.getenv(
+                "DEV_USER_DISPLAY_NAME",
+                "Henning Development",
+            )
+            .strip()
+        )
 
         cors_allowed_origins = tuple(
             _read_comma_separated_environment_variable(
@@ -139,58 +169,104 @@ class Settings:
             app_environment=app_environment,
             auth_mode=auth_mode,
             mongodb_uri=mongodb_uri,
-            mongodb_database=mongodb_database,
-            mongodb_vector_database=mongodb_vector_database,
+            mongodb_database=(
+                mongodb_database
+            ),
+            mongodb_vector_database=(
+                mongodb_vector_database
+            ),
             dev_user_id=dev_user_id,
             dev_user_email=dev_user_email,
-            dev_user_display_name=dev_user_display_name,
-            cors_allowed_origins=cors_allowed_origins,
-            auth0_domain=os.getenv("AUTH0_DOMAIN"),
-            auth0_audience=os.getenv("AUTH0_AUDIENCE"),
+            dev_user_display_name=(
+                dev_user_display_name
+            ),
+            cors_allowed_origins=(
+                cors_allowed_origins
+            ),
+            auth0_domain=os.getenv(
+                "AUTH0_DOMAIN"
+            ),
+            auth0_audience=os.getenv(
+                "AUTH0_AUDIENCE"
+            ),
         )
 
         settings.validate()
 
         return settings
 
-    def validate(self) -> None:
+    def validate(
+        self,
+    ) -> None:
         if (
-            self.app_environment == AppEnvironment.PRODUCTION
-            and self.auth_mode != AuthMode.AUTH0
+            self.auth_mode
+            == AuthMode.DEVELOPMENT
+            and self.app_environment
+            != AppEnvironment.DEVELOPMENT
         ):
             raise RuntimeError(
-                "Production must use AUTH_MODE=auth0. "
-                f"Current value: {self.auth_mode.value!r}."
+                "AUTH_MODE=development may "
+                "only be used with "
+                "APP_ENV=development."
             )
 
         if (
-            self.app_environment != AppEnvironment.TEST
-            and self.auth_mode == AuthMode.TEST
+            self.app_environment
+            == AppEnvironment.PRODUCTION
+            and self.auth_mode
+            != AuthMode.AUTH0
         ):
             raise RuntimeError(
-                "AUTH_MODE=test may only be used with APP_ENV=test."
+                "Production must use "
+                "AUTH_MODE=auth0. "
+                f"Current value: "
+                f"{self.auth_mode.value!r}."
             )
 
-        if self.auth_mode == AuthMode.DEVELOPMENT:
+        if (
+            self.app_environment
+            != AppEnvironment.TEST
+            and self.auth_mode
+            == AuthMode.TEST
+        ):
+            raise RuntimeError(
+                "AUTH_MODE=test may only "
+                "be used with APP_ENV=test."
+            )
+
+        if (
+            self.auth_mode
+            == AuthMode.DEVELOPMENT
+        ):
             if not self.dev_user_id:
                 raise RuntimeError(
-                    "DEV_USER_ID must be configured in development mode."
+                    "DEV_USER_ID must be "
+                    "configured in "
+                    "development mode."
                 )
 
             if not self.dev_user_email:
                 raise RuntimeError(
-                    "DEV_USER_EMAIL must be configured in development mode."
+                    "DEV_USER_EMAIL must be "
+                    "configured in "
+                    "development mode."
                 )
 
-        if self.auth_mode == AuthMode.AUTH0:
+        if (
+            self.auth_mode
+            == AuthMode.AUTH0
+        ):
             if not self.auth0_domain:
                 raise RuntimeError(
-                    "AUTH0_DOMAIN is required when AUTH_MODE=auth0."
+                    "AUTH0_DOMAIN is required "
+                    "when AUTH_MODE=auth0."
                 )
 
             if not self.auth0_audience:
                 raise RuntimeError(
-                    "AUTH0_AUDIENCE is required when AUTH_MODE=auth0."
+                    "AUTH0_AUDIENCE is "
+                    "required when "
+                    "AUTH_MODE=auth0."
                 )
 
 
