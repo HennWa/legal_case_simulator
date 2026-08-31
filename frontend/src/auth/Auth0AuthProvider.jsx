@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -295,27 +296,39 @@ export default function Auth0AuthProvider({
   );
 
 
-  const value = {
-    authStatus,
+    const value =
+      useMemo(
+        () => ({
+          authStatus,
 
-    authError,
+          authError,
 
-    isAuth0Authenticated,
+          isAuth0Authenticated,
 
-    isAuthenticated:
-      authStatus ===
-      "authenticated",
+          isAuthenticated:
+            authStatus ===
+            "authenticated",
 
-    isLoading:
-      authStatus ===
-      "loading",
+          isLoading:
+            authStatus ===
+            "loading",
 
-    currentUser,
+          currentUser,
 
-    login,
-    logout,
-    getAccessToken,
-  };
+          login,
+          logout,
+          getAccessToken,
+        }),
+        [
+          authStatus,
+          authError,
+          isAuth0Authenticated,
+          currentUser,
+          login,
+          logout,
+          getAccessToken,
+        ],
+      );
 
 
   return (
