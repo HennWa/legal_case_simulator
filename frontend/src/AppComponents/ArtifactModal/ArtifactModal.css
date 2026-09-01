@@ -74,7 +74,7 @@
 
 .modal-close-button:active {
   transform: scale(0.95);
-}}
+}
 
 .modal-overlay {
   position: fixed;
