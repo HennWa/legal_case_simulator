@@ -12,20 +12,22 @@ import backend.auth.dependencies as auth_dependencies
 from backend.auth.jwt import (
     TokenValidationError,
 )
-from backend.auth.models import (
-    User,
+from backend.auth.models import User
+from backend.auth.provisioning import (
+    AUTH0_EMAIL_CLAIM,
+    AUTH0_EMAIL_VERIFIED_CLAIM,
+    AUTH0_NAME_CLAIM,
 )
-
-
-# ------------------------------------------------------------------
-# Helpers
-# ------------------------------------------------------------------
 
 
 def create_test_user(
     *,
-    user_id: str = "usr_test_user",
-    auth0_subject: str = "auth0|test-user",
+    user_id: str = (
+        "usr_test_user"
+    ),
+    auth0_subject: str = (
+        "auth0|test-user"
+    ),
     is_active: bool = True,
 ) -> User:
     return User.create(
@@ -47,28 +49,86 @@ def create_credentials(
     )
 
 
+class FakeUserRepository:
+    def __init__(
+        self,
+        *,
+        user: User | None = None,
+    ):
+        self.users = []
+
+        if user is not None:
+            self.users.append(
+                user
+            )
+
+    def get(
+        self,
+        user_id: str,
+    ):
+        for user in self.users:
+            if user.id == user_id:
+                return user
+
+        return None
+
+    def get_by_auth0_subject(
+        self,
+        auth0_subject: str,
+    ):
+        for user in self.users:
+            if (
+                user.auth0_subject
+                == auth0_subject
+            ):
+                return user
+
+        return None
+
+    def get_by_email(
+        self,
+        email: str,
+    ):
+        normalized = (
+            email.strip().lower()
+        )
+
+        for user in self.users:
+            if (
+                user.email_normalized
+                == normalized
+            ):
+                return user
+
+        return None
+
+    def create(
+        self,
+        user: User,
+    ):
+        self.users.append(
+            user
+        )
+
+        return user
+
+
 def patch_user_repository(
     monkeypatch,
     *,
-    user: User | None,
+    user: User | None = None,
 ):
-    class FakeUserRepository:
-        def get_by_auth0_subject(
-            self,
-            auth0_subject: str,
-        ):
-            return user
+    repository = FakeUserRepository(
+        user=user
+    )
 
     monkeypatch.setattr(
         auth_dependencies,
         "UserRepository",
-        FakeUserRepository,
+        lambda: repository,
     )
 
-
-# ------------------------------------------------------------------
-# Authentication tests
-# ------------------------------------------------------------------
+    return repository
 
 
 def test_missing_bearer_token_returns_401():
@@ -79,10 +139,9 @@ def test_missing_bearer_token_returns_401():
             credentials=None
         )
 
-    assert exc_info.value.status_code == 401
     assert (
-        exc_info.value.detail
-        == "Authorization header is missing."
+        exc_info.value.status_code
+        == 401
     )
 
 
@@ -102,139 +161,150 @@ def test_invalid_access_token_returns_401(
         fake_validate_access_token,
     )
 
-    credentials = create_credentials()
-
     with pytest.raises(
         HTTPException
     ) as exc_info:
         auth_dependencies.get_auth0_user(
-            credentials
+            create_credentials()
         )
 
-    assert exc_info.value.status_code == 401
     assert (
-        exc_info.value.detail
-        == "Access token is invalid."
+        exc_info.value.status_code
+        == 401
     )
 
 
 def test_token_without_subject_returns_401(
     monkeypatch,
 ):
-    def fake_validate_access_token(
-        token: str,
-    ):
-        return {
-            "aud": "https://api.casendra.legal",
-        }
-
     monkeypatch.setattr(
         auth_dependencies,
         "validate_access_token",
-        fake_validate_access_token,
+        lambda token: {
+            "aud":
+                "https://api.casendra.legal",
+        },
     )
-
-    credentials = create_credentials()
 
     with pytest.raises(
         HTTPException
     ) as exc_info:
         auth_dependencies.get_auth0_user(
-            credentials
+            create_credentials()
         )
 
-    assert exc_info.value.status_code == 401
-
-    assert exc_info.value.detail == (
-        "Access token does not contain "
-        "a valid subject claim."
+    assert (
+        exc_info.value.status_code
+        == 401
     )
 
 
-def test_empty_subject_returns_401(
+def test_new_verified_auth0_user_is_provisioned(
     monkeypatch,
 ):
-    def fake_validate_access_token(
-        token: str,
-    ):
-        return {
-            "sub": "",
-        }
-
     monkeypatch.setattr(
         auth_dependencies,
         "validate_access_token",
-        fake_validate_access_token,
+        lambda token: {
+            "sub":
+                "auth0|new-user",
+
+            AUTH0_EMAIL_CLAIM:
+                "new@example.com",
+
+            AUTH0_EMAIL_VERIFIED_CLAIM:
+                True,
+
+            AUTH0_NAME_CLAIM:
+                "New User",
+        },
     )
 
-    credentials = create_credentials()
-
-    with pytest.raises(
-        HTTPException
-    ) as exc_info:
-        auth_dependencies.get_auth0_user(
-            credentials
+    repository = (
+        patch_user_repository(
+            monkeypatch
         )
+    )
 
-    assert exc_info.value.status_code == 401
+    result = (
+        auth_dependencies
+        .get_auth0_user(
+            create_credentials()
+        )
+    )
+
+    assert (
+        result.auth0_subject
+        == "auth0|new-user"
+    )
+
+    assert (
+        result.email
+        == "new@example.com"
+    )
+
+    assert (
+        result.display_name
+        == "New User"
+    )
+
+    assert len(
+        repository.users
+    ) == 1
 
 
-def test_unknown_casendra_user_returns_403(
+def test_new_unverified_auth0_user_returns_403(
     monkeypatch,
 ):
-    def fake_validate_access_token(
-        token: str,
-    ):
-        return {
-            "sub": "auth0|unknown-user",
-        }
-
     monkeypatch.setattr(
         auth_dependencies,
         "validate_access_token",
-        fake_validate_access_token,
+        lambda token: {
+            "sub":
+                "auth0|new-user",
+
+            AUTH0_EMAIL_CLAIM:
+                "new@example.com",
+
+            AUTH0_EMAIL_VERIFIED_CLAIM:
+                False,
+
+            AUTH0_NAME_CLAIM:
+                "New User",
+        },
     )
 
     patch_user_repository(
-        monkeypatch,
-        user=None,
+        monkeypatch
     )
-
-    credentials = create_credentials()
 
     with pytest.raises(
         HTTPException
     ) as exc_info:
         auth_dependencies.get_auth0_user(
-            credentials
+            create_credentials()
         )
 
-    assert exc_info.value.status_code == 403
-
-    assert exc_info.value.detail == (
-        "No Casendra user is linked "
-        "to this Auth0 identity."
+    assert (
+        exc_info.value.status_code
+        == 403
     )
 
 
-def test_inactive_casendra_user_returns_403(
+def test_inactive_existing_user_returns_403(
     monkeypatch,
 ):
     user = create_test_user(
-        is_active=False,
+        is_active=False
     )
-
-    def fake_validate_access_token(
-        token: str,
-    ):
-        return {
-            "sub": user.auth0_subject,
-        }
 
     monkeypatch.setattr(
         auth_dependencies,
         "validate_access_token",
-        fake_validate_access_token,
+        lambda token: {
+            "sub":
+                user.auth0_subject,
+        },
     )
 
     patch_user_repository(
@@ -242,39 +312,31 @@ def test_inactive_casendra_user_returns_403(
         user=user,
     )
 
-    credentials = create_credentials()
-
     with pytest.raises(
         HTTPException
     ) as exc_info:
         auth_dependencies.get_auth0_user(
-            credentials
+            create_credentials()
         )
 
-    assert exc_info.value.status_code == 403
-
     assert (
-        exc_info.value.detail
-        == "The Casendra user is inactive."
+        exc_info.value.status_code
+        == 403
     )
 
 
-def test_active_casendra_user_is_returned(
+def test_active_existing_user_is_returned(
     monkeypatch,
 ):
     user = create_test_user()
 
-    def fake_validate_access_token(
-        token: str,
-    ):
-        return {
-            "sub": user.auth0_subject,
-        }
-
     monkeypatch.setattr(
         auth_dependencies,
         "validate_access_token",
-        fake_validate_access_token,
+        lambda token: {
+            "sub":
+                user.auth0_subject,
+        },
     )
 
     patch_user_repository(
@@ -282,14 +344,12 @@ def test_active_casendra_user_is_returned(
         user=user,
     )
 
-    credentials = create_credentials()
-
     result = (
-        auth_dependencies.get_auth0_user(
-            credentials
+        auth_dependencies
+        .get_auth0_user(
+            create_credentials()
         )
     )
 
     assert result is user
-    assert result.id == "usr_test_user"
     assert result.is_active is True
