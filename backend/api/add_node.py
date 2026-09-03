@@ -23,6 +23,9 @@ from backend.expansion_engine.exapnsion_engine import (
 from backend.llm_interface.llm_interface import (
     MockLLMProvider,
 )
+from backend.services.usage_service import (
+    UsageService,
+)
 
 
 router = APIRouter()
@@ -53,27 +56,50 @@ def add_node(
         current_user,
     )
 
-    repository = GraphRepository()
-
-    graph = repository.load_graph(
-        payload.case_id
+    usage_service = (
+        UsageService()
     )
 
-    llm = MockLLMProvider(
-        key=openai_api_key
+
+    usage_service.reserve_node_creation(
+        current_user
     )
 
-    engine = ExpansionEngine(
-        graph,
-        llm,
-    )
+    try:
+        repository = (
+            GraphRepository()
+        )
 
-    branch_node = engine.expand_node(
-        payload.node_id
-    )
+        graph = (
+            repository.load_graph(
+                payload.case_id
+            )
+        )
 
-    repository.save_graph(
-        graph
-    )
+        llm = MockLLMProvider(
+            key=openai_api_key
+        )
+
+        engine = ExpansionEngine(
+            graph,
+            llm,
+        )
+
+        branch_node = (
+            engine.expand_node(
+                payload.node_id
+            )
+        )
+
+        repository.save_graph(
+            graph
+        )
+
+    except Exception:
+        usage_service.release_node_creation(
+            current_user.id
+        )
+
+        raise
 
     return branch_node.model_dump()

@@ -54,6 +54,30 @@ def _read_comma_separated_environment_variable(
     ]
 
 
+def _read_non_negative_int_environment_variable(
+    name: str,
+    default: int,
+) -> int:
+    raw_value = os.getenv(
+        name,
+        str(default),
+    ).strip()
+
+    try:
+        value = int(raw_value)
+    except ValueError as exc:
+        raise RuntimeError(
+            f"{name} must be an integer."
+        ) from exc
+
+    if value < 0:
+        raise RuntimeError(
+            f"{name} must be greater than or equal to 0."
+        )
+
+    return value
+
+
 @dataclass(frozen=True)
 class Settings:
     app_environment: AppEnvironment
@@ -66,6 +90,14 @@ class Settings:
     dev_user_id: str
     dev_user_email: str
     dev_user_display_name: str
+
+    # Default number of nodes a normal user may create.
+    #
+    # Individual users can override this value through
+    # User.node_limit.
+    #
+    # Admin users are not limited.
+    node_limit_default: int
 
     cors_allowed_origins: tuple[
         str,
@@ -152,6 +184,13 @@ class Settings:
             .strip()
         )
 
+        node_limit_default = (
+            _read_non_negative_int_environment_variable(
+                "NODE_LIMIT_DEFAULT",
+                50,
+            )
+        )
+
         cors_allowed_origins = tuple(
             _read_comma_separated_environment_variable(
                 "CORS_ALLOWED_ORIGINS",
@@ -179,6 +218,9 @@ class Settings:
             dev_user_email=dev_user_email,
             dev_user_display_name=(
                 dev_user_display_name
+            ),
+            node_limit_default=(
+                node_limit_default
             ),
             cors_allowed_origins=(
                 cors_allowed_origins
