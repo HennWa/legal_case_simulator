@@ -23,6 +23,10 @@ import {
   useApiClient,
 } from "./api/useApiClient";
 
+import {
+  isNodeLimitReachedError,
+} from "./api/apiClient";
+
 import CustomNode from "./AppComponents/CustomNode";
 import CustomEdge from "./AppComponents/CustomEdge";
 
@@ -38,6 +42,8 @@ import NodeDetailsPanel from "./AppComponents/NodeDetailsPanel/NodeDetailsPanel"
 import TopBar from "./AppComponents/TopBar";
 
 import CreateCaseModal from "./AppComponents/CreateCaseModal/CreateCaseModal";
+
+import NodeLimitModal from "./AppComponents/NodeLimitModal/NodeLimitModal";
 
 import DocumentsView from "./AppComponents/DocumentsView/DocumentsView";
 
@@ -239,7 +245,15 @@ function rectanglesOverlap(
 
 function SimulatorApp() {
 
-  const apiFetch = useApiClient();
+  const apiFetch =
+    useApiClient();
+
+
+  /*
+   * =======================================================
+   * STATE
+   * =======================================================
+   */
 
   const [
     graphData,
@@ -305,32 +319,6 @@ function SimulatorApp() {
   );
 
 
-  const nodeTypes =
-    useMemo(
-      () => ({
-        custom:
-          CustomNode,
-
-        potentialAction:
-          PotentialActionNode,
-      }),
-      []
-    );
-
-
-  const edgeTypes =
-    useMemo(
-      () => ({
-        custom:
-          CustomEdge,
-
-        potential:
-          PotentialEdge,
-      }),
-      []
-    );
-
-
   const [
     contextMenuRightClick,
     setContextMenuRightClick,
@@ -352,6 +340,20 @@ function SimulatorApp() {
     setCreateCaseModalOpen,
   ] = useState(
     false
+  );
+
+
+  /*
+   * Contains the structured backend
+   * node-limit error detail.
+   *
+   * null means that the modal is closed.
+   */
+  const [
+    nodeLimitUsage,
+    setNodeLimitUsage,
+  ] = useState(
+    null
   );
 
 
@@ -397,6 +399,75 @@ function SimulatorApp() {
 
   /*
    * =======================================================
+   * REACT FLOW TYPES
+   * =======================================================
+   */
+
+  const nodeTypes =
+    useMemo(
+      () => ({
+        custom:
+          CustomNode,
+
+        potentialAction:
+          PotentialActionNode,
+      }),
+      []
+    );
+
+
+  const edgeTypes =
+    useMemo(
+      () => ({
+        custom:
+          CustomEdge,
+
+        potential:
+          PotentialEdge,
+      }),
+      []
+    );
+
+
+  /*
+   * =======================================================
+   * NODE LIMIT ERROR
+   * =======================================================
+   */
+
+  const handlePossibleNodeLimitError =
+    (
+      error
+    ) => {
+      if (
+        !isNodeLimitReachedError(
+          error
+        )
+      ) {
+        return false;
+      }
+
+
+      setNodeLimitUsage(
+        error.detail
+      );
+
+
+      /*
+       * Make sure the context menu is
+       * gone when the modal appears.
+       */
+      setContextMenuRightClick(
+        null
+      );
+
+
+      return true;
+    };
+
+
+  /*
+   * =======================================================
    * CREATE CASE
    * =======================================================
    */
@@ -416,6 +487,7 @@ function SimulatorApp() {
             apiFetch,
             payload
           );
+
 
         const newCase =
           creationResult.case;
@@ -496,6 +568,29 @@ function SimulatorApp() {
       } catch (
         err
       ) {
+        /*
+         * The initial case node also
+         * counts against the user's
+         * node quota.
+         */
+        if (
+          handlePossibleNodeLimitError(
+            err
+          )
+        ) {
+          /*
+           * Re-throw because CreateCaseModal
+           * awaits this function.
+           *
+           * CreateCaseModal should ignore
+           * this particular error because
+           * SimulatorApp shows the dedicated
+           * NodeLimitModal.
+           */
+          throw err;
+        }
+
+
         console.error(
           "Case creation workflow failed:",
           err
@@ -683,7 +778,7 @@ function SimulatorApp() {
 
 
         await createArtifacts(
-          aptFetch,
+          apiFetch,
           selectedCaseId,
           newBranch.edge.id
         );
@@ -699,6 +794,15 @@ function SimulatorApp() {
       } catch (
         err
       ) {
+        if (
+          handlePossibleNodeLimitError(
+            err
+          )
+        ) {
+          return;
+        }
+
+
         console.error(
           err
         );
@@ -827,6 +931,7 @@ function SimulatorApp() {
 
 
         await createArtifacts(
+          apiFetch,
           selectedCaseId,
           newBranch.edge.id
         );
@@ -842,6 +947,15 @@ function SimulatorApp() {
       } catch (
         err
       ) {
+        if (
+          handlePossibleNodeLimitError(
+            err
+          )
+        ) {
+          return;
+        }
+
+
         console.error(
           err
         );
@@ -1562,12 +1676,6 @@ function SimulatorApp() {
            * =================================================
            * HORIZONTAL POSITION
            * =================================================
-           *
-           * Default:
-           *
-           * If this is the current frontier and there is no
-           * later real node column, position it normally to
-           * the right.
            */
 
           let groupX =
@@ -1575,13 +1683,6 @@ function SimulatorApp() {
             POTENTIAL_X_OFFSET;
 
 
-          /*
-           * Find the nearest REAL graph column to the right.
-           *
-           * Because all real nodes now have exactly the same
-           * 320 px layout/render width, this calculation is
-           * geometrically consistent.
-           */
           const nextRealNode =
             layoutedRealGraph
               .nodes
@@ -1605,28 +1706,18 @@ function SimulatorApp() {
           if (
             nextRealNode
           ) {
-            /*
-             * Center of source real node.
-             */
             const sourceCenterX =
               sourceNode.position.x +
               REAL_NODE_WIDTH /
                 2;
 
 
-            /*
-             * Center of next real node.
-             */
             const nextCenterX =
               nextRealNode.position.x +
               REAL_NODE_WIDTH /
                 2;
 
 
-            /*
-             * EXACT midpoint between
-             * the two real-node centers.
-             */
             const midpointX =
               (
                 sourceCenterX +
@@ -1635,14 +1726,6 @@ function SimulatorApp() {
               2;
 
 
-            /*
-             * React Flow position.x describes
-             * the LEFT side of the potential
-             * node.
-             *
-             * Therefore subtract half its width
-             * to put its center at midpointX.
-             */
             groupX =
               midpointX -
               POTENTIAL_NODE_WIDTH /
@@ -1723,13 +1806,6 @@ function SimulatorApp() {
            * =================================================
            * COLLISION AVOIDANCE
            * =================================================
-           *
-           * IMPORTANT:
-           *
-           * This only modifies Y.
-           *
-           * groupX remains exactly at the midpoint calculated
-           * above.
            */
 
           let groupRectangle = {
@@ -1788,8 +1864,8 @@ function SimulatorApp() {
               ) {
                 /*
                  * Only move vertically.
-                 *
-                 * Horizontal midpoint stays unchanged.
+                 * Horizontal midpoint remains
+                 * unchanged.
                  */
                 groupY =
                   occupiedRectangle.y +
@@ -2254,7 +2330,8 @@ function SimulatorApp() {
                 />
 
 
-                {contextMenuRightClick &&
+                {
+                  contextMenuRightClick &&
                   createPortal(
                     <ContextMenuRightClick
                       x={
@@ -2270,7 +2347,8 @@ function SimulatorApp() {
                       }
 
                       potentialNextStates={
-                        contextMenuRightClick.potentialNextStates
+                        contextMenuRightClick
+                          .potentialNextStates
                       }
 
                       onAdd={
@@ -2297,111 +2375,134 @@ function SimulatorApp() {
                     />,
 
                     document.body
-                  )}
+                  )
+                }
 
 
-                {isProcessing && (
-                  <div className="loading-indicator">
-                    <div className="spinner" />
+                {
+                  isProcessing &&
+                  (
+                    <div className="loading-indicator">
+                      <div className="spinner" />
 
-                    <span>
-                      creating next step...
-                    </span>
-                  </div>
-                )}
-
-
-                {isLegalCheck && (
-                  <div className="loading-indicator">
-                    <div className="spinner" />
-
-                    <span>
-                      legal check...
-                    </span>
-                  </div>
-                )}
+                      <span>
+                        creating next step...
+                      </span>
+                    </div>
+                  )
+                }
 
 
-                {isCreatingArtifacts && (
-                  <div className="loading-indicator">
-                    <div className="spinner" />
+                {
+                  isLegalCheck &&
+                  (
+                    <div className="loading-indicator">
+                      <div className="spinner" />
 
-                    <span>
-                      creating documents...
-                    </span>
-                  </div>
-                )}
+                      <span>
+                        legal check...
+                      </span>
+                    </div>
+                  )
+                }
+
+
+                {
+                  isCreatingArtifacts &&
+                  (
+                    <div className="loading-indicator">
+                      <div className="spinner" />
+
+                      <span>
+                        creating documents...
+                      </span>
+                    </div>
+                  )
+                }
               </ReactFlowProvider>
             </div>
           </>
         )}
 
 
-        {activeTab ===
-          "documents" && (
-          <DocumentsView
-            caseId={
-              selectedCaseId
-            }
-          />
-        )}
+        {
+          activeTab ===
+            "documents" &&
+          (
+            <DocumentsView
+              caseId={
+                selectedCaseId
+              }
+            />
+          )
+        }
 
 
-        {activeTab ===
-          "actors" && (
-          <main
-            style={{
-              flex:
-                1,
-
-              display:
-                "flex",
-
-              alignItems:
-                "center",
-
-              justifyContent:
-                "center",
-
-              background:
-                "linear-gradient(180deg, #faf7f8 0%, #f3edef 100%)",
-
-              color:
-                "#756b6f",
-            }}
-          >
-            <div
+        {
+          activeTab ===
+            "actors" &&
+          (
+            <main
               style={{
-                textAlign:
+                flex:
+                  1,
+
+                display:
+                  "flex",
+
+                alignItems:
                   "center",
+
+                justifyContent:
+                  "center",
+
+                background:
+                  "linear-gradient(180deg, #faf7f8 0%, #f3edef 100%)",
+
+                color:
+                  "#756b6f",
               }}
             >
-              <h2
+              <div
                 style={{
-                  margin:
-                    "0 0 8px",
-
-                  color:
-                    "#443b3e",
+                  textAlign:
+                    "center",
                 }}
               >
-                Actors
-              </h2>
+                <h2
+                  style={{
+                    margin:
+                      "0 0 8px",
+
+                    color:
+                      "#443b3e",
+                  }}
+                >
+                  Actors
+                </h2>
 
 
-              <p
-                style={{
-                  margin: 0,
-                }}
-              >
-                The Actors view will be
-                implemented next.
-              </p>
-            </div>
-          </main>
-        )}
+                <p
+                  style={{
+                    margin:
+                      0,
+                  }}
+                >
+                  The Actors view will be
+                  implemented next.
+                </p>
+              </div>
+            </main>
+          )
+        }
       </div>
 
+
+      {/*
+       * ===================================================
+       * CREATE CASE MODAL
+       * ===================================================
+       */}
 
       <CreateCaseModal
         open={
@@ -2428,6 +2529,30 @@ function SimulatorApp() {
               payload
             );
           }
+        }
+      />
+
+
+      {/*
+       * ===================================================
+       * NODE LIMIT MODAL
+       * ===================================================
+       */}
+
+      <NodeLimitModal
+        open={
+          nodeLimitUsage !==
+          null
+        }
+
+        usage={
+          nodeLimitUsage
+        }
+
+        onClose={() =>
+          setNodeLimitUsage(
+            null
+          )
         }
       />
     </div>

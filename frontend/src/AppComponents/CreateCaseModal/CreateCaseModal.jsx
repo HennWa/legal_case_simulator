@@ -11,6 +11,8 @@ import { uploadDocument } from "../../api/upload_document";
 
 import {useApiClient } from "../../api/useApiClient";
 
+import {isNodeLimitReachedError} from "../../api/apiClient";
+
 import "./CreateCaseModal.css";
 
 
@@ -715,6 +717,18 @@ export default function CreateCaseModal({
       console.error(
         submissionError,
       );
+
+      if (
+          isNodeLimitReachedError(
+            submissionError
+          )
+        ) {
+          setSubmissionStage(
+            ""
+          );
+
+          return;
+      }
 
       setSubmissionStage("");
 
