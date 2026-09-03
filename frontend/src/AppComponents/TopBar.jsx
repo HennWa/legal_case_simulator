@@ -10,6 +10,10 @@ import {
   useCasendraAuth,
 } from "../auth/useCasendraAuth";
 
+import {
+  fetchCurrentUser,
+} from "../api/auth";
+
 
 export default function TopBar({
   cases,
@@ -26,7 +30,9 @@ export default function TopBar({
    */
 
   const {
+    currentUser,
     logout,
+    getAccessToken,
   } = useCasendraAuth();
 
 
@@ -45,6 +51,20 @@ export default function TopBar({
   const [
     profileMenuOpen,
     setProfileMenuOpen,
+  ] = useState(false);
+
+
+  const [
+    profileUser,
+    setProfileUser,
+  ] = useState(
+    currentUser
+  );
+
+
+  const [
+    profileUsageLoading,
+    setProfileUsageLoading,
   ] = useState(false);
 
 
@@ -73,6 +93,24 @@ export default function TopBar({
       (currentCase) =>
         currentCase.id === selectedCaseId
     ) ?? null;
+
+
+  /*
+   * =======================================================
+   * KEEP PROFILE USER IN SYNC
+   * =======================================================
+   */
+
+  useEffect(
+    () => {
+      setProfileUser(
+        currentUser
+      );
+    },
+    [
+      currentUser,
+    ],
+  );
 
 
   /*
@@ -181,6 +219,123 @@ export default function TopBar({
       label: "Actors",
     },
   ];
+
+
+  /*
+   * =======================================================
+   * PROFILE MENU
+   * =======================================================
+   */
+
+  const handleProfileMenuClick =
+    async () => {
+      const willOpen =
+        !profileMenuOpen;
+
+      setProfileMenuOpen(
+        willOpen
+      );
+
+
+      /*
+       * Only one TopBar dropdown
+       * should be open at a time.
+       */
+      setCaseDropdownOpen(
+        false
+      );
+
+
+      /*
+       * Nothing else to do when
+       * closing the profile menu.
+       */
+      if (!willOpen) {
+        return;
+      }
+
+
+      /*
+       * Refresh /auth/me whenever
+       * the profile menu opens.
+       *
+       * This ensures that the node
+       * usage reflects nodes created
+       * during the current session.
+       */
+      setProfileUsageLoading(
+        true
+      );
+
+
+      try {
+        const accessToken =
+          await getAccessToken();
+
+
+        const refreshedUser =
+          await fetchCurrentUser(
+            accessToken
+          );
+
+
+        setProfileUser(
+          refreshedUser
+        );
+
+      } catch (error) {
+        /*
+         * Keep the previously loaded
+         * user data visible if refreshing
+         * the usage information fails.
+         */
+        console.error(
+          "Failed to refresh profile usage:",
+          error
+        );
+
+      } finally {
+        setProfileUsageLoading(
+          false
+        );
+      }
+    };
+
+
+  /*
+   * =======================================================
+   * NODE USAGE
+   * =======================================================
+   */
+
+  const nodesCreated =
+    profileUser?.nodes_created ?? 0;
+
+
+  const nodeLimit =
+    profileUser?.node_limit ?? null;
+
+
+  const nodeUsagePercentage =
+    nodeLimit !== null
+      ? (
+        Math.min(
+          100,
+          Math.max(
+            0,
+            (
+              nodesCreated
+              /
+              Math.max(
+                nodeLimit,
+                1
+              )
+            )
+            * 100
+          )
+        )
+      )
+      : 0;
 
 
   /*
@@ -852,21 +1007,9 @@ export default function TopBar({
               profileMenuOpen
             }
 
-            onClick={() => {
-              setProfileMenuOpen(
-                (
-                  current
-                ) => !current
-              );
-
-              /*
-               * Close case selector
-               * when opening profile menu.
-               */
-              setCaseDropdownOpen(
-                false
-              );
-            }}
+            onClick={
+              handleProfileMenuClick
+            }
 
             style={{
               ...buttonStyle,
@@ -925,7 +1068,7 @@ export default function TopBar({
                     0,
 
                   width:
-                    190,
+                    230,
 
                   background:
                     "#20161a",
@@ -946,6 +1089,192 @@ export default function TopBar({
                     "0 8px 24px rgba(0,0,0,.4)",
                 }}
               >
+                {/*
+                 * NODE USAGE
+                 */}
+
+                <div
+                  style={{
+                    padding:
+                      "12px 14px",
+
+                    background:
+                      "rgba(192,132,151,0.055)",
+                  }}
+                >
+                  <div
+                    style={{
+                      display:
+                        "flex",
+
+                      alignItems:
+                        "center",
+
+                      justifyContent:
+                        "space-between",
+
+                      gap:
+                        12,
+                    }}
+                  >
+                    <span
+                      style={{
+                        color:
+                          "rgba(244,236,238,0.58)",
+
+                        fontSize:
+                          11,
+
+                        fontWeight:
+                          500,
+                      }}
+                    >
+                      Node usage
+                    </span>
+
+
+                    {
+                      profileUsageLoading
+                        ? (
+                          <span
+                            style={{
+                              color:
+                                "rgba(244,236,238,0.45)",
+
+                              fontSize:
+                                11,
+                            }}
+                          >
+                            Updating...
+                          </span>
+                        )
+                        : (
+                          <span
+                            style={{
+                              color:
+                                "#f3dce4",
+
+                              fontSize:
+                                11,
+
+                              fontWeight:
+                                650,
+
+                              whiteSpace:
+                                "nowrap",
+                            }}
+                          >
+                            {
+                              profileUser
+                                ? (
+                                  nodeLimit ===
+                                    null
+                                    ? (
+                                      `${nodesCreated} nodes used`
+                                    )
+                                    : (
+                                      `${nodesCreated} of ${nodeLimit} nodes used`
+                                    )
+                                )
+                                : "—"
+                            }
+                          </span>
+                        )
+                    }
+                  </div>
+
+
+                  {
+                    profileUser &&
+                    nodeLimit !==
+                      null &&
+                    (
+                      <div
+                        style={{
+                          width:
+                            "100%",
+
+                          height:
+                            4,
+
+                          marginTop:
+                            9,
+
+                          overflow:
+                            "hidden",
+
+                          borderRadius:
+                            999,
+
+                          background:
+                            "rgba(192,132,151,0.14)",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width:
+                              `${nodeUsagePercentage}%`,
+
+                            height:
+                              "100%",
+
+                            borderRadius:
+                              999,
+
+                            background:
+                              "#c08497",
+
+                            transition:
+                              "width 180ms ease",
+                          }}
+                        />
+                      </div>
+                    )
+                  }
+
+
+                  {
+                    profileUser &&
+                    nodeLimit ===
+                      null &&
+                    (
+                      <div
+                        style={{
+                          marginTop:
+                            5,
+
+                          color:
+                            "rgba(244,236,238,0.40)",
+
+                          fontSize:
+                            10,
+                        }}
+                      >
+                        Unlimited
+                      </div>
+                    )
+                  }
+                </div>
+
+
+                {/*
+                 * SEPARATOR
+                 */}
+
+                <div
+                  style={{
+                    height:
+                      1,
+
+                    background:
+                      "rgba(192,132,151,0.20)",
+
+                    margin:
+                      "0 10px",
+                  }}
+                />
+
+
                 {/*
                  * SETTINGS
                  *
