@@ -42,6 +42,38 @@ def create_indexes() -> None:
         "owner_id",
     )
 
+    # Template lookup
+    db.cases.create_index(
+        [
+            ("is_template", 1),
+            ("template_key", 1),
+            ("template_version", 1),
+        ],
+    )
+
+    # A user may receive a particular template version
+    # only once.
+    db.cases.create_index(
+        [
+            ("owner_id", 1),
+            ("template_key", 1),
+            ("template_version", 1),
+        ],
+        unique=True,
+        partialFilterExpression={
+            "owner_id": {
+                "$type": "string",
+            },
+            "template_key": {
+                "$type": "string",
+            },
+            "template_version": {
+                "$type": "number",
+            },
+            "is_template": False,
+        },
+    )
+
     # Nodes
     db.nodes.create_index(
         "id",

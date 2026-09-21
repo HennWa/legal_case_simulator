@@ -31,12 +31,44 @@ class AppliedLaw(str, Enum):
 
 class Case(BaseModel):
     id: str
-    owner_id: str
+
+    # None is allowed for canonical template cases.
+    # Normal user-owned cases always contain a user ID.
+    owner_id: str | None = None
+
     title: str
     created_at: str
+
     language: Language = Language.ENGLISH
     applied_law: AppliedLaw = AppliedLaw.GERMAN
+
     node_counter: int = 1
+
+    # --------------------------------------------------
+    # Template metadata
+    # --------------------------------------------------
+
+    # True only for the canonical template itself.
+    is_template: bool = False
+
+    # Stable identifier of the template.
+    #
+    # Example:
+    #     "default_demo"
+    #
+    # For the canonical template this identifies the
+    # template itself.
+    #
+    # For a cloned user case this records which template
+    # the case originated from.
+    #
+    # For normal user-created cases this is None.
+    template_key: str | None = None
+
+    # Allows the demo template to evolve later without
+    # losing information about which version a user
+    # originally received.
+    template_version: int | None = None
 
 # -------------------------
 # Artifact Model
