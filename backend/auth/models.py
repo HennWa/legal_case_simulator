@@ -91,6 +91,18 @@ class User(BaseModel):
         ge=0,
     )
 
+    # --------------------------------------------------
+    # Onboarding
+    # --------------------------------------------------
+
+    provisioned_template_keys: list[str] = Field(
+        default_factory=list,
+    )
+
+    # --------------------------------------------------
+    # Timestamps
+    # --------------------------------------------------
+
     created_at: datetime = Field(
         default_factory=utc_now
     )

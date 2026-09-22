@@ -51,6 +51,8 @@ class Case(BaseModel):
     # True only for the canonical template itself.
     is_template: bool = False
 
+    is_active_template: bool = False
+
     # Stable identifier of the template.
     #
     # Example:

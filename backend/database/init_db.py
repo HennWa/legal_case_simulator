@@ -53,11 +53,12 @@ def create_indexes() -> None:
 
     # A user may receive a particular template version
     # only once.
+    # A user may receive a template family only once,
+    # independently of template version.
     db.cases.create_index(
         [
             ("owner_id", 1),
             ("template_key", 1),
-            ("template_version", 1),
         ],
         unique=True,
         partialFilterExpression={
@@ -67,11 +68,19 @@ def create_indexes() -> None:
             "template_key": {
                 "$type": "string",
             },
-            "template_version": {
-                "$type": "number",
-            },
             "is_template": False,
         },
+        name="unique_user_template_key",
+    )
+
+    db.cases.create_index(
+        [
+            ("is_template", 1),
+            ("is_active_template", 1),
+            ("template_key", 1),
+            ("template_version", 1),
+        ],
+        name="template_lookup",
     )
 
     # Nodes

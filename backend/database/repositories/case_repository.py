@@ -178,3 +178,64 @@ class CaseRepository:
         return Case.model_validate(
             data
         )
+
+    # =========================================================
+    # Get all active templates
+    # =========================================================
+
+    def get_active_templates(
+            self,
+    ) -> list[Case]:
+
+        docs = self.collection.find(
+            {
+                "is_template": True,
+                "is_active_template": True,
+                "template_key": {
+                    "$type": "string",
+                },
+            }
+        )
+
+        return [
+            Case.model_validate(
+                {
+                    key: value
+                    for key, value in doc.items()
+                    if key != "_id"
+                }
+            )
+            for doc in docs
+        ]
+
+    # =========================================================
+    # Get user's copy by template family
+    # =========================================================
+
+    def get_user_template_copy_by_key(
+            self,
+            owner_id: str,
+            template_key: str,
+    ) -> Case | None:
+
+        data = self.collection.find_one(
+            {
+                "owner_id": owner_id,
+                "is_template": {
+                    "$ne": True,
+                },
+                "template_key": template_key,
+            }
+        )
+
+        if not data:
+            return None
+
+        data.pop(
+            "_id",
+            None,
+        )
+
+        return Case.model_validate(
+            data
+        )

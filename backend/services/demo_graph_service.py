@@ -127,6 +127,16 @@ class DemoGraphService:
             )
         )
 
+        if template_case.template_key is None:
+            raise RuntimeError(
+                "Template has no template_key."
+            )
+
+        if template_case.template_version is None:
+            raise RuntimeError(
+                "Template has no template_version."
+            )
+
         user_graph, user_artifacts = (
             self._clone_graph(
                 template_graph=(
@@ -136,6 +146,12 @@ class DemoGraphService:
                     template_artifacts
                 ),
                 owner_id=user.id,
+                template_key=(
+                    template_case.template_key
+                ),
+                template_version=(
+                    template_case.template_version
+                ),
             )
         )
 
@@ -281,6 +297,12 @@ class DemoGraphService:
                         source_case.owner_id
                         or "template_creation"
                 ),
+                template_key=(
+                    template_key
+                ),
+                template_version=(
+                    template_version
+                ),
             )
         )
 
@@ -291,6 +313,8 @@ class DemoGraphService:
         template_graph.case.owner_id = None
 
         template_graph.case.is_template = True
+
+        template_graph.case.is_active_template = True
 
         template_graph.case.template_key = (
             template_key
@@ -339,12 +363,14 @@ class DemoGraphService:
     # =========================================================
 
     def _clone_graph(
-        self,
-        *,
-        template_graph: CaseGraph,
-        template_artifacts: list,
-        owner_id: str,
-    ):
+                self,
+                *,
+                template_graph: CaseGraph,
+                template_artifacts: list,
+                owner_id: str,
+                template_key: str,
+                template_version: int,
+        ):
         """
         Deep-copy a template graph and regenerate every
         database identity.
@@ -420,12 +446,14 @@ class DemoGraphService:
         graph.case.is_template = False
 
         graph.case.template_key = (
-            DEFAULT_DEMO_TEMPLATE_KEY
+            template_key
         )
 
         graph.case.template_version = (
-            DEFAULT_DEMO_TEMPLATE_VERSION
+            template_version
         )
+
+        graph.case.is_active_template = False
 
         # -----------------------------------------------------
         # Actors
@@ -683,3 +711,121 @@ class DemoGraphService:
             graph,
             artifacts,
         )
+
+    def clone_template_for_user(
+            self,
+            *,
+            template_case,
+            user: User,
+    ):
+        """
+        Clone one canonical template for a user.
+
+        The caller is responsible for deciding whether the
+        user should receive this template.
+        """
+
+        if not template_case.is_template:
+            raise ValueError(
+                f"Case '{template_case.id}' "
+                "is not a template."
+            )
+
+        if template_case.template_key is None:
+            raise ValueError(
+                f"Template '{template_case.id}' "
+                "has no template_key."
+            )
+
+        if template_case.template_version is None:
+            raise ValueError(
+                f"Template '{template_case.id}' "
+                "has no template_version."
+            )
+
+        # ---------------------------------------------------------
+        # Existing user copy
+        # ---------------------------------------------------------
+
+        existing_case = (
+            self.case_repository
+            .get_user_template_copy_by_key(
+                owner_id=user.id,
+                template_key=(
+                    template_case.template_key
+                ),
+            )
+        )
+
+        if existing_case is not None:
+            return existing_case
+
+        # ---------------------------------------------------------
+        # Load canonical graph
+        # ---------------------------------------------------------
+
+        template_graph = (
+            self.graph_repository.load_graph(
+                template_case.id
+            )
+        )
+
+        template_artifacts = (
+            self.artifact_repository
+            .get_by_case(
+                template_case.id
+            )
+        )
+
+        # ---------------------------------------------------------
+        # Clone
+        # ---------------------------------------------------------
+
+        user_graph, user_artifacts = (
+            self._clone_graph(
+                template_graph=(
+                    template_graph
+                ),
+                template_artifacts=(
+                    template_artifacts
+                ),
+                owner_id=user.id,
+                template_key=(
+                    template_case.template_key
+                ),
+                template_version=(
+                    template_case.template_version
+                ),
+            )
+        )
+
+        try:
+            self.graph_repository.save_graph(
+                user_graph
+            )
+
+            for artifact in user_artifacts:
+                self.artifact_repository.upsert(
+                    artifact
+                )
+
+        except DuplicateKeyError:
+            # Another /auth/me request may have completed
+            # provisioning concurrently.
+            existing_case = (
+                self.case_repository
+                .get_user_template_copy_by_key(
+                    owner_id=user.id,
+                    template_key=(
+                        template_case.template_key
+                    ),
+                )
+            )
+
+            if existing_case is not None:
+                return existing_case
+
+            raise
+
+        return user_graph.case
+

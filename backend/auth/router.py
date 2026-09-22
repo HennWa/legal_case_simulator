@@ -17,6 +17,9 @@ from backend.auth.models import (
 from backend.database.repositories.user_repository import (
     UserRepository,
 )
+from backend.services.onboarding_service import (
+    OnboardingService,
+)
 from backend.services.usage_service import (
     UsageService,
 )
@@ -39,15 +42,35 @@ def get_me(
         get_current_user
     ),
 ) -> CurrentUserResponse:
+
     repository = (
         UserRepository()
     )
+
+    # --------------------------------------------------
+    # Update login timestamp
+    # --------------------------------------------------
 
     current_user = (
         repository.set_last_login(
             current_user.id
         )
     )
+
+    # --------------------------------------------------
+    # Ensure onboarding resources
+    # --------------------------------------------------
+
+    current_user = (
+        OnboardingService()
+        .ensure_templates_for_user(
+            current_user
+        )
+    )
+
+    # --------------------------------------------------
+    # Usage information
+    # --------------------------------------------------
 
     usage = (
         UsageService

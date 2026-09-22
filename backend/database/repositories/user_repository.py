@@ -350,3 +350,54 @@ class UserRepository:
         return (
             result.deleted_count == 1
         )
+
+
+    def mark_template_provisioned(
+            self,
+            user_id: str,
+            template_key: str,
+    ) -> User:
+        """
+        Atomically record that a template family has been
+        provisioned for the user.
+
+        $addToSet makes this operation idempotent.
+        """
+
+        now = utc_now()
+
+        stored_document = (
+            self.collection
+            .find_one_and_update(
+                {
+                    "id": user_id,
+                },
+                {
+                    "$addToSet": {
+                        "provisioned_template_keys":
+                            template_key,
+                    },
+                    "$set": {
+                        "updated_at": now,
+                    },
+                },
+                return_document=(
+                    ReturnDocument.AFTER
+                ),
+            )
+        )
+
+        user = self._document_to_user(
+            stored_document
+        )
+
+        if user is None:
+            raise LookupError(
+                f"User {user_id!r} "
+                f"does not exist."
+            )
+
+        return user
+
+
+
