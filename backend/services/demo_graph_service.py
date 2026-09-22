@@ -174,6 +174,166 @@ class DemoGraphService:
 
         return user_graph.case
 
+    # ---------------------------------------------------------
+    # Create template from case
+    # ---------------------------------------------------------
+
+    def create_template_from_case(
+            self,
+            *,
+            source_case_id: str,
+            template_key: str,
+            template_version: int,
+            template_title: str | None = None,
+    ):
+        """
+        Create a new canonical graph template from an
+        existing normal Casendra case.
+
+        The source case itself is never modified.
+
+        All case, node, edge, actor and artifact IDs are
+        regenerated so that the template is completely
+        independent of the source graph.
+        """
+
+        # ---------------------------------------------------------
+        # Validate source case
+        # ---------------------------------------------------------
+
+        source_case = (
+            self.case_repository.get(
+                source_case_id
+            )
+        )
+
+        if source_case is None:
+            raise ValueError(
+                f"Source case '{source_case_id}' "
+                "does not exist."
+            )
+
+        if source_case.is_template:
+            raise ValueError(
+                f"Source case '{source_case_id}' "
+                "is already a template."
+            )
+
+        # ---------------------------------------------------------
+        # Prevent duplicate canonical template
+        # ---------------------------------------------------------
+
+        existing_template = (
+            self.case_repository
+            .get_template(
+                template_key=template_key,
+                template_version=(
+                    template_version
+                ),
+            )
+        )
+
+        if existing_template is not None:
+            raise ValueError(
+                "A template already exists with "
+                f"template_key='{template_key}' "
+                f"and template_version="
+                f"{template_version}. "
+                f"Existing case ID: "
+                f"'{existing_template.id}'."
+            )
+
+        # ---------------------------------------------------------
+        # Load complete source graph
+        # ---------------------------------------------------------
+
+        source_graph = (
+            self.graph_repository
+            .load_graph(
+                source_case_id
+            )
+        )
+
+        source_artifacts = (
+            self.artifact_repository
+            .get_by_case(
+                source_case_id
+            )
+        )
+
+        # ---------------------------------------------------------
+        # Clone graph
+        #
+        # _clone_graph requires an owner because it normally
+        # creates user-owned demo copies.
+        #
+        # We temporarily use the source owner and convert the
+        # resulting copy into an ownerless template below.
+        # ---------------------------------------------------------
+
+        template_graph, template_artifacts = (
+            self._clone_graph(
+                template_graph=source_graph,
+                template_artifacts=(
+                    source_artifacts
+                ),
+                owner_id=(
+                        source_case.owner_id
+                        or "template_creation"
+                ),
+            )
+        )
+
+        # ---------------------------------------------------------
+        # Convert cloned graph into canonical template
+        # ---------------------------------------------------------
+
+        template_graph.case.owner_id = None
+
+        template_graph.case.is_template = True
+
+        template_graph.case.template_key = (
+            template_key
+        )
+
+        template_graph.case.template_version = (
+            template_version
+        )
+
+        if template_title is not None:
+            template_graph.case.title = (
+                template_title.strip()
+            )
+        else:
+            template_graph.case.title = (
+                source_case.title
+            )
+
+        # ---------------------------------------------------------
+        # Persist
+        # ---------------------------------------------------------
+
+        try:
+            self.graph_repository.save_graph(
+                template_graph
+            )
+
+            for artifact in template_artifacts:
+                self.artifact_repository.upsert(
+                    artifact
+                )
+
+        except Exception:
+            # Avoid leaving an incomplete template behind
+            # if persistence fails part-way through.
+            self.graph_repository.delete_case(
+                template_graph.case.id
+            )
+
+            raise
+
+        return template_graph.case
+
     # =========================================================
     # Clone complete graph
     # =========================================================
@@ -252,6 +412,10 @@ class DemoGraphService:
         graph.case.id = new_case_id
         graph.case.owner_id = owner_id
         graph.case.created_at = utc_now()
+
+        graph.case.title = (
+            f"Demo – {template_graph.case.title}"
+        )
 
         graph.case.is_template = False
 
