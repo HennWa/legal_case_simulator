@@ -1,0 +1,5 @@
+# Runtime dependencies plus the law-vector ingestion script.
+-r requirements.txt
+
+# Explicit import in backend/data_preparation/ingestion_vector_store/ingest_vectordb.py
+lxml==6.1.3
