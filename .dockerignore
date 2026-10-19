@@ -1,0 +1,36 @@
+# Include only the backend and its runtime dependency list.
+# This excludes frontend, documentation, notebooks, venvs, and Git metadata
+# at the repository root, including folders added in the future.
+**
+!Dockerfile
+!.dockerignore
+!requirements.txt
+!backend/
+!backend/**
+
+# Never send local environment files or credentials to the build.
+**/.env
+**/.env.*
+**/.aws/
+**/.git/
+**/*.pem
+**/*.key
+
+# Python caches, notebooks, and virtual environments inside backend.
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.ipynb
+**/.ipynb_checkpoints/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.venv/
+**/venv/
+**/node_modules/
+
+# Development tools and local databases are not used by the API.
+backend/tests/
+backend/scripts/
+backend/data_preparation/
+backend/local_db/
