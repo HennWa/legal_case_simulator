@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import os
-from pathlib import Path
 
-from networkx.classes import neighbors
+#from pathlib import Path
+
+#from networkx.classes import neighbors
 from backend.object_graph_runtime.graph_classes import CaseGraph, LegalNode, LegalBranchNode
 from backend.prompt_builder.prompt_builder import PromptBuilder
 from backend.llm_interface.llm_interface import BaseLLMProvider
 from backend.rag_engine.rag_engine import RAGEngine
-from backend.utils.utils import get_frontend_dir
+
 
 
 #path_db = os.path.join(Path(__file__).resolve().parent.parent, 'local_db/law_vectorstore')
@@ -111,12 +111,5 @@ class LegalServices:
                 "Legal check currently requires a unique "
                 "causal predecessor."
             )
-
-        self.graph.to_json(
-            os.path.join(
-                get_frontend_dir(),
-                "src/data/graph.json",
-            )
-        )
 
         return result, rag_results_law

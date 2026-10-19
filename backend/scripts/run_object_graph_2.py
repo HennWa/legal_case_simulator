@@ -10,8 +10,7 @@ from backend.database.repositories.artifact_repository import ArtifactRepository
 from backend.database.repositories.edge_repository import EdgeRepository
 from backend.database.repositories.case_repository import CaseRepository
 from backend.database.repositories.node_repository import NodeRepository
-from backend.utils.utils import get_frontend_dir
-import json
+
 
 
 if __name__ == "__main__":
@@ -131,7 +130,6 @@ if __name__ == "__main__":
 
     print("Created node")
 
-    graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
     print("\nSerialized graph:\n")
     #print(json.dumps(graph.to_dict(), indent=2))
 

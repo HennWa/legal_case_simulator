@@ -1,4 +1,3 @@
-import os
 
 from fastapi import (
     APIRouter,
@@ -15,9 +14,6 @@ from backend.auth.dependencies import (
 from backend.auth.models import User
 from backend.database.repositories.graph_repository import (
     GraphRepository,
-)
-from backend.utils.utils import (
-    get_frontend_dir,
 )
 
 
@@ -49,13 +45,6 @@ def delete_node(
 
     graph.delete_node(
         payload.node_id
-    )
-
-    graph.to_json(
-        os.path.join(
-            get_frontend_dir(),
-            "src/data/graph.json",
-        )
     )
 
     repository.sync_to_mongo(

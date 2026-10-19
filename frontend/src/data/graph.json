@@ -1,452 +1,2827 @@
 {
   "case": {
-    "id": "7777",
-    "owner_id": "2542365",
-    "title": "my_case",
-    "created_at": "2026-07-05T09:09:06.354679+00:00",
+    "id": "case_acme_kuendigung",
+    "owner_id": "usr_dev_henning",
+    "title": "Demo - K\u00fcndigung w\u00e4hrend der Schwangerschaft",
+    "created_at": "2026-09-28T17:40:44.108317+00:00",
     "language": "en",
-    "applied_law": "de"
+    "applied_law": "de",
+    "node_counter": 1,
+    "is_template": false,
+    "is_active_template": false,
+    "template_key": null,
+    "template_version": null
   },
   "nodes": {
-    "12344": {
-      "id": "12344",
-      "case_id": "7777",
+    "node_001": {
+      "id": "node_001",
+      "case_id": "case_acme_kuendigung",
       "incoming": [],
       "outgoing": [
-        "edge_1c59f6e4"
+        "edge_6a29945a",
+        "edge_c59911e2",
+        "edge_39e2d8f7"
       ],
-      "title": "Debtor failed to pay",
+      "number": "A-01",
+      "title": "Betriebsbedingte K\u00fcndigung w\u00e4hrend der Schwangerschaft",
       "state": {
-        "start_time": "2026-04-19T13:00:00",
-        "end_time": "2026-04-27T13:00:00",
-        "description": "Debtor has not paid the invoice after a reminder was sent.",
-        "legal_issue": "Debtor has not paid the invoice after a reminder was sent.",
+        "start_time": "2026-03-20T12:00:00",
+        "end_time": "2026-03-20T12:00:00",
+        "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer. Jennifer Kaufmann arbeitet dort seit vier Jahren unbefristet als Marketing Managerin. Jennifer informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich dar\u00fcber, dass sie schwanger ist. Die ACME GmbH befindet sich gleichzeitig in wirtschaftlichen Schwierigkeiten. Die Gesch\u00e4ftsf\u00fchrung beschloss, Kosten zu reduzieren und die Marketingabteilung von f\u00fcnf auf drei Stellen zu verkleinern. Am 20. M\u00e4rz 2026 erhielt Jennifer eine ordentliche betriebsbedingte K\u00fcndigung zum 30. April 2026. Im K\u00fcndigungsschreiben begr\u00fcndet die ACME GmbH die K\u00fcndigung mit der angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau. Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          }
+        ],
+        "legal_issue": "Ist die gegen\u00fcber Jennifer Kaufmann ausgesprochene betriebsbedingte K\u00fcndigung wirksam und welche rechtlichen Handlungsm\u00f6glichkeiten bestehen f\u00fcr die Beteiligten?",
         "final_state": false,
         "actors_status": [
           {
             "actor": {
-              "id": "123",
-              "case_id": "7777",
-              "name": "tim",
-              "role": "plaintiff",
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
-              "profession": null,
-              "background": null
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 50,
+              "assertiveness": 60,
+              "trust_in_opponent": 40,
+              "flexibility": 40,
+              "emotionality": 60,
+              "current_goal_satisfaction": 20
+            },
+            "intermediate_goal": "Die ausgesprochene K\u00fcndigung abwehren."
           },
           {
             "actor": {
-              "id": "1234",
-              "case_id": "7777",
-              "name": "andi",
-              "role": "debtor",
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
               "profession": null,
-              "background": null
+              "background": null,
+              "has_legal_expenses_insurance": false
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 40,
+              "assertiveness": 60,
+              "trust_in_opponent": 50,
+              "flexibility": 50,
+              "emotionality": 30,
+              "current_goal_satisfaction": 40
+            },
+            "intermediate_goal": "Die Marketingabteilung von f\u00fcnf auf drei Stellen reduzieren."
           }
         ],
         "legal_references": [],
-        "artifacts": [],
-        "deadlines": []
+        "artifact_ids": [
+          "artifact_kuendigung_001"
+        ],
+        "deadlines": [],
+        "potential_next_states": []
       },
-      "summary": "Debtor failed to pay"
+      "summary": "Die ACME GmbH k\u00fcndigt Jennifer Kaufmann w\u00e4hrend ihrer Schwangerschaft aus betriebsbedingten Gr\u00fcnden. Vor Ausspruch der K\u00fcndigung wurde keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung eingeholt."
     },
-    "node_94de9e42": {
-      "id": "node_94de9e42",
-      "case_id": "7777",
+    "node_f3d67bc5": {
+      "id": "node_f3d67bc5",
+      "case_id": "case_acme_kuendigung",
       "incoming": [
-        "edge_1c59f6e4"
+        "edge_6a29945a"
       ],
       "outgoing": [
-        "edge_5e72a7fb",
-        "edge_984aba26"
+        "edge_c4f17e21"
       ],
-      "title": "Complaint filed against Debtor for non-payment",
+      "number": "A1-01",
+      "title": "K\u00fcndigungsschutzklage erhoben von Jennifer Kaufmann",
       "state": {
-        "start_time": "2026-05-01T13:00:00",
-        "end_time": "2026-05-31T13:00:00",
-        "description": "Plaintiff Tim has filed a formal complaint against debtor Andi for failing to pay the invoice after a reminder. The case is now pending court proceedings.",
-        "legal_issue": "Non-payment and default leading to initiation of legal proceedings.",
+        "start_time": "2026-03-21T09:30:00",
+        "end_time": "2026-03-21T09:30:00",
+        "description": "Jennifer Kaufmann hat gegen die betriebsbedingte K\u00fcndigung der ACME GmbH Klage zum Arbeitsgericht erhoben. Die Klage richtet sich gegen die Wirksamkeit der K\u00fcndigung vom 20. M\u00e4rz 2026 mit K\u00fcndigungstermin 30. April 2026. Jennifer wird durch ihre Rechtsanw\u00e4ltin vertreten, da sie \u00fcber eine Rechtsschutzversicherung verf\u00fcgt. Die ACME GmbH wurde \u00fcber die Klage informiert und bereitet sich auf das K\u00fcndigungsschutzverfahren vor.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          },
+          {
+            "id": "fact_013",
+            "description": "Jennifer Kaufmann hat am 21. M\u00e4rz 2026 K\u00fcndigungsschutzklage gegen die K\u00fcndigung erhoben."
+          },
+          {
+            "id": "fact_014",
+            "description": "Jennifer Kaufmann wird aufgrund ihrer Rechtsschutzversicherung durch einen Rechtsanwalt vertreten."
+          }
+        ],
+        "legal_issue": "Wirksamkeit der K\u00fcndigung vom 20.03.2026 unter dem Mutterschutz-K\u00fcndigungsverbot (\u00a7 17 MuSchG) bei bekannter Schwangerschaft und fehlender beh\u00f6rdlicher Zul\u00e4ssigkeit; Fristfragen der Klageerhebung (\u00a7 4 KSchG) und Verfahrensablauf (\u00a7 61a ArbGG).",
         "final_state": false,
         "actors_status": [
           {
             "actor": {
-              "id": "123",
-              "case_id": "7777",
-              "name": "tim",
-              "role": "plaintiff",
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
-              "profession": null,
-              "background": null
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [
+              {
+                "title": "Rechtsanwaltskosten im K\u00fcndigungsschutzverfahren",
+                "amount": 1500,
+                "paid_to": "Lawyer",
+                "covered_by_insurance": true
+              }
+            ],
+            "negotiation_profile": {
+              "cooperativeness": 50,
+              "assertiveness": 65,
+              "trust_in_opponent": 35,
+              "flexibility": 40,
+              "emotionality": 65,
+              "current_goal_satisfaction": 40
+            },
+            "intermediate_goal": "Gewinn des K\u00fcndigungsschutzverfahrens und Fortsetzung des Arbeitsverh\u00e4ltnisses."
           },
           {
             "actor": {
-              "id": "1234",
-              "case_id": "7777",
-              "name": "andi",
-              "role": "debtor",
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
               "profession": null,
-              "background": null
+              "background": null,
+              "has_legal_expenses_insurance": false
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 40,
+              "assertiveness": 60,
+              "trust_in_opponent": 45,
+              "flexibility": 50,
+              "emotionality": 30,
+              "current_goal_satisfaction": 35
+            },
+            "intermediate_goal": "Verteidigung gegen die K\u00fcndigungsschutzklage und Durchsetzung der K\u00fcndigung."
           }
         ],
         "legal_references": [
           {
             "type": "law",
-            "reference": "\u00a7 286 BGB - Verzug des Schuldners",
-            "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
-            "summary": "Confirms debtor is in default after failure to pay following reminder."
+            "reference": "\u00a7 17 Mutterschutzgesetz (MuSchG) \u2013 K\u00fcndigungsverbot",
+            "extract": "K\u00fcndigung w\u00e4hrend Schwangerschaft und bis vier Monate nach Entbindung ist unzul\u00e4ssig; ausnahmsweise nur mit beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung.",
+            "summary": "Absolutes K\u00fcndigungsverbot zugunsten schwangerer Arbeitnehmerinnen; Wirksamkeit setzt in Ausnahmef\u00e4llen eine vorherige beh\u00f6rdliche Zustimmung voraus.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft von Jennifer Kaufmann."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin wurde am 03.03.2026 schriftlich informiert; Kenntnis liegt vor."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026 w\u00e4hrend bestehender Schwangerschaft."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung vor Ausspruch."
+                  }
+                ],
+                "application": "Da die Arbeitgeberin die Schwangerschaft kannte und keine beh\u00f6rdliche Zul\u00e4ssigkeit vorlag, ist die K\u00fcndigung nach \u00a7 17 MuSchG unzul\u00e4ssig und damit unwirksam."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+            "extract": "Dreiwochenfrist f\u00fcr die Klage; bei zustimmungsbed\u00fcrftiger K\u00fcndigung Fristbeginn erst mit Bekanntgabe der Beh\u00f6rdenentscheidung.",
+            "summary": "Regelt die Klagefrist und deren besonderen Beginn bei zustimmungsbed\u00fcrftigen K\u00fcndigungen (u. a. nach \u00a7 17 MuSchG).",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "Klage am 21.03.2026 erhoben."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "Zugang der K\u00fcndigung am 20.03.2026."
+                  }
+                ],
+                "application": "Die Klage wurde innerhalb der Dreiwochenfrist erhoben."
+              },
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Entscheidung vorhanden."
+                  }
+                ],
+                "application": "Unabh\u00e4ngig davon w\u00e4re der Fristbeginn nach \u00a7 4 S. 4 KSchG mangels Beh\u00f6rdenentscheidung nicht angelaufen."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 7 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Wirksamkeitsfiktion",
+            "extract": "Wird Unwirksamkeit nicht rechtzeitig geltend gemacht, gilt die K\u00fcndigung als von Anfang an rechtswirksam.",
+            "summary": "Sanktion bei Fristvers\u00e4umnis; hier wegen rechtzeitiger Klage und \u00a7 4 S. 4 KSchG nicht einschl\u00e4gig.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "Rechtzeitige Klageerhebung."
+                  }
+                ],
+                "application": "Die Wirksamkeitsfiktion greift nicht ein, weil die Klage rechtzeitig erhoben wurde."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 6 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Verl\u00e4ngerte Anrufungsfrist",
+            "extract": "Innerhalb der Frist erhobene Klage: weitere Unwirksamkeitsgr\u00fcnde bis Schluss der m\u00fcndlichen Verhandlung erster Instanz zul\u00e4ssig.",
+            "summary": "Erlaubt, zus\u00e4tzlich zur Klage noch weitere Unwirksamkeitsgr\u00fcnde nachzuschieben.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "Klage ist rechtzeitig anh\u00e4ngig."
+                  }
+                ],
+                "application": "Jennifer Kaufmann kann bis zum Schluss der m\u00fcndlichen Verhandlung erster Instanz weitere Unwirksamkeitsgr\u00fcnde vorbringen (z. B. soziale Auswahl, milderes Mittel), ohne Pr\u00e4klusion."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 1 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Sozial ungerechtfertigte K\u00fcndigungen",
+            "extract": "K\u00fcndigung ist rechtsunwirksam, wenn sie nicht durch personen-, verhaltensbedingte oder dringende betriebliche Erfordernisse bedingt ist.",
+            "summary": "Subsidi\u00e4r zu pr\u00fcfen, falls das Mutterschutz-K\u00fcndigungsverbot nicht bereits zur Unwirksamkeit f\u00fchrt.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_001",
+                    "relevance": "Betrieb > 10 Arbeitnehmer; KSchG anwendbar."
+                  },
+                  {
+                    "fact_id": "fact_002",
+                    "relevance": "Besch\u00e4ftigungsdauer > 6 Monate; Wartezeit erf\u00fcllt."
+                  },
+                  {
+                    "fact_id": "fact_006",
+                    "relevance": "Wirtschaftliche Schwierigkeiten behauptet."
+                  },
+                  {
+                    "fact_id": "fact_008",
+                    "relevance": "Stellenabbau in Marketing von 5 auf 3."
+                  },
+                  {
+                    "fact_id": "fact_011",
+                    "relevance": "Begr\u00fcndung der K\u00fcndigung mit Stellenabbau."
+                  }
+                ],
+                "application": "Unabh\u00e4ngig vom absoluten Verbot nach \u00a7 17 MuSchG m\u00fcsste ACME dringende betriebliche Erfordernisse darlegen und eine ordnungsgem\u00e4\u00dfe Sozialauswahl sowie fehlende Weiterbesch\u00e4ftigungsm\u00f6glichkeiten beweisen. Diese Fragen sind hier nicht entscheidungstragend, da \u00a7 17 MuSchG bereits zur Unwirksamkeit f\u00fchrt."
+              }
+            ]
+          },
+          {
+            "type": "procedural rule",
+            "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung in K\u00fcndigungsverfahren",
+            "extract": "G\u00fcteverhandlung soll binnen zwei Wochen stattfinden; Beklagter erh\u00e4lt zur Erwiderung mindestens zwei Wochen Frist.",
+            "summary": "Regelt beschleunigten Verfahrensablauf im K\u00fcndigungsschutzprozess (fr\u00fche G\u00fcteverhandlung, schriftliche Erwiderungsfristen).",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "Klage anh\u00e4ngig; Gericht hat Verfahrensf\u00f6rderung zu beachten."
+                  }
+                ],
+                "application": "Das Gericht soll binnen zwei Wochen nach 21.03.2026 einen G\u00fctetermin ansetzen und der Arbeitgeberin mindestens zwei Wochen zur Klageerwiderung setzen."
+              }
+            ]
+          },
+          {
+            "type": "procedural rule",
+            "reference": "\u00a7 11 Arbeitsgerichtsgesetz (ArbGG) \u2013 Prozessvertretung",
+            "extract": "Vor dem Arbeitsgericht k\u00f6nnen sich Parteien selbst vertreten oder durch Rechtsanw\u00e4lte bzw. befugte Verb\u00e4nde vertreten lassen.",
+            "summary": "Kein Anwaltszwang in erster Instanz; anwaltliche Vertretung ist gleichwohl zul\u00e4ssig (hier erfolgt).",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "Anwaltliche Vertretung der Kl\u00e4gerin."
+                  }
+                ],
+                "application": "Die anwaltliche Vertretung ist zul\u00e4ssig; ein Anwaltszwang besteht in erster Instanz nicht."
+              }
+            ]
           }
         ],
-        "artifacts": [
-          {
-            "id": "art_0001",
-            "type": "document",
-            "title": "Complaint Filing Document",
-            "content": "Complaint filed by plaintiff Tim against debtor Andi for failure to pay invoice despite reminder.",
-            "created_by": "123",
-            "timestamp": "2026-04-27T14:00:00"
-          }
+        "artifact_ids": [
+          "art_0a0a329b"
         ],
         "deadlines": [
           {
-            "type": "response_deadline",
+            "type": "Klagefrist nach \u00a7 4 KSchG",
             "references": {
               "type": "law",
-              "reference": "Court procedural rules",
-              "extract": "Deadlines for response to complaint typically set by court procedural regulations.",
-              "summary": "Deadline for debtor to respond to complaint."
+              "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+              "extract": "Dreiwochenfrist; bei zustimmungsbed\u00fcrftiger K\u00fcndigung Fristbeginn erst mit Bekanntgabe der Beh\u00f6rdenentscheidung.",
+              "summary": "Klagefrist zur Geltendmachung der Unwirksamkeit der K\u00fcndigung.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_009",
+                      "relevance": "Zugang der K\u00fcndigung am 20.03.2026."
+                    },
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Klage am 21.03.2026 erhoben."
+                    },
+                    {
+                      "fact_id": "fact_012",
+                      "relevance": "Keine beh\u00f6rdliche Entscheidung vorhanden."
+                    }
+                  ],
+                  "application": "Die Klagefrist ist gewahrt; zudem w\u00e4re sie mangels beh\u00f6rdlicher Entscheidung nach \u00a7 4 S. 4 KSchG noch nicht angelaufen."
+                }
+              ]
             },
-            "summary": "Debtor must respond to complaint within court-specified time limit.",
-            "due_date": "2026-05-31T13:00:00"
+            "summary": "Klagefrist gewahrt; \u00a7 4 S. 4 KSchG verschiebt den Fristbeginn bei zustimmungsbed\u00fcrftigen K\u00fcndigungen. Keine gesonderte F\u00e4lligkeit offen.",
+            "due_date": ""
+          },
+          {
+            "type": "G\u00fcteverhandlung (\u00a7 61a Abs. 2 ArbGG) \u2013 Gerichtlicher Soll-Termin",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung",
+              "extract": "Die G\u00fcteverhandlung soll innerhalb von zwei Wochen nach Klageerhebung stattfinden.",
+              "summary": "Zeitvorgabe f\u00fcr das Gericht zur Anberaumung des G\u00fctetermins.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Klageeingang 21.03.2026."
+                    }
+                  ],
+                  "application": "Gericht soll G\u00fctetermin bis zwei Wochen nach 21.03.2026 ansetzen."
+                }
+              ]
+            },
+            "summary": "Gerichtlicher Soll-Termin f\u00fcr G\u00fcteverhandlung; keine Parteifrist.",
+            "due_date": "2026-04-04"
+          },
+          {
+            "type": "Frist zur Klageerwiderung (\u00a7 61a Abs. 3 ArbGG) \u2013 mindestens 2 Wochen",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung",
+              "extract": "Vorsitzender fordert Beklagten zur schriftlichen Erwiderung binnen angemessener Frist, mindestens zwei Wochen, auf.",
+              "summary": "Gericht setzt der Beklagten eine Erwiderungsfrist von mindestens zwei Wochen.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Anh\u00e4ngige K\u00fcndigungsschutzklage."
+                    }
+                  ],
+                  "application": "Nach ergehendem gerichtlichem Hinweis hat ACME schriftlich binnen mindestens zwei Wochen zu erwidern; konkretes Fristende steht noch nicht fest."
+                }
+              ]
+            },
+            "summary": "Parteifrist f\u00fcr ACME zur Klageerwiderung; Beginn abh\u00e4ngig von gerichtlicher Verf\u00fcgung.",
+            "due_date": ""
           }
+        ],
+        "potential_next_states": [
+          "Court schedules conciliation hearing",
+          "ACME GmbH submits written response",
+          "Jennifer Kaufmann files additional evidence",
+          "ACME GmbH proposes settlement negotiation"
         ]
       },
-      "summary": "Plaintiff files complaint initiating court proceedings due to non-payment after reminder."
+      "summary": "Jennifer Kaufmann hat am 21. M\u00e4rz 2026 K\u00fcndigungsschutzklage gegen ihre betriebsbedingte K\u00fcndigung vom 20. M\u00e4rz 2026 erhoben. Wegen bekannter Schwangerschaft und fehlender beh\u00f6rdlicher Zul\u00e4ssigkeit ist die K\u00fcndigung nach \u00a7 17 MuSchG voraussichtlich unwirksam. Die Klage ist rechtzeitig (\u00a7 4 KSchG). Das Verfahren l\u00e4uft nach \u00a7 61a ArbGG beschleunigt ab."
     },
-    "node_4915b61e": {
-      "id": "node_4915b61e",
-      "case_id": "7777",
+    "node_69e2fdd3": {
+      "id": "node_69e2fdd3",
+      "case_id": "case_acme_kuendigung",
       "incoming": [
-        "edge_5e72a7fb"
+        "edge_c59911e2"
+      ],
+      "outgoing": [
+        "edge_297e8efd"
+      ],
+      "number": "A2-01",
+      "title": "Jennifer fordert R\u00fccknahme der K\u00fcndigung",
+      "state": {
+        "start_time": "2026-03-21T09:15:00",
+        "end_time": "2026-03-21T09:15:00",
+        "description": "Jennifer Kaufmann hat am 21. M\u00e4rz 2026 der ACME GmbH formell die R\u00fccknahme der betriebsbedingten K\u00fcndigung gefordert. Der Arbeitgeber wurde schriftlich darauf hingewiesen, dass die K\u00fcndigung w\u00e4hrend der Schwangerschaft erfolgt ist und daher angefochten wird. Es gibt noch keine Antwort des Arbeitgebers auf diese Forderung.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          },
+          {
+            "id": "fact_013",
+            "description": "Am 21. M\u00e4rz 2026 forderte Jennifer Kaufmann schriftlich die R\u00fccknahme der K\u00fcndigung von der ACME GmbH."
+          }
+        ],
+        "legal_issue": "Rechtsfolgen der am 21.03.2026 verlangten R\u00fccknahme der K\u00fcndigung und Wirksamkeit der am 20.03.2026 erkl\u00e4rten K\u00fcndigung unter Beachtung des besonderen K\u00fcndigungsschutzes nach \u00a7 17 MuSchG (Schwangerschaft) sowie der Anrufungsfrist nach \u00a7 4 KSchG.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
+            },
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 55,
+              "assertiveness": 65,
+              "trust_in_opponent": 35,
+              "flexibility": 40,
+              "emotionality": 65,
+              "current_goal_satisfaction": 30
+            },
+            "intermediate_goal": "Erzielen der R\u00fccknahme der K\u00fcndigung von der ACME GmbH."
+          },
+          {
+            "actor": {
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": null,
+              "background": null,
+              "has_legal_expenses_insurance": false
+            },
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 40,
+              "assertiveness": 60,
+              "trust_in_opponent": 50,
+              "flexibility": 45,
+              "emotionality": 30,
+              "current_goal_satisfaction": 35
+            },
+            "intermediate_goal": "Entscheidung \u00fcber die Forderung von Jennifer Kaufmann zur K\u00fcndigungsr\u00fccknahme."
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "Mutterschutzgesetz (MuSchG) \u00a7 17 K\u00fcndigungsverbot",
+            "extract": "\u201eDie K\u00fcndigung gegen\u00fcber einer Frau w\u00e4hrend der Schwangerschaft \u2026 ist unzul\u00e4ssig \u2026\u201c; \u201eDie zust\u00e4ndige Beh\u00f6rde kann in besonderen F\u00e4llen \u2026 die K\u00fcndigung f\u00fcr zul\u00e4ssig erkl\u00e4ren.\u201c",
+            "summary": "K\u00fcndigungen w\u00e4hrend der Schwangerschaft sind grunds\u00e4tzlich unzul\u00e4ssig. Nur in besonderen, nicht schwangerschaftsbezogenen F\u00e4llen kann die zust\u00e4ndige Beh\u00f6rde vorab die K\u00fcndigung f\u00fcr zul\u00e4ssig erkl\u00e4ren.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft besteht."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin hatte vor K\u00fcndigung positive Kenntnis."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026 im Schutzzeitraum."
+                  }
+                ],
+                "application": "Da die Arbeitnehmerin schwanger war und der Arbeitgeberin dies seit 03.03.2026 bekannt war, f\u00e4llt die K\u00fcndigung vom 20.03.2026 unter das gesetzliche K\u00fcndigungsverbot des \u00a7 17 Abs. 1 MuSchG."
+              },
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine vorherige beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung eingeholt."
+                  }
+                ],
+                "application": "Mangels vorheriger beh\u00f6rdlicher Zustimmung liegt keine der eng begrenzten Ausnahmen des \u00a7 17 Abs. 2 MuSchG vor; die K\u00fcndigung ist daher nach Spezialschutz unzul\u00e4ssig."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "B\u00fcrgerliches Gesetzbuch (BGB) \u00a7 134 Gesetzliches Verbot",
+            "extract": "\u201eEin Rechtsgesch\u00e4ft, das gegen ein gesetzliches Verbot verst\u00f6\u00dft, ist nichtig \u2026\u201c",
+            "summary": "Verst\u00f6\u00dfe gegen gesetzliche Verbote f\u00fchren regelm\u00e4\u00dfig zur Nichtigkeit des Rechtsgesch\u00e4fts.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schutzbereich des K\u00fcndigungsverbots er\u00f6ffnet."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Kenntnis der Arbeitgeberin vom Schutztatbestand."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "Ausspruch der K\u00fcndigung im Schutzzeitraum."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Beh\u00f6rdliche Zustimmung fehlt."
+                  }
+                ],
+                "application": "Die K\u00fcndigung verst\u00f6\u00dft gegen das gesetzliche K\u00fcndigungsverbot des \u00a7 17 MuSchG; nach \u00a7 134 BGB ist eine solche K\u00fcndigung grunds\u00e4tzlich nichtig."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "K\u00fcndigungsschutzgesetz (KSchG) \u00a7 4 Anrufung des Arbeitsgerichts",
+            "extract": "\u201e\u2026 innerhalb von drei Wochen \u2026 Klage \u2026 Soweit die K\u00fcndigung der Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist \u2026 erst von der Bekanntgabe der Entscheidung \u2026\u201c",
+            "summary": "Grunds\u00e4tzlich ist binnen drei Wochen K\u00fcndigungsschutzklage zu erheben. Bedarf die K\u00fcndigung einer beh\u00f6rdlichen Zustimmung, beginnt die Frist erst mit Bekanntgabe der Beh\u00f6rdenentscheidung.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft \u2013 Zustimmungserfordernis."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Kenntnis der Arbeitgeberin \u2013 Zustimmung erforderlich."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine Beh\u00f6rdenentscheidung vorhanden."
+                  }
+                ],
+                "application": "Weil die K\u00fcndigung w\u00e4hrend der bekannten Schwangerschaft ohne beh\u00f6rdliche Zustimmung erfolgte und keine Entscheidung der Beh\u00f6rde bekanntgegeben wurde, hat die Dreiwochenfrist noch nicht begonnen."
+              },
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "R\u00fccknahmegesuch vom 21.03.2026"
+                  }
+                ],
+                "application": "Das Verlangen nach R\u00fccknahme der K\u00fcndigung ersetzt oder hemmt die Klagefrist nicht; es \u00e4ndert an der Erforderlichkeit einer gerichtlichen Geltendmachung nichts."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "K\u00fcndigungsschutzgesetz (KSchG) \u00a7 7 Wirksamwerden der K\u00fcndigung",
+            "extract": "\u201eWird die Rechtsunwirksamkeit einer K\u00fcndigung nicht rechtzeitig geltend gemacht, so gilt die K\u00fcndigung als von Anfang an rechtswirksam.\u201c",
+            "summary": "Vers\u00e4umt der Arbeitnehmer die Anrufungsfrist, fingiert \u00a7 7 KSchG die Wirksamkeit der K\u00fcndigung.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine Beh\u00f6rdenentscheidung \u2013 Fristbeginn nach \u00a7 4 S. 4 KSchG noch nicht ausgel\u00f6st."
+                  }
+                ],
+                "application": "Mangels laufender Klagefrist ist die Wirksamkeitsfiktion des \u00a7 7 KSchG derzeit nicht eingetreten."
+              }
+            ]
+          },
+          {
+            "type": "judgment",
+            "reference": "BAG, Urteil vom 24.11.2022 \u2013 2 AZR 11/22",
+            "extract": "\u201e\u2026 K\u00fcndigung verst\u00f6\u00dft gegen das Verbot in \u00a7 17 Abs. 1 \u2026 was grunds\u00e4tzlich deren Nichtigkeit gem\u00e4\u00df \u00a7 134 BGB zur Folge hat \u2026\u201c",
+            "summary": "Das BAG best\u00e4tigt, dass ein Versto\u00df gegen \u00a7 17 MuSchG grunds\u00e4tzlich die Nichtigkeit der K\u00fcndigung nach \u00a7 134 BGB bewirkt.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft der Kl\u00e4gerin."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung w\u00e4hrend der Schwangerschaft."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Fehlende beh\u00f6rdliche Zustimmung."
+                  }
+                ],
+                "application": "Die Konstellation entspricht dem vom BAG best\u00e4tigten Grundsatz: Eine w\u00e4hrend der Schwangerschaft ohne erforderliche Zustimmung erkl\u00e4rte K\u00fcndigung ist grunds\u00e4tzlich nichtig."
+              }
+            ]
+          }
+        ],
+        "artifact_ids": [
+          "art_44408e66"
+        ],
+        "deadlines": [
+          {
+            "type": "K\u00fcndigungsschutzklage \u2013 Dreiwochenfrist",
+            "references": {
+              "type": "law",
+              "reference": "K\u00fcndigungsschutzgesetz (KSchG) \u00a7 4 Anrufung des Arbeitsgerichts",
+              "extract": "\u201e\u2026 innerhalb von drei Wochen \u2026 Klage \u2026 Soweit \u2026 Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist \u2026 erst von der Bekanntgabe der Entscheidung \u2026\u201c",
+              "summary": "Frist zur Erhebung der K\u00fcndigungsschutzklage; Beginn bei zustimmungsbed\u00fcrftiger K\u00fcndigung erst mit Bekanntgabe der Beh\u00f6rdenentscheidung.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_004",
+                      "relevance": "Schwangerschaft \u2013 Zustimmungserfordernis."
+                    },
+                    {
+                      "fact_id": "fact_005",
+                      "relevance": "Kenntnis der Arbeitgeberin."
+                    },
+                    {
+                      "fact_id": "fact_012",
+                      "relevance": "Keine Entscheidung der Beh\u00f6rde."
+                    }
+                  ],
+                  "application": "Da keine beh\u00f6rdliche Entscheidung bekanntgegeben wurde, l\u00e4uft die Dreiwochenfrist derzeit nicht; ein konkretes Fristende steht noch nicht fest."
+                }
+              ]
+            },
+            "summary": "K\u00fcndigungsschutzklage erforderlich; derzeit kein Fristlauf, weil mangels beh\u00f6rdlicher Entscheidung \u00a7 4 Satz 4 KSchG den Beginn hinausschiebt.",
+            "due_date": ""
+          }
+        ],
+        "potential_next_states": [
+          "ACME GmbH responds to rescission demand",
+          "Jennifer files a lawsuit against the dismissal",
+          "Jennifer seeks injunction to prevent dismissal",
+          "ACME GmbH offers a settlement proposal"
+        ]
+      },
+      "summary": "Am 21.03.2026 verlangt Jennifer Kaufmann die R\u00fccknahme der am 20.03.2026 erkl\u00e4rten K\u00fcndigung. Aufgrund des K\u00fcndigungsverbots nach \u00a7 17 MuSchG und fehlender beh\u00f6rdlicher Zustimmung ist die K\u00fcndigung grunds\u00e4tzlich nichtig (\u00a7 134 BGB). Das R\u00fccknahmeverlangen \u00e4ndert an der Notwendigkeit einer gerichtlichen Geltendmachung nichts; die Dreiwochenfrist nach \u00a7 4 KSchG hat mangels Beh\u00f6rdenentscheidung noch nicht zu laufen begonnen."
+    },
+    "node_f91f2788": {
+      "id": "node_f91f2788",
+      "case_id": "case_acme_kuendigung",
+      "incoming": [
+        "edge_c4f17e21"
+      ],
+      "outgoing": [
+        "edge_4e80c8ea"
+      ],
+      "number": "A1-02",
+      "title": "ACME GmbH legt schriftliche Klageerwiderung vor",
+      "state": {
+        "start_time": "2026-03-30T17:00:00",
+        "end_time": "2026-03-30T17:00:00",
+        "description": "Die ACME GmbH hat eine schriftliche Klageerwiderung eingereicht, in der sie die Rechtm\u00e4\u00dfigkeit der betriebsbedingten K\u00fcndigung trotz der Schwangerschaft und des Fehlens der beh\u00f6rdlichen Zul\u00e4ssigkeitserkl\u00e4rung bestreitet. Das Unternehmen argumentiert, dass dringende betriebliche Erfordernisse vorliegen und dass die Sozialauswahl ordnungsgem\u00e4\u00df durchgef\u00fchrt wurde. Die schriftliche Erwiderung wurde von einem Rechtsanwalt der ACME GmbH verfasst. Der Arbeitgeber bereitet sich auf den weiteren Verlauf des K\u00fcndigungsschutzverfahrens vor.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          },
+          {
+            "id": "fact_013",
+            "description": "Jennifer Kaufmann hat am 21. M\u00e4rz 2026 K\u00fcndigungsschutzklage gegen die K\u00fcndigung erhoben."
+          },
+          {
+            "id": "fact_014",
+            "description": "Jennifer Kaufmann wird aufgrund ihrer Rechtsschutzversicherung durch einen Rechtsanwalt vertreten."
+          },
+          {
+            "id": "fact_015",
+            "description": "ACME GmbH hat am 30. M\u00e4rz 2026 eine schriftliche Klageerwiderung vorgelegt und bestreitet die Unwirksamkeit der K\u00fcndigung trotz fehlender beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung."
+          }
+        ],
+        "legal_issue": "Rechtliche Bedeutung der am 30.03.2026 eingegangenen Klageerwiderung f\u00fcr die Wirksamkeit der K\u00fcndigung vom 20.03.2026: Vorrang des Mutterschutz-K\u00fcndigungsverbots nach \u00a7 17 MuSchG bei bekannter Schwangerschaft und fehlender beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung; Relevanz der von ACME geltend gemachten betriebsbedingten Gr\u00fcnde nur bei vorab erteilter Zul\u00e4ssigkeitserkl\u00e4rung; verfahrensrechtliche Schritte und Fristen nach \u00a7 61a ArbGG; Klagefristregime des \u00a7 4 KSchG.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
+            },
+            "income": [],
+            "expenses": [
+              {
+                "title": "Rechtsanwaltskosten im K\u00fcndigungsschutzverfahren",
+                "amount": 1500,
+                "paid_to": "Lawyer",
+                "covered_by_insurance": true
+              }
+            ],
+            "negotiation_profile": {
+              "cooperativeness": 50,
+              "assertiveness": 65,
+              "trust_in_opponent": 30,
+              "flexibility": 40,
+              "emotionality": 70,
+              "current_goal_satisfaction": 40
+            },
+            "intermediate_goal": "Fortsetzung der Klage und Vorbereitung weiterer Beweismittel."
+          },
+          {
+            "actor": {
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": null,
+              "background": null,
+              "has_legal_expenses_insurance": false
+            },
+            "income": [],
+            "expenses": [
+              {
+                "title": "Anwaltskosten f\u00fcr Klageerwiderung",
+                "amount": 2000,
+                "paid_to": "Lawyer",
+                "covered_by_insurance": false
+              }
+            ],
+            "negotiation_profile": {
+              "cooperativeness": 40,
+              "assertiveness": 65,
+              "trust_in_opponent": 40,
+              "flexibility": 50,
+              "emotionality": 35,
+              "current_goal_satisfaction": 45
+            },
+            "intermediate_goal": "Erfolg der Klageerwiderung und Durchsetzung der K\u00fcndigung."
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "\u00a7 17 Mutterschutzgesetz (MuSchG) \u2013 K\u00fcndigungsverbot",
+            "extract": "Die K\u00fcndigung gegen\u00fcber einer Frau ist unzul\u00e4ssig \u2026 (2) Die \u2026 oberste Landesbeh\u00f6rde \u2026 kann in besonderen F\u00e4llen \u2026 die K\u00fcndigung f\u00fcr zul\u00e4ssig erkl\u00e4ren.",
+            "summary": "Absolutes K\u00fcndigungsverbot w\u00e4hrend Schwangerschaft; ausnahmsweise nur mit vorheriger beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung in besonderen, nicht schwangerschaftsbedingten F\u00e4llen.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft der Kl\u00e4gerin."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin wurde am 03.03.2026 informiert; Kenntnis lag vor."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026 im Schutzzeitraum."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine Zul\u00e4ssigkeitserkl\u00e4rung vor Ausspruch."
+                  }
+                ],
+                "application": "Mangels beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung ist die K\u00fcndigung nach \u00a7 17 MuSchG unzul\u00e4ssig und damit unwirksam; Einw\u00e4nde zu betrieblicher Dringlichkeit und Sozialauswahl sind ohne vorg\u00e4ngige Zul\u00e4ssigkeitserkl\u00e4rung rechtlich unerheblich. (Quelle: gesetze-im-internet.de \u00a7 17 MuSchG)."
+              }
+            ]
+          },
+          {
+            "type": "government publication",
+            "reference": "Regierungspr\u00e4sidien Baden\u2011W\u00fcrttemberg \u2013 Information: K\u00fcndigungsschutz nach Mutterschutzgesetz (\u00a7 17 MuSchG)",
+            "extract": "Die K\u00fcndigung darf erst ausgesprochen werden, wenn die beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung \u2026 vorliegt.",
+            "summary": "Beh\u00f6rdliche Praxis: Die Zul\u00e4ssigkeitserkl\u00e4rung muss dem Arbeitgeber vor Ausspruch der K\u00fcndigung vorliegen; nachtr\u00e4gliche Genehmigung ersetzt dies nicht.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026 ausgesprochen."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine vorherige Zul\u00e4ssigkeitserkl\u00e4rung vorhanden."
+                  }
+                ],
+                "application": "Da keine vorangehende beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung vorlag, konnte die K\u00fcndigung das Verbot des \u00a7 17 MuSchG nicht \u00fcberwinden. (Amtliche Beh\u00f6rdeninformation)."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+            "extract": "Soweit die K\u00fcndigung der Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist \u2026 erst von der Bekanntgabe der Entscheidung der Beh\u00f6rde an den Arbeitnehmer ab.",
+            "summary": "Besonderer Fristbeginn bei zustimmungsbed\u00fcrftigen K\u00fcndigungen; erg\u00e4nzt die rechtzeitig erhobene Klage.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "Zugang der K\u00fcndigung am 20.03.2026."
+                  },
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "Klageerhebung am 21.03.2026."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Entscheidung vorhanden."
+                  }
+                ],
+                "application": "Die Klagefrist ist in jedem Fall gewahrt; mangels beh\u00f6rdlicher Entscheidung w\u00e4re der Fristlauf nach \u00a7 4 S. 4 KSchG noch nicht begonnen. (Quelle: gesetze\u2011im\u2011internet.de \u00a7 4 KSchG)."
+              }
+            ]
+          },
+          {
+            "type": "procedural rule",
+            "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung",
+            "extract": "Die G\u00fcteverhandlung soll innerhalb von zwei Wochen \u2026; der Vorsitzende \u2026 fordert den Beklagten \u2026 binnen \u2026 mindestens zwei Wochen \u2026 zur schriftlichen Erwiderung auf. Er kann dem Kl\u00e4ger \u2026 eine Frist \u2026 zur Stellungnahme setzen.",
+            "summary": "Richtet Verfahrensbeschleunigung ein; regelt Klageerwiderungs- und (optional) Stellungnahmefristen.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_015",
+                    "relevance": "Eingereichte Klageerwiderung der Beklagten."
+                  }
+                ],
+                "application": "Die Verteidigung per Schriftsatz entspricht \u00a7 61a Abs. 3 ArbGG; das Gericht kann nach Abs. 4 der Kl\u00e4gerin eine mindestens zweiw\u00f6chige Stellungnahmefrist setzen. (Quelle: gesetze\u2011im\u2011internet.de \u00a7 61a ArbGG)."
+              }
+            ]
+          }
+        ],
+        "artifact_ids": [
+          "art_413b2cf6"
+        ],
+        "deadlines": [
+          {
+            "type": "Klagefrist nach \u00a7 4 KSchG",
+            "references": {
+              "type": "law",
+              "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+              "extract": "Dreiwochenfrist; bei zustimmungsbed\u00fcrftiger K\u00fcndigung Fristbeginn erst mit Bekanntgabe der Beh\u00f6rdenentscheidung.",
+              "summary": "Klagefrist zur Geltendmachung der Unwirksamkeit der K\u00fcndigung.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_009",
+                      "relevance": "Zugang der K\u00fcndigung am 20.03.2026."
+                    },
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Klage am 21.03.2026 erhoben."
+                    },
+                    {
+                      "fact_id": "fact_012",
+                      "relevance": "Keine beh\u00f6rdliche Entscheidung vorhanden."
+                    }
+                  ],
+                  "application": "Die Klagefrist ist gewahrt; zudem w\u00e4re sie mangels beh\u00f6rdlicher Entscheidung nach \u00a7 4 S. 4 KSchG noch nicht angelaufen."
+                }
+              ]
+            },
+            "summary": "Klagefrist gewahrt; \u00a7 4 S. 4 KSchG verschiebt den Fristbeginn bei zustimmungsbed\u00fcrftigen K\u00fcndigungen. Keine gesonderte F\u00e4lligkeit offen.",
+            "due_date": ""
+          },
+          {
+            "type": "G\u00fcteverhandlung (\u00a7 61a Abs. 2 ArbGG) \u2013 Gerichtlicher Soll-Termin",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung",
+              "extract": "Die G\u00fcteverhandlung soll innerhalb von zwei Wochen nach Klageerhebung stattfinden.",
+              "summary": "Zeitvorgabe f\u00fcr das Gericht zur Anberaumung des G\u00fctetermins.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Klageeingang 21.03.2026."
+                    }
+                  ],
+                  "application": "Gericht soll G\u00fctetermin bis zwei Wochen nach 21.03.2026 ansetzen."
+                }
+              ]
+            },
+            "summary": "Gerichtlicher Soll-Termin f\u00fcr G\u00fcteverhandlung; keine Parteifrist.",
+            "due_date": "2026-04-04"
+          },
+          {
+            "type": "Frist zur Klageerwiderung (\u00a7 61a Abs. 3 ArbGG) \u2013 mindestens 2 Wochen",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung",
+              "extract": "\u2026 binnen einer angemessenen Frist, die mindestens zwei Wochen betragen mu\u00df, \u2026 schriftlich die Klage zu erwidern \u2026",
+              "summary": "Gericht setzt der Beklagten eine Erwiderungsfrist von mindestens zwei Wochen.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Anh\u00e4ngig gemachte K\u00fcndigungsschutzklage."
+                    }
+                  ],
+                  "application": "Nach ergehendem gerichtlichem Hinweis hat ACME schriftlich binnen mindestens zwei Wochen zu erwidern; konkretes Fristende steht noch nicht fest."
+                }
+              ]
+            },
+            "summary": "Parteifrist f\u00fcr ACME zur Klageerwiderung; Beginn abh\u00e4ngig von gerichtlicher Verf\u00fcgung.",
+            "due_date": ""
+          },
+          {
+            "type": "Frist zur Stellungnahme der Kl\u00e4gerin (\u00a7 61a Abs. 4 ArbGG) \u2013 mindestens 2 Wochen",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung",
+              "extract": "Der Vorsitzende kann dem Kl\u00e4ger eine angemessene Frist, die mindestens zwei Wochen betragen mu\u00df, zur schriftlichen Stellungnahme auf die Klageerwiderung setzen.",
+              "summary": "Optionale Stellungnahmefrist der Kl\u00e4gerin nach Eingang der Klageerwiderung.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_015",
+                      "relevance": "Klageerwiderung liegt seit 30.03.2026 vor."
+                    }
+                  ],
+                  "application": "Nach \u00a7 61a Abs. 4 ArbGG kann das Gericht der Kl\u00e4gerin eine mindestens zweiw\u00f6chige Frist zur schriftlichen Stellungnahme setzen; Beginn/Ende h\u00e4ngen von der gerichtlichen Verf\u00fcgung ab."
+                }
+              ]
+            },
+            "summary": "M\u00f6gliche Parteifrist f\u00fcr die Kl\u00e4gerin; konkretisiert sich erst durch gerichtliche Verf\u00fcgung.",
+            "due_date": ""
+          }
+        ],
+        "potential_next_states": [
+          "File written response to defendant's statement",
+          "Request scheduling of court conciliation hearing",
+          "Submit additional evidence supporting dismissal claim",
+          "File rebuttal to employer's arguments"
+        ]
+      },
+      "summary": "Die ACME GmbH hat am 30. M\u00e4rz 2026 eine schriftliche Klageerwiderung eingereicht und bestreitet die Wirksamkeit der K\u00fcndigung trotz der Schwangerschaft und fehlender beh\u00f6rdlicher Zustimmung. Das Verfahren wird fortgesetzt."
+    },
+    "node_34450b85": {
+      "id": "node_34450b85",
+      "case_id": "case_acme_kuendigung",
+      "incoming": [
+        "edge_4e80c8ea"
       ],
       "outgoing": [],
-      "title": "Response Submitted by Debtor",
+      "number": "A1-03",
+      "title": "G\u00fcteverhandlung am Arbeitsgericht",
       "state": {
-        "start_time": "2026-05-31T13:00:00",
-        "end_time": "2026-06-10T13:00:00",
-        "description": "Debtor Andi has submitted a formal response to the complaint filed by plaintiff Tim. The content of the response addresses the claims of non-payment, either accepting, contesting, or justifying the situation. The case progresses to evaluation of the response by the court.",
-        "legal_issue": "Debtor's formal response to complaint within procedural rules.",
+        "start_time": "2026-04-05T11:30:00",
+        "end_time": "2026-04-05T11:30:00",
+        "description": "Am 5. April 2026 fand vor dem Arbeitsgericht die G\u00fcteverhandlung zum K\u00fcndigungsschutzverfahren gegen die ACME GmbH statt. Die Kl\u00e4gerin Jennifer Kaufmann und die Beklagte ACME GmbH, vertreten durch ihre Rechtsanw\u00e4lte, erschienen zur Verhandlung. Der Richter f\u00fchrte die Verhandlung zur g\u00fctlichen Einigung. Es wurde erneut \u00fcber die Wirksamkeit der K\u00fcndigung diskutiert, insbesondere hinsichtlich der Schwangerschaft der Kl\u00e4gerin und der fehlenden beh\u00f6rdlichen Zul\u00e4ssigkeitserkl\u00e4rung. Eine Einigung wurde nicht erzielt. Das Gericht k\u00fcndigte weitere Verfahrensschritte an.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          },
+          {
+            "id": "fact_013",
+            "description": "Jennifer Kaufmann hat am 21. M\u00e4rz 2026 K\u00fcndigungsschutzklage gegen die K\u00fcndigung erhoben."
+          },
+          {
+            "id": "fact_014",
+            "description": "Jennifer Kaufmann wird aufgrund ihrer Rechtsschutzversicherung durch einen Rechtsanwalt vertreten."
+          },
+          {
+            "id": "fact_015",
+            "description": "ACME GmbH hat am 30. M\u00e4rz 2026 eine schriftliche Klageerwiderung vorgelegt und bestreitet die Unwirksamkeit der K\u00fcndigung trotz fehlender beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung."
+          },
+          {
+            "id": "fact_016",
+            "description": "Am 5. April 2026 fand vor dem Arbeitsgericht eine G\u00fcteverhandlung zum K\u00fcndigungsschutzverfahren statt."
+          },
+          {
+            "id": "fact_017",
+            "description": "Jennifer Kaufmann und ACME GmbH erschienen mit ihren Rechtsvertretern zur G\u00fcteverhandlung am 5. April 2026."
+          },
+          {
+            "id": "fact_018",
+            "description": "W\u00e4hrend der G\u00fcteverhandlung wurde keine Einigung erzielt."
+          },
+          {
+            "id": "fact_019",
+            "description": "Das Gericht k\u00fcndigte weitere Verfahrensschritte im K\u00fcndigungsschutzverfahren an."
+          }
+        ],
+        "legal_issue": "Nach erfolgloser G\u00fcteverhandlung am 05.04.2026: streitige Fortf\u00fchrung und Anberaumung eines Kammertermins (\u00a7\u00a7 54 Abs. 4, 57 ArbGG) sowie Fristensteuerung nach \u00a7 61a ArbGG; materiellrechtlich bleibt zentral, ob die K\u00fcndigung vom 20.03.2026 wegen bekannter Schwangerschaft und fehlender beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung nach \u00a7 17 MuSchG unwirksam ist.",
         "final_state": false,
         "actors_status": [
           {
             "actor": {
-              "id": "123",
-              "case_id": "7777",
-              "name": "tim",
-              "role": "plaintiff",
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
-              "profession": null,
-              "background": null
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [
+              {
+                "title": "Rechtsanwaltskosten im K\u00fcndigungsschutzverfahren",
+                "amount": 1500,
+                "paid_to": "Lawyer",
+                "covered_by_insurance": true
+              }
+            ],
+            "negotiation_profile": {
+              "cooperativeness": 45,
+              "assertiveness": 70,
+              "trust_in_opponent": 25,
+              "flexibility": 35,
+              "emotionality": 75,
+              "current_goal_satisfaction": 45
+            },
+            "intermediate_goal": "Fortsetzung des Verfahrens nach erfolglosem G\u00fcteversuch und Vorbereitung auf die n\u00e4chste Verhandlung."
           },
           {
             "actor": {
-              "id": "1234",
-              "case_id": "7777",
-              "name": "andi",
-              "role": "debtor",
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
               "profession": null,
-              "background": null
+              "background": null,
+              "has_legal_expenses_insurance": false
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [
+              {
+                "title": "Anwaltskosten f\u00fcr Klageerwiderung",
+                "amount": 2000,
+                "paid_to": "Lawyer",
+                "covered_by_insurance": false
+              },
+              {
+                "title": "Gerichtskosten f\u00fcr G\u00fcteverhandlung",
+                "amount": 300,
+                "paid_to": "Court",
+                "covered_by_insurance": false
+              }
+            ],
+            "negotiation_profile": {
+              "cooperativeness": 35,
+              "assertiveness": 70,
+              "trust_in_opponent": 35,
+              "flexibility": 45,
+              "emotionality": 40,
+              "current_goal_satisfaction": 50
+            },
+            "intermediate_goal": "Durchsetzung der K\u00fcndigung trotz G\u00fcteverhandlung und Vorbereitung auf den weiteren Prozessverlauf."
           }
         ],
         "legal_references": [
           {
+            "type": "procedural rule",
+            "reference": "\u00a7 54 Arbeitsgerichtsgesetz (ArbGG) \u2013 G\u00fcteverfahren",
+            "extract": "Die m\u00fcndliche Verhandlung beginnt mit einer Verhandlung vor dem Vorsitzenden zum Zwecke der g\u00fctlichen Einigung der Parteien (G\u00fcteverhandlung).",
+            "summary": "Erstinstanz beginnt mit G\u00fcteverhandlung vor dem Vorsitzenden; bei Erfolglosigkeit ist streitige Verhandlung alsbald anzuberaumen.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_016",
+                    "relevance": "G\u00fcteverhandlung wurde durchgef\u00fchrt."
+                  },
+                  {
+                    "fact_id": "fact_018",
+                    "relevance": "Keine Einigung erzielt."
+                  },
+                  {
+                    "fact_id": "fact_019",
+                    "relevance": "Gericht k\u00fcndigte weitere Verfahrensschritte an."
+                  }
+                ],
+                "application": "Die erfolglose G\u00fcteverhandlung bewirkt die streitige Fortsetzung und erfordert die Anberaumung eines Kammertermins alsbald."
+              }
+            ]
+          },
+          {
+            "type": "procedural rule",
+            "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Proze\u00dff\u00f6rderung in K\u00fcndigungsverfahren",
+            "extract": "Ist die G\u00fcteverhandlung erfolglos \u2026 fordert der Vorsitzende den Beklagten auf, binnen einer angemessenen Frist, die mindestens zwei Wochen betragen mu\u00df, \u2026 schriftlich die Klage zu erwidern.",
+            "summary": "Beschleunigung: nach erfolgloser G\u00fcteverhandlung schriftliche Erwiderung der Beklagten mind. 2 Wochen; M\u00f6glichkeit, der Kl\u00e4gerin eine mind. zweiw\u00f6chige Stellungnahmefrist zu setzen; Pr\u00e4klusion versp\u00e4teter Angriffs-/Verteidigungsmittel (\u00a7 61a Abs. 5).",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_018",
+                    "relevance": "G\u00fcteverhandlung erfolglos."
+                  },
+                  {
+                    "fact_id": "fact_015",
+                    "relevance": "Schriftliche Klageerwiderung der Beklagten liegt bereits vor."
+                  },
+                  {
+                    "fact_id": "fact_019",
+                    "relevance": "Gericht k\u00fcndigte weitere Schritte an."
+                  }
+                ],
+                "application": "Da die G\u00fcteverhandlung scheiterte und bereits eine Erwiderung vorliegt, kann das Gericht nun nach \u00a7 61a Abs. 4 ArbGG der Kl\u00e4gerin eine mindestens zweiw\u00f6chige Stellungnahmefrist setzen; sp\u00e4tere neue Mittel k\u00f6nnen nach Abs. 5 pr\u00e4kludiert werden."
+              }
+            ]
+          },
+          {
+            "type": "procedural rule",
+            "reference": "\u00a7 57 Arbeitsgerichtsgesetz (ArbGG) \u2013 Verhandlung vor der Kammer",
+            "extract": "Die Verhandlung ist m\u00f6glichst in einem Termin zu Ende zu f\u00fchren.",
+            "summary": "Nach der G\u00fcteverhandlung folgt die Verhandlung vor der Kammer; ist eine sofortige Beweisaufnahme nicht m\u00f6glich, ist Termin zur weiteren Verhandlung alsbald zu verk\u00fcnden.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_018",
+                    "relevance": "G\u00fcteverhandlung ohne Einigung."
+                  },
+                  {
+                    "fact_id": "fact_019",
+                    "relevance": "Gericht k\u00fcndigte Fortsetzung an."
+                  }
+                ],
+                "application": "Das Gericht hat nun den Kammertermin anzuberaumen und die streitige Verhandlung zu f\u00fchren; z\u00fcgige Terminierung ist geboten."
+              }
+            ]
+          },
+          {
             "type": "law",
-            "reference": "Court procedural rules",
-            "extract": "The defendant is required to respond to the complaint within a set deadline to participate effectively in the legal proceedings.",
-            "summary": "Confirms procedural requirement for response submission."
+            "reference": "\u00a7 17 Mutterschutzgesetz (MuSchG) \u2013 K\u00fcndigungsverbot",
+            "extract": "Die K\u00fcndigung gegen\u00fcber einer Frau w\u00e4hrend ihrer Schwangerschaft \u2026 ist unzul\u00e4ssig.",
+            "summary": "Absolutes K\u00fcndigungsverbot w\u00e4hrend der Schwangerschaft; ausnahmsweise beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung m\u00f6glich (nur in besonderen, nicht schwangerschaftsbedingten F\u00e4llen). Schriftform und Angabe des K\u00fcndigungsgrundes erforderlich.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Kl\u00e4gerin war schwanger."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin wurde am 03.03.2026 informiert (Kenntnis)."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026 im Schutzzeitraum."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung vor Ausspruch."
+                  }
+                ],
+                "application": "Mangels beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung ist die K\u00fcndigung dem Verbot des \u00a7 17 MuSchG unterfallen und rechtlich unzul\u00e4ssig; die materiell\u2011rechtliche Hauptfrage bleibt damit zu Lasten der Beklagten."
+              }
+            ]
           }
         ],
-        "artifacts": [
-          {
-            "id": "art_response_0001",
-            "type": "document",
-            "title": "Debtor's Response to Complaint",
-            "content": "Formal response submitted by debtor Andi addressing the complaint filed by plaintiff Tim regarding non-payment of the invoice.",
-            "created_by": "1234",
-            "timestamp": "2026-05-31T13:30:00"
-          }
+        "artifact_ids": [
+          "art_f675f011",
+          "art_f11b3218"
         ],
         "deadlines": [
           {
-            "type": "hearing_date_deadline",
+            "type": "Klagefrist nach \u00a7 4 KSchG",
             "references": {
               "type": "law",
-              "reference": "Court procedural rules",
-              "extract": "A hearing date is typically scheduled after the response to the complaint is received, allowing parties to prepare.",
-              "summary": "Deadline for setting hearing after response."
+              "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+              "extract": "Soweit die K\u00fcndigung der Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist zur Anrufung des Arbeitsgerichts erst von der Bekanntgabe der Entscheidung der Beh\u00f6rde an den Arbeitnehmer ab.",
+              "summary": "Klagefrist in K\u00fcndigungsschutzsachen; besonderer Fristbeginn bei zustimmungsbed\u00fcrftiger K\u00fcndigung.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_009",
+                      "relevance": "Zugang der K\u00fcndigung am 20.03.2026."
+                    },
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Klage am 21.03.2026 erhoben."
+                    },
+                    {
+                      "fact_id": "fact_012",
+                      "relevance": "Keine beh\u00f6rdliche Entscheidung vorhanden."
+                    }
+                  ],
+                  "application": "Frist gewahrt; zudem w\u00e4re der Fristlauf mangels beh\u00f6rdlicher Entscheidung noch nicht begonnen."
+                }
+              ]
             },
-            "summary": "Deadline by which the court must schedule a hearing date post response.",
-            "due_date": "2026-06-20T13:00:00"
+            "summary": "Klagefrist gewahrt; \u00a7 4 S. 4 KSchG verschiebt den Fristbeginn bei zustimmungsbed\u00fcrftigen K\u00fcndigungen. Keine gesonderte F\u00e4lligkeit offen.",
+            "due_date": ""
+          },
+          {
+            "type": "G\u00fcteverhandlung (\u00a7 61a Abs. 2 ArbGG) \u2013 Gerichtlicher Soll-Termin",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Proze\u00dff\u00f6rderung in K\u00fcndigungsverfahren",
+              "extract": "Die G\u00fcteverhandlung soll innerhalb von zwei Wochen nach Klageerhebung stattfinden.",
+              "summary": "Zeitvorgabe f\u00fcr die Anberaumung des G\u00fctetermins.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Klageeingang 21.03.2026."
+                    },
+                    {
+                      "fact_id": "fact_016",
+                      "relevance": "G\u00fcteverhandlung am 05.04.2026 durchgef\u00fchrt."
+                    }
+                  ],
+                  "application": "Der G\u00fctetermin lag etwa zwei Wochen nach Klageerhebung und wurde durchgef\u00fchrt; keine Parteifrist betroffen."
+                }
+              ]
+            },
+            "summary": "G\u00fcteverhandlung am 5. April 2026 durchgef\u00fchrt; keine weiteren Parteifristen neu gesetzt.",
+            "due_date": "2026-04-05"
+          },
+          {
+            "type": "Frist zur Klageerwiderung (\u00a7 61a Abs. 3 ArbGG) \u2013 mindestens 2 Wochen",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Proze\u00dff\u00f6rderung in K\u00fcndigungsverfahren",
+              "extract": "\u2026 binnen einer angemessenen Frist, die mindestens zwei Wochen betragen mu\u00df, \u2026 schriftlich die Klage zu erwidern \u2026",
+              "summary": "Gericht setzt der Beklagten eine Erwiderungsfrist von mindestens zwei Wochen, falls noch nicht ausreichend erwidert.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_013",
+                      "relevance": "Anh\u00e4ngig gemachte K\u00fcndigungsschutzklage."
+                    },
+                    {
+                      "fact_id": "fact_015",
+                      "relevance": "Schriftliche Erwiderung bereits am 30.03.2026 erfolgt."
+                    }
+                  ],
+                  "application": "Die Anordnung nach Abs. 3 ist hier bereits erf\u00fcllt; weitergehende Fristsetzungen betreffen voraussichtlich die Kl\u00e4gerin (Abs. 4)."
+                }
+              ]
+            },
+            "summary": "Parteifrist f\u00fcr ACME zur Klageerwiderung; hier bereits erf\u00fcllt durch Schriftsatz vom 30.03.2026.",
+            "due_date": ""
+          },
+          {
+            "type": "Frist zur Stellungnahme der Kl\u00e4gerin (\u00a7 61a Abs. 4 ArbGG) \u2013 mindestens 2 Wochen",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Proze\u00dff\u00f6rderung in K\u00fcndigungsverfahren",
+              "extract": "Der Vorsitzende kann dem Kl\u00e4ger eine angemessene Frist, die mindestens zwei Wochen betragen mu\u00df, zur schriftlichen Stellungnahme auf die Klageerwiderung setzen.",
+              "summary": "Optionale Stellungnahmefrist der Kl\u00e4gerin nach Eingang der Klageerwiderung.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_015",
+                      "relevance": "Klageerwiderung liegt seit 30.03.2026 vor."
+                    },
+                    {
+                      "fact_id": "fact_019",
+                      "relevance": "Weitere Schritte werden vom Gericht angek\u00fcndigt."
+                    }
+                  ],
+                  "application": "Das Gericht kann eine mindestens zweiw\u00f6chige Stellungnahmefrist setzen; Beginn/Ende h\u00e4ngen von der gerichtlichen Verf\u00fcgung ab."
+                }
+              ]
+            },
+            "summary": "M\u00f6gliche Parteifrist f\u00fcr die Kl\u00e4gerin; konkretisiert sich erst durch gerichtliche Verf\u00fcgung.",
+            "due_date": ""
+          },
+          {
+            "type": "Anberaumung Kammertermin (\u00a7 57 ArbGG) \u2013 alsbald",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 57 Arbeitsgerichtsgesetz (ArbGG) \u2013 Verhandlung vor der Kammer",
+              "extract": "Die Verhandlung ist m\u00f6glichst in einem Termin zu Ende zu f\u00fchren.",
+              "summary": "Nach erfolgloser G\u00fcteverhandlung ist die streitige Verhandlung vor der Kammer alsbald anzuberaumen und \u2013 soweit m\u00f6glich \u2013 in einem Termin abzuschlie\u00dfen.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_018",
+                      "relevance": "G\u00fcteverhandlung war erfolglos."
+                    },
+                    {
+                      "fact_id": "fact_019",
+                      "relevance": "Gericht k\u00fcndigte Fortsetzung an."
+                    }
+                  ],
+                  "application": "Termin zur Kammerverhandlung ist nun zeitnah festzusetzen; keine Parteifrist, gerichtliche Terminierung."
+                }
+              ]
+            },
+            "summary": "Gerichtliche Terminierungspflicht f\u00fcr den Kammertermin; keine unmittelbare Parteifrist.",
+            "due_date": ""
           }
+        ],
+        "potential_next_states": [
+          "Request court to schedule chamber hearing",
+          "Jennifer submits written response to defense",
+          "ACME proposes settlement post-mediation",
+          "Jennifer files further evidence for hearing"
         ]
       },
-      "summary": "Debtor Andi has submitted a formal written response to the complaint from plaintiff Tim, marking progression to the court's review of arguments."
+      "summary": "Am 5. April 2026 fand die G\u00fcteverhandlung im K\u00fcndigungsschutzverfahren statt, bei der keine Einigung erzielt wurde. Das Verfahren ist nach \u00a7\u00a7 54, 57, 61a ArbGG streitig fortzuf\u00fchren; materiell bleibt \u00a7 17 MuSchG ausschlaggebend f\u00fcr die Wirksamkeit der K\u00fcndigung."
     },
-    "node_a2245566": {
-      "id": "node_a2245566",
-      "case_id": "7777",
+    "node_8867e7ec": {
+      "id": "node_8867e7ec",
+      "case_id": "case_acme_kuendigung",
       "incoming": [
-        "edge_984aba26"
+        "edge_297e8efd"
       ],
       "outgoing": [],
-      "title": "Court Sets Payment Deadline After No Response",
+      "number": "A2-02",
+      "title": "ACME nimmt K\u00fcndigung zur\u00fcck und zahlt Gehalt bis Ende April",
       "state": {
-        "start_time": "2026-05-31T13:00:00",
-        "end_time": "2026-06-15T13:00:00",
-        "description": "After debtor Andi failed to respond to the complaint within the court-specified deadline, the court issued an order setting a new payment deadline of 15 days to settle the outstanding invoice with plaintiff Tim. The case awaits debtor's compliance with the court order.",
-        "legal_issue": "Non-payment continues despite complaint and court order; debtor now under formal payment deadline for settlement.",
+        "start_time": "2026-03-22T10:30:00",
+        "end_time": "2026-03-22T10:30:00",
+        "description": "Die ACME GmbH hat am 22. M\u00e4rz 2026 die ordentliche betriebsbedingte K\u00fcndigung gegen\u00fcber Jennifer Kaufmann zur\u00fcckgenommen und zugesichert, bis zum urspr\u00fcnglich geplanten Ende des Arbeitsverh\u00e4ltnisses am 30. April 2026 das Gehalt weiterzuzahlen. Jennifer Kaufmann wurde schriftlich \u00fcber die R\u00fccknahme informiert. Der K\u00fcndigungsschutz und die damit zusammenh\u00e4ngenden Rechte bleiben bestehen.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          },
+          {
+            "id": "fact_013",
+            "description": "Am 21. M\u00e4rz 2026 forderte Jennifer Kaufmann schriftlich die R\u00fccknahme der K\u00fcndigung von der ACME GmbH."
+          },
+          {
+            "id": "fact_014",
+            "description": "Am 22. M\u00e4rz 2026 hat die ACME GmbH die K\u00fcndigung gegen\u00fcber Jennifer Kaufmann formell zur\u00fcckgenommen."
+          },
+          {
+            "id": "fact_015",
+            "description": "Die ACME GmbH zahlt Jennifer Kaufmann das Gehalt bis zum 30. April 2026 trotz der R\u00fccknahme der K\u00fcndigung."
+          }
+        ],
+        "legal_issue": "Rechtswirkungen der von ACME am 22.03.2026 erkl\u00e4rten \u201eR\u00fccknahme\u201c der K\u00fcndigung: (1) Fortbestand des Arbeitsverh\u00e4ltnisses wegen K\u00fcndigungsverbots nach \u00a7 17 MuSchG und Nichtigkeit (\u00a7 134 BGB); (2) R\u00fccknahme als Angebot zur einvernehmlichen Fortsetzung; (3) Auswirkungen auf die Dreiwochenfrist des \u00a7 4 KSchG (bei zustimmungsbed\u00fcrftiger K\u00fcndigung \u2013 kein Fristlauf mangels Beh\u00f6rdentscheidung); (4) Verg\u00fctungs- und Besch\u00e4ftigungspflichten einschlie\u00dflich Annahmeverzug, solange keine tats\u00e4chliche Besch\u00e4ftigungsaufforderung erfolgt.",
         "final_state": false,
         "actors_status": [
           {
             "actor": {
-              "id": "123",
-              "case_id": "7777",
-              "name": "tim",
-              "role": "plaintiff",
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
-              "profession": null,
-              "background": null
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 60,
+              "assertiveness": 65,
+              "trust_in_opponent": 50,
+              "flexibility": 45,
+              "emotionality": 60,
+              "current_goal_satisfaction": 65
+            },
+            "intermediate_goal": "Abwarten der weiteren Entscheidung von ACME GmbH und Wahrung der Rechte bei der R\u00fccknahme der K\u00fcndigung."
           },
           {
             "actor": {
-              "id": "1234",
-              "case_id": "7777",
-              "name": "andi",
-              "role": "debtor",
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
               "gender": null,
-              "age": null,
+              "date_of_birth": null,
               "nationality": null,
               "profession": null,
-              "background": null
+              "background": null,
+              "has_legal_expenses_insurance": false
             },
-            "paid": 0,
-            "received": 0
+            "income": [],
+            "expenses": [
+              {
+                "title": "Fortzahlung Gehalt bis 30. April 2026",
+                "amount": 4000,
+                "paid_to": "actor_jennifer_kaufmann",
+                "covered_by_insurance": false
+              }
+            ],
+            "negotiation_profile": {
+              "cooperativeness": 45,
+              "assertiveness": 55,
+              "trust_in_opponent": 55,
+              "flexibility": 50,
+              "emotionality": 25,
+              "current_goal_satisfaction": 50
+            },
+            "intermediate_goal": "\u00dcberpr\u00fcfung der wirtschaftlichen Situation und Planung weiterer Personalkostenma\u00dfnahmen unter Ber\u00fccksichtigung der R\u00fccknahme der K\u00fcndigung."
           }
         ],
         "legal_references": [
           {
             "type": "law",
-            "reference": "\u00a7 331 ZPO - Court's power to set deadlines",
-            "extract": "Das Gericht kann Fristen setzen, um den Fortgang des Verfahrens zu sichern.",
-            "summary": "Court's authority to impose procedural deadlines."
+            "reference": "Mutterschutzgesetz (MuSchG) \u00a7 17 K\u00fcndigungsverbot",
+            "extract": "\u201eDie K\u00fcndigung gegen\u00fcber einer Frau ist unzul\u00e4ssig \u2026 w\u00e4hrend ihrer Schwangerschaft \u2026\u201c; die Beh\u00f6rde kann \u201ein besonderen F\u00e4llen \u2026 ausnahmsweise die K\u00fcndigung f\u00fcr zul\u00e4ssig erkl\u00e4ren.\u201c",
+            "summary": "K\u00fcndigungen w\u00e4hrend der Schwangerschaft sind unzul\u00e4ssig; nur ausnahmsweise kann die zust\u00e4ndige Beh\u00f6rde vorab die K\u00fcndigung f\u00fcr zul\u00e4ssig erkl\u00e4ren.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft besteht."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin hatte vor K\u00fcndigung Kenntnis."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026 im Schutzzeitraum."
+                  }
+                ],
+                "application": "Die K\u00fcndigung f\u00e4llt unter das Verbot des \u00a7 17 Abs. 1 MuSchG, da die Arbeitnehmerin schwanger war und dies der Arbeitgeberin bekannt war."
+              },
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung eingeholt."
+                  }
+                ],
+                "application": "Mangels vorab erteilter Zul\u00e4ssigkeitserkl\u00e4rung liegt keine Ausnahme nach \u00a7 17 Abs. 2 MuSchG vor; die K\u00fcndigung ist unzul\u00e4ssig."
+              }
+            ]
           },
           {
             "type": "law",
-            "reference": "\u00a7 286 BGB - Verzug des Schuldners",
-            "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
-            "summary": "Confirms debtor is in default after failure to pay following reminder."
+            "reference": "B\u00fcrgerliches Gesetzbuch (BGB) \u00a7 134 Gesetzliches Verbot",
+            "extract": "\u201eEin Rechtsgesch\u00e4ft, das gegen ein gesetzliches Verbot verst\u00f6\u00dft, ist nichtig \u2026\u201c",
+            "summary": "Verst\u00f6\u00dfe gegen gesetzliche Verbote f\u00fchren grunds\u00e4tzlich zur Nichtigkeit des Rechtsgesch\u00e4fts.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schutzbereich des K\u00fcndigungsverbots er\u00f6ffnet."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "Ausspruch der K\u00fcndigung im Schutzzeitraum."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Beh\u00f6rdliche Zustimmung fehlt."
+                  },
+                  {
+                    "fact_id": "fact_010",
+                    "relevance": "Aus der K\u00fcndigung abgeleitetes Beendigungsdatum 30.04.2026."
+                  }
+                ],
+                "application": "Die K\u00fcndigung verst\u00f6\u00dft gegen \u00a7 17 MuSchG und ist daher nach \u00a7 134 BGB nichtig; das in der K\u00fcndigung genannte Beendigungsdatum (30.04.2026) entfaltet keine Rechtswirkung, das Arbeitsverh\u00e4ltnis besteht fort."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "K\u00fcndigungsschutzgesetz (KSchG) \u00a7 4 Anrufung des Arbeitsgerichts",
+            "extract": "Dreiwochenfrist ab Zugang der K\u00fcndigung; \u201eSoweit die K\u00fcndigung der Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist \u2026 erst von der Bekanntgabe der Entscheidung der Beh\u00f6rde an den Arbeitnehmer ab.\u201c",
+            "summary": "Grunds\u00e4tzlich ist binnen drei Wochen Klage zu erheben; bei zustimmungsbed\u00fcrftiger K\u00fcndigung beginnt die Frist erst mit Bekanntgabe der beh\u00f6rdlichen Entscheidung.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schutztatbestand (Schwangerschaft) \u2013 Zustimmungserfordernis."
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Kenntnis der Arbeitgeberin."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine Beh\u00f6rdentscheidung vorhanden."
+                  },
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "Arbeitgeberin hat K\u00fcndigung zur\u00fcckgenommen; beh\u00f6rdliche Entscheidung weiterhin nicht existent."
+                  }
+                ],
+                "application": "Mangels beh\u00f6rdlicher Entscheidung hat die Dreiwochenfrist noch nicht begonnen. Die R\u00fccknahme der K\u00fcndigung ersetzt die gesetzliche Fristausl\u00f6sung nicht und beseitigt nicht die M\u00f6glichkeit einer gerichtlichen Geltendmachung, falls erforderlich."
+              }
+            ]
+          },
+          {
+            "type": "judgment",
+            "reference": "BAG, Urteil vom 24.11.2022 \u2013 2 AZR 11/22",
+            "extract": "Eine gegen \u00a7 17 Abs. 1 MuSchG versto\u00dfende K\u00fcndigung hat \u201egrunds\u00e4tzlich deren Nichtigkeit gem\u00e4\u00df \u00a7 134 BGB\u201c zur Folge.",
+            "summary": "Das BAG best\u00e4tigt: K\u00fcndigungen entgegen \u00a7 17 MuSchG sind grunds\u00e4tzlich nach \u00a7 134 BGB nichtig.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft der Arbeitnehmerin."
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung im Schutzzeitraum."
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Fehlende beh\u00f6rdliche Zustimmung."
+                  }
+                ],
+                "application": "Die Konstellation entspricht dem vom BAG best\u00e4tigten Grundsatz; die K\u00fcndigung ist nichtig, das Arbeitsverh\u00e4ltnis besteht fort."
+              }
+            ]
+          },
+          {
+            "type": "judgment",
+            "reference": "BAG, Urteil vom 25.11.2010 \u2013 2 AZR 323/09",
+            "extract": "Zur \u201eK\u00fcndigungsr\u00fccknahme\u201c und dem \u201edarin liegenden Angebot \u2026, das Arbeitsverh\u00e4ltnis einvernehmlich fortzusetzen\u201c.",
+            "summary": "Die R\u00fccknahme der K\u00fcndigung ist rechtlich als Angebot des K\u00fcndigenden zu verstehen, das Arbeitsverh\u00e4ltnis (einvernehmlich) fortzusetzen oder neu zu begr\u00fcnden; sie wirkt nicht einseitig gestaltend.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "Arbeitnehmerin verlangte R\u00fccknahme und Fortsetzung."
+                  },
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "Arbeitgeberin erkl\u00e4rte R\u00fccknahme der K\u00fcndigung."
+                  }
+                ],
+                "application": "Die R\u00fccknahmeerkl\u00e4rung der Arbeitgeberin ist als Angebot zur einvernehmlichen Fortsetzung zu werten. Da die Arbeitnehmerin zuvor die R\u00fccknahme verlangte und an der Fortsetzung festh\u00e4lt, liegt jedenfalls eine \u00fcbereinstimmende Fortsetzungsabsicht vor; unabh\u00e4ngig davon besteht das Arbeitsverh\u00e4ltnis bereits kraft Nichtigkeit der K\u00fcndigung fort."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "B\u00fcrgerliches Gesetzbuch (BGB) \u00a7 615 Verg\u00fctung bei Annahmeverzug und bei Betriebsrisiko",
+            "extract": "\u201eKommt der Dienstberechtigte mit der Annahme der Dienste in Verzug, so kann der Verpflichtete \u2026 die vereinbarte Verg\u00fctung verlangen \u2026\u201c",
+            "summary": "Verweigert der Arbeitgeber die Annahme der Arbeitsleistung, schuldet er gleichwohl die Verg\u00fctung (Annahmeverzug).",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "K\u00fcndigung wurde zur\u00fcckgenommen; tats\u00e4chliche Besch\u00e4ftigungsaufforderung nicht festgestellt."
+                  },
+                  {
+                    "fact_id": "fact_015",
+                    "relevance": "Zusage der Lohnzahlung bis 30.04.2026."
+                  }
+                ],
+                "application": "Ohne ausdr\u00fcckliche Aufforderung zur Arbeitsaufnahme bleibt der Arbeitgeber im Annahmeverzug und schuldet Verg\u00fctung. Die blo\u00dfe R\u00fccknahme und eine begrenzte Zahlungszusage bis 30.04.2026 beenden den Annahmeverzug nicht; die Verg\u00fctungspflicht besteht fort, bis Besch\u00e4ftigung tats\u00e4chlich angeboten wird."
+              }
+            ]
+          },
+          {
+            "type": "judgment",
+            "reference": "BAG, Urteil vom 24.05.2017 \u2013 5 AZR 251/16",
+            "extract": "Annahmeverzug endet bei \u201eR\u00fccknahme\u201c der K\u00fcndigung nur, wenn der Arbeitnehmer \u201ezu einem bestimmten Zeitpunkt an einem bestimmten Ort\u201c zur Arbeitsaufnahme aufgefordert wird.",
+            "summary": "Zur Beendigung des Annahmeverzugs reicht eine R\u00fccknahmeerkl\u00e4rung nicht; es bedarf einer hinreichend bestimmten Aufforderung zur Wiederaufnahme der Arbeit.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "R\u00fccknahme der K\u00fcndigung erkl\u00e4rt."
+                  },
+                  {
+                    "fact_id": "fact_015",
+                    "relevance": "Zusage der Gehaltszahlung bis 30.04.2026, ohne dokumentierte Arbeitsaufforderung."
+                  }
+                ],
+                "application": "Mangels dokumentierter konkreter Arbeitsaufforderung ist davon auszugehen, dass der Annahmeverzug nicht allein durch die R\u00fccknahme endete; ACME bleibt zur Verg\u00fctungszahlung verpflichtet, bis sie die tats\u00e4chliche Arbeitsaufnahme hinreichend bestimmt anbietet."
+              }
+            ]
           }
         ],
-        "artifacts": [
-          {
-            "id": "art_0002",
-            "type": "document",
-            "title": "Court Order Setting Payment Deadline",
-            "content": "Court issues an order setting a new payment deadline for debtor Andi to settle the invoice with plaintiff Tim within 15 days upon debtor's failure to respond adequately to complaint.",
-            "created_by": null,
-            "timestamp": "2026-05-31T15:00:00"
-          }
+        "artifact_ids": [
+          "art_85436c88"
         ],
         "deadlines": [
           {
-            "type": "payment_deadline",
+            "type": "K\u00fcndigungsschutzklage \u2013 Dreiwochenfrist",
             "references": {
               "type": "law",
-              "reference": "\u00a7 331 ZPO - Court's power to set deadlines",
-              "extract": "Das Gericht kann Fristen setzen, um den Fortgang des Verfahrens zu sichern.",
-              "summary": "Court set deadline for debtor payment after non-response."
+              "reference": "K\u00fcndigungsschutzgesetz (KSchG) \u00a7 4 Anrufung des Arbeitsgerichts",
+              "extract": "\u2026 innerhalb von drei Wochen \u2026 Klage \u2026 Soweit \u2026 Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist \u2026 erst von der Bekanntgabe der Entscheidung \u2026",
+              "summary": "Frist zur Erhebung der K\u00fcndigungsschutzklage; Beginn bei zustimmungsbed\u00fcrftiger K\u00fcndigung erst mit Bekanntgabe der Beh\u00f6rdenentscheidung.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_004",
+                      "relevance": "Schwangerschaft \u2013 Zustimmungserfordernis."
+                    },
+                    {
+                      "fact_id": "fact_005",
+                      "relevance": "Kenntnis der Arbeitgeberin."
+                    },
+                    {
+                      "fact_id": "fact_012",
+                      "relevance": "Keine Entscheidung der Beh\u00f6rde."
+                    }
+                  ],
+                  "application": "Da keine beh\u00f6rdliche Entscheidung bekanntgegeben wurde, l\u00e4uft die Dreiwochenfrist derzeit nicht; ein konkretes Fristende steht noch nicht fest."
+                }
+              ]
             },
-            "summary": "Debtor must pay invoice within 15 days of court order.",
-            "due_date": "2026-06-15T13:00:00"
+            "summary": "K\u00fcndigungsschutzklage erforderlich; derzeit kein Fristlauf, weil mangels beh\u00f6rdlicher Entscheidung \u00a7 4 Satz 4 KSchG den Beginn hinausschiebt.",
+            "due_date": ""
           }
+        ],
+        "potential_next_states": [
+          "Jennifer Kaufmann files a K\u00fcndigungsschutzklage",
+          "ACME GmbH issues a formal work reinstatement offer",
+          "Jennifer Kaufmann negotiates a settlement agreement",
+          "ACME GmbH requests a beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung",
+          "Wait for beh\u00f6rdliche Entscheidung on K\u00fcndigung"
         ]
       },
-      "summary": "Court issues order setting a new 15-day payment deadline after debtor fails to respond to complaint."
+      "summary": "Die ACME GmbH hat die betriebsbedingte K\u00fcndigung von Jennifer Kaufmann zur\u00fcckgenommen und zugesichert, ihr bis 30. April 2026 das Gehalt weiterzuzahlen. Die arbeitsrechtliche Situation ist damit verbessert, das Risiko eines Gerichtsverfahrens reduziert."
+    },
+    "node_ff95fe8c": {
+      "id": "node_ff95fe8c",
+      "case_id": "case_acme_kuendigung",
+      "incoming": [
+        "edge_39e2d8f7"
+      ],
+      "outgoing": [
+        "edge_72aeb593"
+      ],
+      "number": "A3-01",
+      "title": "F\u00fcnfw\u00f6chige Reaktionslosigkeit von Jennifer Kaufmann",
+      "state": {
+        "start_time": "2026-03-20T12:00:00",
+        "end_time": "2026-04-24T12:00:00",
+        "description": "Nach Zugang der betriebsbedingten K\u00fcndigung am 20. M\u00e4rz 2026 reagierte Jennifer Kaufmann f\u00fcnf Wochen lang nicht. Die K\u00fcndigung erfolgte w\u00e4hrend einer bekannten Schwangerschaft und ohne vorherige beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung. In F\u00e4llen eines beh\u00f6rdlichen Zustimmungserfordernisses beginnt die Dreiwochenfrist zur Erhebung einer K\u00fcndigungsschutzklage nach \u00a7 4 Satz 4 KSchG erst mit Bekanntgabe der Beh\u00f6rdenentscheidung. Da keine beh\u00f6rdliche Entscheidung vorliegt, ist die Wirksamkeitsfiktion des \u00a7 7 KSchG durch die f\u00fcnf Wochen w\u00e4hrende Unt\u00e4tigkeit nicht eingetreten. Die objektive Unwirksamkeit der K\u00fcndigung nach \u00a7 17 MuSchG bleibt deshalb unber\u00fchrt.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          },
+          {
+            "id": "fact_013",
+            "description": "Jennifer Kaufmann reagierte f\u00fcnf Wochen lang nicht auf die K\u00fcndigung nach deren Zugang am 20. M\u00e4rz 2026."
+          }
+        ],
+        "legal_issue": "Rechtsfolgen der f\u00fcnfw\u00f6chigen Unt\u00e4tigkeit nach Zugang einer w\u00e4hrend der bekannten Schwangerschaft und ohne beh\u00f6rdliche Zustimmung erkl\u00e4rten Arbeitgeberk\u00fcndigung: Beginn der Klagefrist nach \u00a7 4 KSchG, Anwendbarkeit der Wirksamkeitsfiktion des \u00a7 7 KSchG und Fortbestand der Unwirksamkeit nach \u00a7 17 MuSchG.",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
+            },
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 50,
+              "assertiveness": 60,
+              "trust_in_opponent": 40,
+              "flexibility": 40,
+              "emotionality": 55,
+              "current_goal_satisfaction": 15
+            },
+            "intermediate_goal": "Pr\u00fcfung und ggf. Einleitung von Rechtsschutz gegen die K\u00fcndigung."
+          },
+          {
+            "actor": {
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": null,
+              "background": null,
+              "has_legal_expenses_insurance": false
+            },
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 40,
+              "assertiveness": 60,
+              "trust_in_opponent": 50,
+              "flexibility": 50,
+              "emotionality": 30,
+              "current_goal_satisfaction": 50
+            },
+            "intermediate_goal": "Abwarten oder ggf. Nachholen eines beh\u00f6rdlichen Zustimmungsverfahrens."
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "\u00a7 17 Mutterschutzgesetz (MuSchG) \u2013 K\u00fcndigungsverbot",
+            "extract": "\u201eDie K\u00fcndigung gegen\u00fcber einer Frau w\u00e4hrend der Schwangerschaft [...] ist unzul\u00e4ssig.\u201c Eine K\u00fcndigung bedarf ausnahmsweise der beh\u00f6rdlichen Zustimmung.",
+            "summary": "W\u00e4hrend der Schwangerschaft besteht ein gesetzliches K\u00fcndigungsverbot; ohne vorherige beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung ist eine K\u00fcndigung unwirksam. Die Schutzwirkung greift, wenn dem Arbeitgeber die Schwangerschaft bekannt war oder binnen zwei Wochen mitgeteilt wird.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schwangerschaft bestand"
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin kannte Schwangerschaft vor K\u00fcndigung"
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung w\u00e4hrend der Schwangerschaft ausgesprochen"
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Zustimmung vor K\u00fcndigung"
+                  }
+                ],
+                "application": "Da die Arbeitnehmerin schwanger war und die Arbeitgeberin seit 3. M\u00e4rz 2026 informiert war, h\u00e4tte eine K\u00fcndigung nur mit beh\u00f6rdlicher Zustimmung erfolgen d\u00fcrfen. Mangels Zustimmung ist die K\u00fcndigung nach \u00a7 17 MuSchG unzul\u00e4ssig und unwirksam."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+            "extract": "\u201eInnerhalb von drei Wochen nach Zugang [...] Klage erheben. Soweit die K\u00fcndigung der Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist [...] erst von der Bekanntgabe der Entscheidung [...] an.\u201c",
+            "summary": "Grundsatz: Dreiwochenfrist ab Zugang der schriftlichen K\u00fcndigung. Ausnahme: Bei beh\u00f6rdlichem Zustimmungserfordernis beginnt die Frist erst mit Bekanntgabe der Beh\u00f6rdenentscheidung an den Arbeitnehmer.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "Zugang der K\u00fcndigung am 20.03.2026"
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin kannte Schwangerschaft; Zustimmungserfordernis ausgel\u00f6st"
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Zustimmung nicht eingeholt; keine Beh\u00f6rdenentscheidung"
+                  }
+                ],
+                "application": "Wegen des beh\u00f6rdlichen Zustimmungserfordernisses bei bekannter Schwangerschaft greift \u00a7 4 Satz 4 KSchG. Mangels beh\u00f6rdlicher Entscheidung hat die Dreiwochenfrist bis zum 24.04.2026 nicht zu laufen begonnen."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 7 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Wirksamwerden der K\u00fcndigung",
+            "extract": "\u201eWird die Rechtsunwirksamkeit einer K\u00fcndigung nicht rechtzeitig geltend gemacht, so gilt die K\u00fcndigung als von Anfang an rechtswirksam.\u201c",
+            "summary": "Die Wirksamkeitsfiktion tritt nur ein, wenn die Klagefrist des \u00a7 4 KSchG rechtzeitig zu laufen begonnen hat und vers\u00e4umt wurde.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "F\u00fcnf Wochen ohne Klage oder sonstige Reaktion"
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Entscheidung bekanntgegeben"
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Kenntnis der Arbeitgeberin von der Schwangerschaft"
+                  }
+                ],
+                "application": "Trotz f\u00fcnfw\u00f6chiger Unt\u00e4tigkeit tritt die Fiktion des \u00a7 7 KSchG nicht ein, weil die Klagefrist gem. \u00a7 4 Satz 4 KSchG ohne beh\u00f6rdliche Entscheidung noch nicht begonnen hat."
+              }
+            ]
+          },
+          {
+            "type": "judgment",
+            "reference": "BAG, Urteil vom 03.04.2025 \u2013 2 AZR 156/24",
+            "extract": "\u00a7 4 Satz 4 KSchG findet keine Anwendung, wenn der Arbeitgeber bei Zugang der K\u00fcndigung von den den Sonderk\u00fcndigungsschutz ausl\u00f6senden Umst\u00e4nden keine Kenntnis hatte.",
+            "summary": "Das BAG best\u00e4tigt: Die Ausnahme des \u00a7 4 Satz 4 KSchG greift nicht, wenn der Arbeitgeber die Schwangerschaft bei K\u00fcndigungszugang nicht kannte. Umkehrschluss: Bei Kenntnis gilt \u00a7 4 Satz 4 KSchG; die Klagefrist beginnt erst mit Bekanntgabe der Beh\u00f6rdenentscheidung.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin kannte Schwangerschaft bei K\u00fcndigung"
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026"
+                  },
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "Unt\u00e4tigkeit bis 24.04.2026"
+                  }
+                ],
+                "application": "Da die Arbeitgeberin die Schwangerschaft bereits vor Ausspruch der K\u00fcndigung kannte, ist \u00a7 4 Satz 4 KSchG anwendbar. Ohne Beh\u00f6rdenentscheidung begann die Klagefrist nicht; \u00a7 7 KSchG greift daher (noch) nicht."
+              }
+            ]
+          }
+        ],
+        "artifact_ids": [],
+        "deadlines": [],
+        "potential_next_states": []
+      },
+      "summary": "Trotz f\u00fcnfw\u00f6chiger Unt\u00e4tigkeit seit Zugang der K\u00fcndigung am 20. M\u00e4rz 2026 ist die K\u00fcndigung wegen Versto\u00dfes gegen \u00a7 17 MuSchG weiterhin unwirksam. Weil die Arbeitgeberin die Schwangerschaft seit dem 3. M\u00e4rz 2026 kannte und keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung vorliegt, hat die Dreiwochenfrist des \u00a7 4 KSchG mangels Beh\u00f6rdenentscheidung noch nicht begonnen; die Wirksamkeitsfiktion des \u00a7 7 KSchG ist daher bis zum 24. April 2026 nicht eingetreten."
+    },
+    "node_37c0c2d2": {
+      "id": "node_37c0c2d2",
+      "case_id": "case_acme_kuendigung",
+      "incoming": [
+        "edge_72aeb593"
+      ],
+      "outgoing": [],
+      "number": "A3-02",
+      "title": "Erhebung der K\u00fcndigungsschutzklage durch Jennifer Kaufmann am 24. April 2026",
+      "state": {
+        "start_time": "2026-04-24T12:00:00",
+        "end_time": "2026-04-24T15:00:00",
+        "description": "Jennifer Kaufmann hat am 24. April 2026 K\u00fcndigungsschutzklage gegen die betriebsbedingte K\u00fcndigung erhoben, nachdem sie f\u00fcnf Wochen lang nicht reagiert hatte. Da die Arbeitgeberin die Schwangerschaft bereits am 03.03.2026 kannte und keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung erteilt wurde, war die Klage nicht durch die Dreiwochenfrist pr\u00e4kludiert. Das arbeitsgerichtliche Verfahren ist eingeleitet; eine G\u00fcteverhandlung ist anzuberaumen.",
+        "facts": [
+          {
+            "id": "fact_001",
+            "description": "Die ACME GmbH besch\u00e4ftigt etwa 45 Arbeitnehmer."
+          },
+          {
+            "id": "fact_002",
+            "description": "Jennifer Kaufmann arbeitet seit vier Jahren unbefristet bei der ACME GmbH."
+          },
+          {
+            "id": "fact_003",
+            "description": "Jennifer Kaufmann arbeitet als Marketing Managerin."
+          },
+          {
+            "id": "fact_004",
+            "description": "Jennifer Kaufmann ist schwanger."
+          },
+          {
+            "id": "fact_005",
+            "description": "Jennifer Kaufmann informierte ihre Vorgesetzte am 3. M\u00e4rz 2026 schriftlich \u00fcber ihre Schwangerschaft."
+          },
+          {
+            "id": "fact_006",
+            "description": "Die ACME GmbH befindet sich in wirtschaftlichen Schwierigkeiten."
+          },
+          {
+            "id": "fact_007",
+            "description": "Die Gesch\u00e4ftsf\u00fchrung der ACME GmbH beschloss, Kosten zu reduzieren."
+          },
+          {
+            "id": "fact_008",
+            "description": "Die Marketingabteilung soll von f\u00fcnf auf drei Stellen verkleinert werden."
+          },
+          {
+            "id": "fact_009",
+            "description": "Jennifer Kaufmann erhielt am 20. M\u00e4rz 2026 eine ordentliche betriebsbedingte K\u00fcndigung."
+          },
+          {
+            "id": "fact_010",
+            "description": "Das Arbeitsverh\u00e4ltnis von Jennifer Kaufmann soll nach der K\u00fcndigung zum 30. April 2026 enden."
+          },
+          {
+            "id": "fact_011",
+            "description": "Die ACME GmbH begr\u00fcndet die K\u00fcndigung mit ihrer angespannten wirtschaftlichen Lage und dem notwendigen Stellenabbau."
+          },
+          {
+            "id": "fact_012",
+            "description": "Die ACME GmbH hat vor Ausspruch der K\u00fcndigung keine Zustimmung oder Zul\u00e4ssigkeitserkl\u00e4rung der zust\u00e4ndigen Beh\u00f6rde eingeholt."
+          },
+          {
+            "id": "fact_013",
+            "description": "Jennifer Kaufmann reagierte f\u00fcnf Wochen lang nicht auf die K\u00fcndigung nach deren Zugang am 20. M\u00e4rz 2026."
+          },
+          {
+            "id": "fact_014",
+            "description": "Jennifer Kaufmann hat am 24. April 2026 K\u00fcndigungsschutzklage gegen die K\u00fcndigung erhoben."
+          }
+        ],
+        "legal_issue": "Rechtzeitigkeit und Zul\u00e4ssigkeit der K\u00fcndigungsschutzklage vom 24.04.2026 (\u00a7 4 Satz 4 KSchG) bei K\u00fcndigung w\u00e4hrend bekannter Schwangerschaft ohne beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung (\u00a7 17 Abs. 1, 2 MuSchG); Nichtanwendung der Wirksamkeitsfiktion (\u00a7 7 KSchG); prozessuale Folgepflichten des Gerichts (\u00a7 61a ArbGG) und fehlender Anwaltszwang in erster Instanz (\u00a7 11 ArbGG).",
+        "final_state": false,
+        "actors_status": [
+          {
+            "actor": {
+              "id": "actor_jennifer_kaufmann",
+              "case_id": "case_acme_kuendigung",
+              "name": "Jennifer Kaufmann",
+              "role": "Arbeitnehmerin",
+              "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": "Marketing Managerin",
+              "background": null,
+              "has_legal_expenses_insurance": true
+            },
+            "income": [],
+            "expenses": [
+              {
+                "title": "Gerichtskosten f\u00fcr K\u00fcndigungsschutzklage",
+                "amount": 150,
+                "paid_to": "Arbeitsgericht",
+                "covered_by_insurance": false
+              },
+              {
+                "title": "Anwaltskosten f\u00fcr Einreichung der Klage",
+                "amount": 500,
+                "paid_to": "Anwalt",
+                "covered_by_insurance": true
+              }
+            ],
+            "negotiation_profile": {
+              "cooperativeness": 50,
+              "assertiveness": 65,
+              "trust_in_opponent": 35,
+              "flexibility": 40,
+              "emotionality": 60,
+              "current_goal_satisfaction": 30
+            },
+            "intermediate_goal": "Durchf\u00fchren der gerichtlichen Kl\u00e4rung zur K\u00fcndigungsschutzklage."
+          },
+          {
+            "actor": {
+              "id": "actor_acme_gmbh",
+              "case_id": "case_acme_kuendigung",
+              "name": "ACME GmbH",
+              "role": "Arbeitgeberin",
+              "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
+              "gender": null,
+              "date_of_birth": null,
+              "nationality": null,
+              "profession": null,
+              "background": null,
+              "has_legal_expenses_insurance": false
+            },
+            "income": [],
+            "expenses": [],
+            "negotiation_profile": {
+              "cooperativeness": 40,
+              "assertiveness": 60,
+              "trust_in_opponent": 45,
+              "flexibility": 50,
+              "emotionality": 30,
+              "current_goal_satisfaction": 45
+            },
+            "intermediate_goal": "Pr\u00fcfen der Klage und Entscheidungsfindung zum weiteren Vorgehen."
+          }
+        ],
+        "legal_references": [
+          {
+            "type": "law",
+            "reference": "\u00a7 17 Mutterschutzgesetz (MuSchG) \u2013 K\u00fcndigungsverbot",
+            "extract": "\u201eDie K\u00fcndigung gegen\u00fcber einer Frau ist unzul\u00e4ssig \u2026\u201c; \u201eDie \u2026 oberste Landesbeh\u00f6rde \u2026 kann in besonderen F\u00e4llen \u2026 ausnahmsweise die K\u00fcndigung f\u00fcr zul\u00e4ssig erkl\u00e4ren.\u201c",
+            "summary": "W\u00e4hrend der Schwangerschaft besteht ein gesetzliches K\u00fcndigungsverbot. Nur ausnahmsweise kann die zust\u00e4ndige Beh\u00f6rde die K\u00fcndigung f\u00fcr zul\u00e4ssig erkl\u00e4ren.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_004",
+                    "relevance": "Schutzbereich: bestehende Schwangerschaft"
+                  },
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Kenntnis der Arbeitgeberin vor Ausspruch der K\u00fcndigung"
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026 w\u00e4hrend des Schutzzeitraums"
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung vor K\u00fcndigung"
+                  }
+                ],
+                "application": "Da die Arbeitnehmerin schwanger war und die Arbeitgeberin hiervon seit 03.03.2026 wusste, w\u00e4re eine K\u00fcndigung nur bei ausnahmsweiser beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung zul\u00e4ssig gewesen. Mangels solcher Erkl\u00e4rung ist die K\u00fcndigung nach \u00a7 17 MuSchG unzul\u00e4ssig und (arbeitsrechtlich) unwirksam."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+            "extract": "\u201eSoweit die K\u00fcndigung der Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist \u2026 erst von der Bekanntgabe der Entscheidung der Beh\u00f6rde an den Arbeitnehmer ab.\u201c",
+            "summary": "Bei beh\u00f6rdlichem Zustimmungserfordernis beginnt die Dreiwochenfrist erst mit Bekanntgabe der beh\u00f6rdlichen Entscheidung an den Arbeitnehmer.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "Zugang der K\u00fcndigung am 20.03.2026"
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Entscheidung bekanntgegeben"
+                  },
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "Klageerhebung am 24.04.2026"
+                  }
+                ],
+                "application": "Mangels Bekanntgabe einer beh\u00f6rdlichen Entscheidung hat die Klagefrist nicht zu laufen begonnen. Die am 24.04.2026 erhobene Klage ist nicht pr\u00e4kludiert."
+              }
+            ]
+          },
+          {
+            "type": "law",
+            "reference": "\u00a7 7 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Wirksamwerden der K\u00fcndigung",
+            "extract": "\u201eWird die Rechtsunwirksamkeit einer K\u00fcndigung nicht rechtzeitig geltend gemacht \u2026 so gilt die K\u00fcndigung als von Anfang an rechtswirksam.\u201c",
+            "summary": "Die Wirksamkeitsfiktion greift nur, wenn die Klagefrist des \u00a7 4 KSchG l\u00e4uft und vers\u00e4umt wird.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_013",
+                    "relevance": "F\u00fcnf Wochen ohne gerichtliche Schritte"
+                  },
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Kein beh\u00f6rdlicher Bescheid"
+                  }
+                ],
+                "application": "Trotz f\u00fcnf Wochen Unt\u00e4tigkeit tritt die Wirksamkeitsfiktion nicht ein, weil die Frist des \u00a7 4 KSchG wegen fehlender Beh\u00f6rdenentscheidung nicht zu laufen begann."
+              }
+            ]
+          },
+          {
+            "type": "judgment",
+            "reference": "BAG, Urteil vom 03.04.2025 \u2013 2 AZR 156/24",
+            "extract": "\u201e\u00a7 4 Satz 4 KSchG findet keine Anwendung, wenn der Arbeitgeber bei Zugang der K\u00fcndigung keine Kenntnis von den \u2026 Umst\u00e4nden hat.\u201c",
+            "summary": "Das BAG stellt klar: Die Ausnahme des \u00a7 4 Satz 4 KSchG gilt nicht bei Unkenntnis des Arbeitgebers vom Sonderk\u00fcndigungsschutz; im Umkehrschluss greift sie bei Kenntnis.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_005",
+                    "relevance": "Arbeitgeberin kannte die Schwangerschaft"
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung am 20.03.2026"
+                  },
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "Klage am 24.04.2026"
+                  }
+                ],
+                "application": "Da die Arbeitgeberin die Schwangerschaft kannte, ist \u00a7 4 Satz 4 KSchG einschl\u00e4gig. Ohne Beh\u00f6rdenentscheidung begann die Klagefrist nicht; die Klage ist zul\u00e4ssig und nicht verfristet."
+              }
+            ]
+          },
+          {
+            "type": "procedural rule",
+            "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung in K\u00fcndigungsverfahren",
+            "extract": "\u201eDie G\u00fcteverhandlung soll innerhalb von zwei Wochen nach Klageerhebung stattfinden.\u201c",
+            "summary": "K\u00fcndigungsschutzsachen sind vorrangig zu f\u00f6rdern; das Gericht soll binnen zwei Wochen nach Klageerhebung einen G\u00fctetermin anberaumen.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "Klageeingang am 24.04.2026"
+                  }
+                ],
+                "application": "Nach Klageerhebung ist eine G\u00fcteverhandlung bis sp\u00e4testens 08.05.2026 anzusetzen; anschlie\u00dfend sind Mindestfristen von jeweils zwei Wochen f\u00fcr Schrifts\u00e4tze zu beachten."
+              }
+            ]
+          },
+          {
+            "type": "procedural rule",
+            "reference": "\u00a7 11 Arbeitsgerichtsgesetz (ArbGG) \u2013 Prozessvertretung",
+            "extract": "\u201eDie Parteien k\u00f6nnen vor dem Arbeitsgericht den Rechtsstreit selbst f\u00fchren.\u201c",
+            "summary": "Kein Anwaltszwang vor dem Arbeitsgericht erster Instanz; Anwalts- bzw. Beistandszwang besteht erst in den Rechtsmittelinstanzen (LAG/BAG).",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_014",
+                    "relevance": "Klage wurde durch anwaltliche Vertretung eingereicht; gleichwohl w\u00e4re Selbstvertretung zul\u00e4ssig"
+                  }
+                ],
+                "application": "Die anwaltliche Vertretung ist zul\u00e4ssig, aber nicht zwingend vorgeschrieben. Ein Versto\u00df gegen Vertretungsregeln liegt nicht vor."
+              }
+            ]
+          },
+          {
+            "type": "government guidance",
+            "reference": "Bundesportal (verwaltung.bund.de): Aufhebung des K\u00fcndigungsschutzes bei Mutterschutz/Elternzeit \u2013 Hinweise",
+            "extract": "\u201eEine nachtr\u00e4gliche Zustimmung \u2026 einer bereits ausgesprochenen K\u00fcndigung \u2026 ist nicht m\u00f6glich.\u201c / \u201eDie Antragsstellung muss vor dem Ausspruch der K\u00fcndigung erfolgen.\u201c",
+            "summary": "Beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung muss vor K\u00fcndigung vorliegen; eine nachtr\u00e4gliche Heilung durch sp\u00e4tere Zustimmung scheidet aus.",
+            "applications": [
+              {
+                "applies_to": [
+                  {
+                    "fact_id": "fact_012",
+                    "relevance": "Keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung vor K\u00fcndigung"
+                  },
+                  {
+                    "fact_id": "fact_009",
+                    "relevance": "K\u00fcndigung erfolgte ohne vorherige Zustimmung"
+                  }
+                ],
+                "application": "Die fehlende vorherige Zul\u00e4ssigkeitserkl\u00e4rung kann nicht nachtr\u00e4glich geheilt werden; bis zu einer ggf. neu erkl\u00e4rten K\u00fcndigung bleibt der Bestandsschutz bestehen."
+              }
+            ]
+          }
+        ],
+        "artifact_ids": [
+          "art_059a04e0"
+        ],
+        "deadlines": [
+          {
+            "type": "court_scheduling_gueateverhandlung",
+            "references": {
+              "type": "procedural rule",
+              "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung in K\u00fcndigungsverfahren",
+              "extract": "\u201eDie G\u00fcteverhandlung soll innerhalb von zwei Wochen nach Klageerhebung stattfinden.\u201c",
+              "summary": "Das Arbeitsgericht soll binnen zwei Wochen nach Klageerhebung einen G\u00fctetermin anberaumen.",
+              "applications": [
+                {
+                  "applies_to": [
+                    {
+                      "fact_id": "fact_014",
+                      "relevance": "Klage am 24.04.2026 erhoben"
+                    }
+                  ],
+                  "application": "Aus \u00a7 61a Abs. 2 ArbGG folgt die Frist f\u00fcr die Terminierung der G\u00fcteverhandlung."
+                }
+              ]
+            },
+            "summary": "G\u00fcteverhandlung ist innerhalb von zwei Wochen nach Klageerhebung vom 24.04.2026 anzuberaumen.",
+            "due_date": "2026-05-08"
+          }
+        ],
+        "potential_next_states": [
+          "Schedule conciliation hearing",
+          "Submit employer's defense statement",
+          "Request evidence exchange",
+          "Negotiate out-of-court settlement",
+          "Prepare for main hearing"
+        ]
+      },
+      "summary": "Jennifer Kaufmann hat am 24. April 2026 K\u00fcndigungsschutzklage gegen die betriebsbedingte K\u00fcndigung erhoben. Wegen bekannter Schwangerschaft und fehlender beh\u00f6rdlicher Zul\u00e4ssigkeitserkl\u00e4rung lief die Dreiwochenfrist des \u00a7 4 KSchG nicht an; die Wirksamkeitsfiktion des \u00a7 7 KSchG greift daher nicht. Das Gericht hat zeitnah eine G\u00fcteverhandlung anzuberaumen."
     }
   },
   "edges": {
-    "edge_1c59f6e4": {
-      "id": "edge_1c59f6e4",
-      "case_id": "7777",
-      "source_id": "12344",
-      "target_id": "node_94de9e42",
-      "start_time": "2026-04-27T13:00:00",
-      "end_time": "2026-05-01T13:00:00",
-      "action_type": "file_complaint",
-      "actor_id": "123",
-      "artifacts": [
-        {
-          "id": "art_0001",
-          "type": "document",
-          "title": "Complaint Filing Document",
-          "content": "Complaint filed by plaintiff Tim against debtor Andi for failure to pay invoice despite reminder.",
-          "created_by": "123",
-          "timestamp": "2026-04-27T14:00:00"
-        }
+    "edge_6a29945a": {
+      "id": "edge_6a29945a",
+      "case_id": "case_acme_kuendigung",
+      "source_id": "node_001",
+      "target_id": "node_f3d67bc5",
+      "start_time": "2026-03-21T09:00:00",
+      "end_time": "2026-03-21T09:30:00",
+      "action_type": "file_unfair_dismissal_claim",
+      "actor_id": "actor_jennifer_kaufmann",
+      "artifact_ids": [
+        "art_0a0a329b"
       ],
-      "probability": 0.8,
+      "probability": 0.95,
       "conditions": [
-        "Debtor has failed to pay invoice after reminder period elapsed",
-        "Plaintiff wishes to initiate formal legal proceedings"
+        "Jennifer Kaufmann has received the dismissal notice.",
+        "Jennifer Kaufmann has legal expenses insurance.",
+        "Jennifer Kaufmann opposes dismissal and wishes to challenge it.",
+        "Klagefrist des \u00a7 4 KSchG gewahrt (bzw. Fristbeginn gem. \u00a7 4 S. 4 KSchG mangels beh\u00f6rdlicher Entscheidung nicht angelaufen)."
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "\u00a7 286 BGB - Verzug des Schuldners",
-          "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
-          "summary": "Legal basis for debtor being in default after reminder period."
+          "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+          "extract": "Klage ist binnen drei Wochen zu erheben; bei beh\u00f6rdlicher Zustimmung beginnt die Frist erst mit deren Bekanntgabe.",
+          "summary": "Setzt die Dreiwochenfrist f\u00fcr die K\u00fcndigungsschutzklage und verschiebt deren Beginn, wenn die K\u00fcndigung einer beh\u00f6rdlichen Zustimmung bedarf.",
+          "applications": [
+            {
+              "applies_to": [
+                {
+                  "fact_id": "fact_009",
+                  "relevance": "Zugang der K\u00fcndigung am 20.03.2026 als Fristausl\u00f6ser nach \u00a7 4 S. 1 KSchG."
+                },
+                {
+                  "fact_id": "fact_013",
+                  "relevance": "Klageerhebung am 21.03.2026 innerhalb von drei Wochen."
+                }
+              ],
+              "application": "Die Klage wurde am 21.03.2026 einen Tag nach Zugang der K\u00fcndigung erhoben und ist daher fristgerecht. Selbst\u00e4ndig tr\u00e4gt zudem \u00a7 4 S. 4 KSchG: Da es sich um eine der Zustimmung einer Beh\u00f6rde bed\u00fcrftige K\u00fcndigung handelt, w\u00fcrde die Frist ohnehin erst mit Bekanntgabe der beh\u00f6rdlichen Entscheidung beginnen."
+            },
+            {
+              "applies_to": [
+                {
+                  "fact_id": "fact_012",
+                  "relevance": "Es wurde vor Ausspruch keine beh\u00f6rdliche Zul\u00e4ssigkeit eingeholt; zeigt die prinzipielle Relevanz des \u00a7 4 S. 4 KSchG."
+                }
+              ],
+              "application": "Mangels beh\u00f6rdlicher Entscheidung ist der besondere Fristbeginn des \u00a7 4 S. 4 KSchG nicht angelaufen; die Klage ist gleichwohl am 21.03.2026 erhoben und damit unzweifelhaft rechtzeitig."
+            }
+          ]
         }
       ],
       "lawyer_involved": true
     },
-    "edge_5e72a7fb": {
-      "id": "edge_5e72a7fb",
-      "case_id": "7777",
-      "source_id": "node_94de9e42",
-      "target_id": "node_4915b61e",
-      "start_time": "2026-05-31T13:00:00",
-      "end_time": "2026-06-10T13:00:00",
-      "action_type": "submit_response",
-      "actor_id": "1234",
-      "artifacts": [
-        {
-          "id": "art_response_0001",
-          "type": "document",
-          "title": "Debtor's Response to Complaint",
-          "content": "Formal response submitted by debtor Andi addressing the complaint filed by plaintiff Tim regarding non-payment of the invoice. The response may accept, contest, or provide justification for non-payment.",
-          "created_by": "1234",
-          "timestamp": "2026-05-31T13:30:00"
-        }
+    "edge_c59911e2": {
+      "id": "edge_c59911e2",
+      "case_id": "case_acme_kuendigung",
+      "source_id": "node_001",
+      "target_id": "node_69e2fdd3",
+      "start_time": "2026-03-21T09:00:00",
+      "end_time": "2026-03-21T09:15:00",
+      "action_type": "request_withdrawal_of_dismissal",
+      "actor_id": "actor_jennifer_kaufmann",
+      "artifact_ids": [
+        "art_44408e66"
       ],
-      "probability": 0.7,
+      "probability": 0.9,
       "conditions": [
-        "Debtor has received the complaint document",
-        "Debtor is within the deadline to submit a response"
+        "Jennifer Kaufmann has received the dismissal letter"
+      ],
+      "legal_references": [],
+      "lawyer_involved": true
+    },
+    "edge_c4f17e21": {
+      "id": "edge_c4f17e21",
+      "case_id": "case_acme_kuendigung",
+      "source_id": "node_f3d67bc5",
+      "target_id": "node_f91f2788",
+      "start_time": "2026-03-25T09:00:00",
+      "end_time": "2026-03-30T17:00:00",
+      "action_type": "submit_defense_statement",
+      "actor_id": "actor_acme_gmbh",
+      "artifact_ids": [
+        "art_413b2cf6"
+      ],
+      "probability": 0.85,
+      "conditions": [
+        "Klage ist beim Arbeitsgericht anh\u00e4ngig",
+        "ACME GmbH hat Kenntnis von der Klage",
+        "ACME GmbH bereitet sich auf das Verfahren vor"
       ],
       "legal_references": [
         {
-          "type": "law",
-          "reference": "Court procedural rules",
-          "extract": "The defendant must submit a response to the complaint within the specified deadline to proceed with the defense in court.",
-          "summary": "Legal obligation for debtor to respond to the complaint within the deadline."
-        },
-        {
-          "type": "law",
-          "reference": "Court procedural rules",
-          "extract": "The defendant is required to respond to the complaint within a set deadline to participate effectively in the legal proceedings.",
-          "summary": "Confirms procedural requirement for response submission."
+          "type": "procedural rule",
+          "reference": "\u00a7 61a Arbeitsgerichtsgesetz (ArbGG) \u2013 Besondere Prozessf\u00f6rderung in K\u00fcndigungsverfahren",
+          "extract": "Die G\u00fcteverhandlung soll innerhalb von zwei Wochen nach Klageerhebung stattfinden. \u2026 binnen einer angemessenen Frist, die mindestens zwei Wochen betragen mu\u00df, \u2026 schriftlich die Klage zu erwidern.",
+          "summary": "Regelt die beschleunigte Behandlung von K\u00fcndigungsschutzsachen sowie die schriftliche Klageerwiderung des Beklagten binnen mindestens zwei Wochen nach gerichtlicher Aufforderung.",
+          "applications": [
+            {
+              "applies_to": [
+                {
+                  "fact_id": "fact_013",
+                  "relevance": "Anh\u00e4ngig gemachte K\u00fcndigungsschutzklage seit 21.03.2026."
+                },
+                {
+                  "fact_id": "fact_015",
+                  "relevance": "Schriftliche Klageerwiderung der ACME GmbH am 30.03.2026."
+                }
+              ],
+              "application": "Die Einreichung der Klageerwiderung ist ein von \u00a7 61a ArbGG vorgesehenes prozessuales Verteidigungsmittel; ihre Zul\u00e4ssigkeit folgt unabh\u00e4ngig davon, ob bereits eine konkrete Fristverf\u00fcgung erging."
+            }
+          ]
         }
       ],
+      "lawyer_involved": true
+    },
+    "edge_4e80c8ea": {
+      "id": "edge_4e80c8ea",
+      "case_id": "case_acme_kuendigung",
+      "source_id": "node_f91f2788",
+      "target_id": "node_34450b85",
+      "start_time": "2026-04-05T10:00:00",
+      "end_time": "2026-04-05T11:30:00",
+      "action_type": "hold_court_conciliation_hearing",
+      "actor_id": null,
+      "artifact_ids": [
+        "art_f675f011",
+        "art_f11b3218"
+      ],
+      "probability": 0.85,
+      "conditions": [
+        "Klageerwiderung der ACME GmbH vorliegend",
+        "Gericht l\u00e4dt zu G\u00fcteverhandlung ein nach \u00a7 61a ArbGG",
+        "Richter als unparteiischer Verfahrensleiter"
+      ],
+      "legal_references": [
+        {
+          "type": "procedural rule",
+          "reference": "\u00a7 54 Arbeitsgerichtsgesetz (ArbGG) \u2013 G\u00fcteverfahren",
+          "extract": "Die m\u00fcndliche Verhandlung beginnt mit einer Verhandlung vor dem Vorsitzenden zum Zwecke der g\u00fctlichen Einigung der Parteien (G\u00fcteverhandlung).",
+          "summary": "Regelt, dass das erstinstanzliche Verfahren mit einer G\u00fcteverhandlung vor dem Vorsitzenden beginnt; bei Erfolglosigkeit schlie\u00dft sich die weitere Verhandlung an bzw. ist Termin zur streitigen Verhandlung alsbald zu bestimmen.",
+          "applications": [
+            {
+              "applies_to": [
+                {
+                  "fact_id": "fact_016",
+                  "relevance": "G\u00fcteverhandlung fand am 05.04.2026 statt."
+                },
+                {
+                  "fact_id": "fact_018",
+                  "relevance": "Keine Einigung in der G\u00fcteverhandlung."
+                },
+                {
+                  "fact_id": "fact_019",
+                  "relevance": "Gericht k\u00fcndigte weitere Verfahrensschritte an."
+                }
+              ],
+              "application": "Die durchgef\u00fchrte, aber erfolglose G\u00fcteverhandlung entspricht \u00a7 54 ArbGG; folglich ist der Rechtsstreit streitig fortzuf\u00fchren und ein Kammertermin alsbald anzusetzen."
+            }
+          ]
+        }
+      ],
+      "lawyer_involved": true
+    },
+    "edge_297e8efd": {
+      "id": "edge_297e8efd",
+      "case_id": "case_acme_kuendigung",
+      "source_id": "node_69e2fdd3",
+      "target_id": "node_8867e7ec",
+      "start_time": "2026-03-22T10:00:00",
+      "end_time": "2026-03-22T10:30:00",
+      "action_type": "rescind_dismissal",
+      "actor_id": "actor_acme_gmbh",
+      "artifact_ids": [
+        "art_85436c88"
+      ],
+      "probability": 0.85,
+      "conditions": [
+        "Jennifer Kaufmann hat die R\u00fccknahme der K\u00fcndigung gefordert",
+        "Keine beh\u00f6rdliche Zul\u00e4ssigkeitserkl\u00e4rung f\u00fcr die K\u00fcndigung wurde eingeholt",
+        "ACME GmbH erkennt rechtliches Risiko durch die K\u00fcndigung w\u00e4hrend der Schwangerschaft an"
+      ],
+      "legal_references": [],
+      "lawyer_involved": true
+    },
+    "edge_39e2d8f7": {
+      "id": "edge_39e2d8f7",
+      "case_id": "case_acme_kuendigung",
+      "source_id": "node_001",
+      "target_id": "node_ff95fe8c",
+      "start_time": "2026-03-20T12:00:00",
+      "end_time": "2026-04-24T12:00:00",
+      "action_type": "no_reaction_period",
+      "actor_id": "actor_jennifer_kaufmann",
+      "artifact_ids": [],
+      "probability": 1.0,
+      "conditions": [
+        "Jennifer Kaufmann has received the dismissal notice",
+        "No reaction from Jennifer Kaufmann for 5 weeks"
+      ],
+      "legal_references": [],
       "lawyer_involved": false
     },
-    "edge_984aba26": {
-      "id": "edge_984aba26",
-      "case_id": "7777",
-      "source_id": "node_94de9e42",
-      "target_id": "node_a2245566",
-      "start_time": "2026-05-31T13:00:00",
-      "end_time": "2026-06-15T13:00:00",
-      "action_type": "court_order_payment_deadline",
-      "actor_id": null,
-      "artifacts": [
-        {
-          "id": "art_0002",
-          "type": "document",
-          "title": "Court Order Setting Payment Deadline",
-          "content": "Court issues an order setting a new payment deadline for debtor Andi to settle the invoice with plaintiff Tim within 15 days upon debtor's failure to respond adequately to complaint.",
-          "created_by": null,
-          "timestamp": "2026-05-31T15:00:00"
-        }
+    "edge_72aeb593": {
+      "id": "edge_72aeb593",
+      "case_id": "case_acme_kuendigung",
+      "source_id": "node_ff95fe8c",
+      "target_id": "node_37c0c2d2",
+      "start_time": "2026-04-24T12:00:00",
+      "end_time": "2026-04-24T15:00:00",
+      "action_type": "file_claim",
+      "actor_id": "actor_jennifer_kaufmann",
+      "artifact_ids": [
+        "art_059a04e0"
       ],
-      "probability": 0.25,
+      "probability": 0.95,
       "conditions": [
-        "Debtor failed to submit a valid or timely response to the complaint within the court-specified deadline"
+        "Jennifer Kaufmann has received the dismissal notice.",
+        "No administrative approval of dismissal has been obtained yet.",
+        "The statutory three-week period according to \u00a7 4 KSchG has not begun due to unknown authority decision."
       ],
       "legal_references": [
         {
           "type": "law",
-          "reference": "\u00a7 331 ZPO - Court's power to set deadlines",
-          "extract": "Das Gericht kann Fristen setzen, um den Fortgang des Verfahrens zu sichern.",
-          "summary": "Court is empowered to set procedural deadlines including payment deadlines when debtor does not respond."
-        },
-        {
-          "type": "law",
-          "reference": "\u00a7 286 BGB - Verzug des Schuldners",
-          "extract": "Der Schuldner kommt durch die Nichtleistung bis zum Ablauf einer Mahnfrist in Verzug.",
-          "summary": "Debtor is in default after failure to pay following a reminder."
+          "reference": "\u00a7 4 K\u00fcndigungsschutzgesetz (KSchG) \u2013 Anrufung des Arbeitsgerichts",
+          "extract": "\u201eSoweit die K\u00fcndigung der Zustimmung einer Beh\u00f6rde bedarf, l\u00e4uft die Frist \u2026 erst von der Bekanntgabe der Entscheidung der Beh\u00f6rde an den Arbeitnehmer ab.\u201c",
+          "summary": "Bei beh\u00f6rdlichem Zustimmungserfordernis beginnt die Dreiwochenfrist erst mit Bekanntgabe der beh\u00f6rdlichen Entscheidung an den Arbeitnehmer.",
+          "applications": [
+            {
+              "applies_to": [
+                {
+                  "fact_id": "fact_009",
+                  "relevance": "Zugang der K\u00fcndigung am 20.03.2026"
+                },
+                {
+                  "fact_id": "fact_012",
+                  "relevance": "Kein beh\u00f6rdlicher Zustimmungs-/Zul\u00e4ssigkeitsbescheid vorliegend, also keine Bekanntgabe"
+                },
+                {
+                  "fact_id": "fact_014",
+                  "relevance": "Klageerhebung am 24.04.2026"
+                }
+              ],
+              "application": "Mangels beh\u00f6rdlicher Entscheidung wurde die Dreiwochenfrist nicht in Gang gesetzt. Die am 24.04.2026 eingereichte K\u00fcndigungsschutzklage ist daher jedenfalls nicht verfristet."
+            }
+          ]
         }
       ],
-      "lawyer_involved": false
+      "lawyer_involved": true
     }
   },
   "actors": {
-    "123": {
-      "id": "123",
-      "case_id": "7777",
-      "name": "tim",
-      "role": "plaintiff",
+    "actor_jennifer_kaufmann": {
+      "id": "actor_jennifer_kaufmann",
+      "case_id": "case_acme_kuendigung",
+      "name": "Jennifer Kaufmann",
+      "role": "Arbeitnehmerin",
+      "goal": "Fortsetzung ihres Arbeitsverh\u00e4ltnisses bei der ACME GmbH und Abwehr der K\u00fcndigung.",
       "gender": null,
-      "age": null,
+      "date_of_birth": null,
       "nationality": null,
-      "profession": null,
-      "background": null
+      "profession": "Marketing Managerin",
+      "background": null,
+      "has_legal_expenses_insurance": true
     },
-    "1234": {
-      "id": "1234",
-      "case_id": "7777",
-      "name": "andi",
-      "role": "debtor",
+    "actor_acme_gmbh": {
+      "id": "actor_acme_gmbh",
+      "case_id": "case_acme_kuendigung",
+      "name": "ACME GmbH",
+      "role": "Arbeitgeberin",
+      "goal": "Reduzierung der Personalkosten und Verkleinerung der Marketingabteilung.",
       "gender": null,
-      "age": null,
+      "date_of_birth": null,
       "nationality": null,
       "profession": null,
-      "background": null
+      "background": null,
+      "has_legal_expenses_insurance": false
     }
   }
 }

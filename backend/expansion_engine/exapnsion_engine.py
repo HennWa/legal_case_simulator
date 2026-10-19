@@ -25,7 +25,6 @@ class ExpansionEngine:
             raise ValueError(f"Node with id {branch_node.node.id} already exists in the graph. ID collision detected.")
 
         branch_node = self.graph.add_branch_obj(source_id=node_id, branch_node=branch_node)
-        self.graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
 
         return branch_node
 
@@ -38,7 +37,6 @@ class ExpansionEngine:
             raise ValueError(f"Node with id {branch_node.node.id} already exists in the graph. ID collision detected.")
 
         branch_node = self.graph.add_branch_obj(source_id=node_id, branch_node=branch_node)
-        self.graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
 
         return branch_node
 
@@ -65,13 +63,6 @@ class ExpansionEngine:
         # Update only the field we actually want to update
         node.state.potential_next_states = possible_actions.actions
 
-        self.graph.to_json(
-            os.path.join(
-                get_frontend_dir(),
-                "src/data/graph.json",
-            )
-        )
-
         return node
 
     def create_artifacts(self, edge_id: str) -> ArtifactCollection:
@@ -80,8 +71,6 @@ class ExpansionEngine:
         artifact_collection = self.llm.generate_artifacts(prompt_messages)
 
         artifact_collection.artifacts = [self.graph.add_artifact(art, edge_id) for art in artifact_collection.artifacts]
-
-        self.graph.to_json(os.path.join(get_frontend_dir(), 'src/data/graph.json'))
 
         return artifact_collection
 
