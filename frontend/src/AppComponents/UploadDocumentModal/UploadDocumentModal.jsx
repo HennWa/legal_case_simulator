@@ -9,6 +9,10 @@ import {
   uploadDocument,
 } from "../../api/upload_document";
 
+import {
+    useApiClient,
+} from "../../api/useApiClient";
+
 import "./UploadDocumentModal.css";
 
 
@@ -38,6 +42,8 @@ export default function UploadDocumentModal({
   onClose,
   onUploaded,
 }) {
+  const apiFetch = useApiClient();
+
   const fileInputRef = useRef(null);
 
   const [
@@ -179,7 +185,7 @@ export default function UploadDocumentModal({
       setError("");
 
       const artifact =
-        await uploadDocument({
+        await uploadDocument(apiFetch, {
           caseId,
           nodeId: selectedNodeId,
           file: selectedFile,
