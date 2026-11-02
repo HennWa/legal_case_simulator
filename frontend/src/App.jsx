@@ -1,3 +1,4 @@
+
 import { lazy, Suspense } from "react";
 
 import {
@@ -12,6 +13,8 @@ import Impressum from "./Impressum";
 import PrivacyPolicy from "./PrivacyPolicy";
 import ProtectedRoute from "./auth/ProtectedRoute";
 
+import "./MobileLandscape.css";
+
 
 const LANDING_ONLY =
   import.meta.env.VITE_LANDING_ONLY === "true";
@@ -22,6 +25,45 @@ const SimulatorApp = LANDING_ONLY
   : lazy(() => import("./SimulatorApp"));
 
 
+/*
+ * =========================================================
+ * MOBILE LANDSCAPE NOTICE
+ * =========================================================
+ */
+
+function RotateDeviceNotice() {
+  return (
+    <div
+      className="casendra-rotate-notice"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="casendra-rotate-notice__content">
+        <div
+          className="casendra-rotate-notice__phone"
+          aria-hidden="true"
+        >
+          <span className="casendra-rotate-notice__phone-screen" />
+        </div>
+
+        <h1>Please rotate your phone</h1>
+
+        <p>
+          Casendra's case simulator is designed for
+          landscape viewing on small screens.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
+/*
+ * =========================================================
+ * SIMULATOR ROUTE
+ * =========================================================
+ */
+
 function SimulatorRoute() {
   if (LANDING_ONLY || !SimulatorApp) {
     return <Navigate to="/" replace />;
@@ -29,11 +71,18 @@ function SimulatorRoute() {
 
   return (
     <ProtectedRoute>
+      <RotateDeviceNotice />
       <SimulatorApp />
     </ProtectedRoute>
   );
 }
 
+
+/*
+ * =========================================================
+ * MAIN APPLICATION
+ * =========================================================
+ */
 
 export default function App() {
   return (

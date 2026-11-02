@@ -1,0 +1,122 @@
+
+/*
+ * =========================================================
+ * CASENDRA MOBILE LANDSCAPE MODE
+ * =========================================================
+ */
+
+/* Hidden by default: desktop and landscape phones */
+.casendra-rotate-notice {
+  display: none;
+}
+
+
+/*
+ * Display the rotation notice only when:
+ *
+ * 1. Screen width is below 768px
+ * 2. Device is in portrait orientation
+ * 3. Device uses a coarse pointer (typically touch)
+ */
+
+@media screen and (max-width: 767px)
+  and (orientation: portrait)
+  and (pointer: coarse) {
+
+  .casendra-rotate-notice {
+    display: flex;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 2147483647;
+
+    box-sizing: border-box;
+    min-height: 100dvh;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    overflow-y: auto;
+
+    background: linear-gradient(
+      145deg,
+      #25131c,
+      #4a2533
+    );
+
+    color: #f8eef1;
+    text-align: center;
+  }
+
+  /*
+   * Content
+   */
+
+  .casendra-rotate-notice__content {
+    width: 100%;
+    max-width: 330px;
+  }
+
+  /*
+   * Phone icon
+   */
+
+  .casendra-rotate-notice__phone {
+    position: relative;
+
+    box-sizing: border-box;
+
+    width: 60px;
+    height: 100px;
+
+    margin: 0 auto 32px;
+
+    border: 4px solid #dca0b2;
+    border-radius: 13px;
+
+    transform: rotate(-90deg);
+  }
+
+  .casendra-rotate-notice__phone-screen {
+    position: absolute;
+    inset: 10px 5px;
+
+    border-radius: 3px;
+
+    background: rgba(
+      220,
+      160,
+      178,
+      0.18
+    );
+  }
+
+  /*
+   * Text
+   */
+
+  .casendra-rotate-notice h1 {
+    margin: 0 0 12px;
+
+    color: #f8eef1;
+
+    font-size: clamp(
+      1.35rem,
+      5vw,
+      1.8rem
+    );
+
+    line-height: 1.25;
+  }
+
+  .casendra-rotate-notice p {
+    margin: 0;
+
+    color: #e5c6d0;
+
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+}
