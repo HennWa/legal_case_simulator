@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import ReferenceModal from "../ReferenceModal/ReferenceModal";
 import ArtifactModal from "../ArtifactModal/ArtifactModal";
+import { useApiClient } from "../../api/useApiClient";
 
 import { fetchArtifacts } from "../../api/artifact";
 
@@ -30,6 +31,9 @@ export default function NodeDetailsPanel({
   node,
   onClose,
 }) {
+
+  const apiFetch = useApiClient();
+
   const [
     selectedReferences,
     setSelectedReferences,
@@ -81,10 +85,10 @@ export default function NodeDetailsPanel({
         setLoadingArtifacts(true);
         setArtifactError(null);
 
-        const loadedArtifacts =
-          await fetchArtifacts(
-            artifactIds,
-          );
+        const loadedArtifacts = await fetchArtifacts(
+          apiFetch,
+          artifactIds,
+        );
 
         if (!cancelled) {
           setArtifacts(
@@ -117,7 +121,7 @@ export default function NodeDetailsPanel({
     return () => {
       cancelled = true;
     };
-  }, [node?.id]);
+  }, [apiFetch, node?.id, node?.state?.artifact_ids]);
 
 
   if (!node) {
